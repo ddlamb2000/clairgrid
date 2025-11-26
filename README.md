@@ -23,7 +23,7 @@ Copyright David Lambert 2025
 
 2007 - Project factory (https://sourceforge.net/projects/projectfactory/). As an open source project for project management, Factory lets you organize actors in teams, define projects, create version-based plans, generate forecast calendars and track statuses. Small and stand alone, it runs on every system with Java.
 
-2012 - Prototype using Ruby on Rails and sqlite3 . First attenpt to make somthing entirely generic and dynamic. The implementation of row-level security came very late and turned to be impossible to make.
+2012 - Prototype using Ruby on Rails and sqlite3 . First attempt to make somthing entirely generic and dynamic. The implementation of row-level security came very late and turned to be impossible to make.
 
 2022 - Prototype using Docker, Go, Go-gin, React and Postgreqsl. Adopting Go was great, but React wasn't. The code for the UI was a mess. The traditional approach as a monolith was a mistake.
 
