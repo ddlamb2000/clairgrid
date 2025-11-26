@@ -34,6 +34,16 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
+  rabbitmq:
+    container_name: clairgrid-rabbitmq
+    image: rabbitmq:3-management
+    healthcheck:
+      test: "rabbitmqctl node_health_check"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - clairgrid
   grid-service-development:
     build:
       context: ./grid-service
