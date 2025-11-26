@@ -27,7 +27,7 @@ Copyright David Lambert 2025
 
 2022 - Prototype using Docker, Go, Go-gin, React and Postgreqsl. Adopting Go was great, but React wasn't. The code for the UI was a mess. The traditional approach as a monolith was a mistake.
 
-2025 - Prototype using Docker, Go, Kafka, Postgreqsl and Svelte. Adoption an event-based architecture using Kafka. Svelte is sweet.
+2025 - Encoon (https://github.com/ddlamb2000/encoon). Prototype using Docker, Go, Kafka, Postgreqsl and Svelte. Adoption an event-based architecture using Kafka. Svelte is sweet.
 
 
 # Notes for developers

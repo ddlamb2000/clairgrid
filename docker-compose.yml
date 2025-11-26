@@ -42,6 +42,12 @@ services:
     image: clairgrid-grid-service-development
     volumes:
       - ./grid-service:/usr/src/clairgrid/grid-service
+    environment:
+      DB_NAME: clairgrid_master
+      DB_USER_NAME: clairgrid
+      DB_PASSWORD_FILE: /run/secrets/db-password
+    secrets:
+      - db-password
     restart: unless-stopped
     networks:
       - clairgrid
