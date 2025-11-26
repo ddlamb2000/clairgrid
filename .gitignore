@@ -1,0 +1,12 @@
+.git
+.bundle
+.DS_Store
+.git
+.bundle
+.DS_Store
+.loadpath
+.tmp*
+*.autosave
+tmp/
+*.log
+secrets/*

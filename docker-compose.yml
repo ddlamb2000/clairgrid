@@ -1,0 +1,48 @@
+name: "clairgrid"
+services:
+  db:
+    container_name: clairgrid-database
+    image: pgvector/pgvector:pg17
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    networks:
+      - clairgrid
+    configs:
+      - source: db-init
+        target: /docker-entrypoint-initdb.d/clairgrid-initdb.sql
+    secrets:
+      - db-password
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: clairgrid
+      POSTGRES_DB: clairgrid_master
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+  dbadmin:
+    container_name: clairgrid-database-admin
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    networks:
+      - clairgrid
+    volumes:
+      - ./dbConfiguration/dbAdmin.servers.development.json:/pgadmin4/servers.json
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+configs:
+  db-init:
+    file: ./dbConfiguration/initdb.sql
+networks:
+  clairgrid:
+    driver: bridge
+secrets:
+  db-password:
+    file: ./secrets/.db_password
+volumes:
+  db:
+    driver: local
