@@ -41,8 +41,10 @@ services:
     container_name: clairgrid-grid-service-development
     image: clairgrid-grid-service-development
     volumes:
-      - ./grid-service:/usr/src/clairgrid/grid-service
+      - .:/usr/src/clairgrid/
     environment:
+      DB_HOST: db
+      DB_PORT: 5432
       DB_NAME: clairgrid_master
       DB_USER_NAME: clairgrid
       DB_PASSWORD_FILE: /run/secrets/db-password
