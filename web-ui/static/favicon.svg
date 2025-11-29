@@ -1,0 +1,112 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="topFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="leftFace" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#434343;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2b2b2b;stop-opacity:1" />
+      <stop offset="0%" style="stop-color:#3f5efb;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fc466b;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradTopBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4facfe"/>
+      <stop offset="100%" stop-color="#00c6fb"/>
+    </linearGradient>
+    <linearGradient id="gradRightBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3b5998"/>
+      <stop offset="100%" stop-color="#3f5efb"/>
+    </linearGradient>
+    <linearGradient id="gradLeftBlue" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#2c3e50"/>
+      <stop offset="100%" stop-color="#4ca1af"/>
+    </linearGradient>
+    
+    <linearGradient id="gradRightPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#667eea"/>
+      <stop offset="100%" stop-color="#764ba2"/>
+    </linearGradient>
+    <linearGradient id="gradLeftPurple" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#30cfd0"/>
+      <stop offset="100%" stop-color="#330867"/>
+    </linearGradient>
+
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="2" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <g transform="translate(60, 40)">
+  
+    <g transform="translate(180, 0)">
+      <path d="M0 40 L60 10 L120 40 L60 70 Z" fill="url(#gradTopBlue)" stroke="#89f7fe" stroke-width="1"/>
+      <path d="M0 40 L60 70 L60 130 L0 100 Z" fill="#3f5efb" /> 
+      <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#3b5998" />
+    </g>
+
+    <g transform="translate(60, 40)">
+       <path d="M0 40 L60 10 L120 40 L60 70 Z" fill="url(#gradTopBlue)" stroke="#89f7fe" stroke-width="1"/>
+      <path d="M0 40 L60 70 L60 130 L0 100 Z" fill="#3f5efb" />
+      <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#3b5998" />
+    </g>
+
+    <g transform="translate(285, 110)">
+      <path d="M0 40 L60 10 L120 40 L60 70 Z" fill="url(#gradTopBlue)" stroke="#89f7fe" stroke-width="1"/>
+      <path d="M0 40 L60 70 L60 130 L0 100 Z" fill="#5b6cf9" />
+      <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#4a5cc5" />
+    </g>
+    
+    <g transform="translate(180, 165)">
+       <path d="M0 40 L60 10 L120 40 L60 70 Z" fill="url(#gradTopBlue)" stroke="#89f7fe" stroke-width="1"/>
+      <path d="M0 40 L60 70 L60 130 L0 100 Z" fill="url(#gradRightPurple)" />
+      <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#5b6cf9" />
+    </g>
+
+     <g transform="translate(60, 180)">
+       <path d="M0 40 L60 10 L120 40 L60 70 Z" fill="#7a8fd3" stroke="#b1c4ff" stroke-width="1"/>
+      <path d="M0 40 L60 70 L60 130 L0 100 Z" fill="#5631b9" />
+      <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#43269e" />
+    </g>
+
+    <g transform="translate(285, 275)">
+      <path d="M0 40 L60 10 L120 40 L60 70 Z" fill="#5b86e5" stroke="#89f7fe" stroke-width="1"/>
+      <path d="M0 40 L60 70 L60 130 L0 100 Z" fill="#5b6cf9" />
+      <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#4a5cc5" />
+    </g>
+
+     <g transform="translate(180, 335)">
+      <path d="M0 40 L60 10 L120 40 L60 70 Z" fill="url(#gradTopBlue)" stroke="#89f7fe" stroke-width="1"/>
+      <path d="M0 40 L60 70 L60 130 L0 100 Z" fill="url(#gradRightPurple)" />
+      <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#5b6cf9" />
+    </g>
+    
+    <g transform="translate(60, 320)">
+      <path d="M0 40 L60 10 L120 40 L60 70 Z" fill="#6a30c5" stroke="#9d65f5" stroke-width="1"/>
+      <path d="M0 40 L60 70 L60 130 L0 100 Z" fill="#3a1c71" />
+      <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#2e1460" />
+    </g>
+
+    <g stroke="#00f2fe" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
+        <path d="M220 70 L190 85 L190 150 L160 165 L160 300 L200 320 L220 310" />
+        <circle cx="220" cy="70" r="3" fill="#00f2fe" stroke="none"/>
+        <circle cx="220" cy="310" r="3" fill="#00f2fe" stroke="none"/>
+
+        <path d="M200 80 L180 90 L180 145 L150 160 L150 310 L190 330" />
+        <circle cx="200" cy="80" r="3" fill="#00f2fe" stroke="none"/>
+        <circle cx="190" cy="330" r="3" fill="#00f2fe" stroke="none"/>
+        
+        <path d="M230 85 L200 100 L200 140 L170 155 L170 240 L150 250 L150 350 L160 355" />
+        <circle cx="230" cy="85" r="3" fill="#00f2fe" stroke="none"/>
+        <circle cx="160" cy="355" r="3" fill="#00f2fe" stroke="none"/>
+        
+        <line x1="160" y1="230" x2="170" y2="235" />
+        <circle cx="160" cy="230" r="2.5" fill="#00f2fe" stroke="none"/>
+
+        <line x1="180" y1="360" x2="160" y2="350" />
+        <circle cx="180" cy="360" r="2.5" fill="#00f2fe" stroke="none"/>
+    </g>
+
+  </g>
+</svg>

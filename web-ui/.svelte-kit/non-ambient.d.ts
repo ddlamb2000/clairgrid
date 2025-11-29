@@ -47,6 +47,6 @@ declare module "$app/types" {
 		};
 		Pathname(): "/" | `${string}/authentication` & {} | `${string}/authentication/` & {} | `${string}/pullMessages` & {} | `${string}/pullMessages/` & {} | `${string}/pushMessage` & {} | `${string}/pushMessage/` & {} | `${string}${string}${string}` & {} | `${string}${string}${string}/` & {} | `${string}${string}` & {} | `${string}${string}/` & {} | `${string}` & {} | `${string}/` & {};
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): string & {};
+		Asset(): "/favicon.svg" | "/robots.txt" | string & {};
 	}
 }
