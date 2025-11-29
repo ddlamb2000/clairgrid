@@ -88,25 +88,5 @@
       <path d="M60 70 L120 40 L120 100 L60 130 Z" fill="#2e1460" />
     </g>
 
-    <g stroke="#00f2fe" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)">
-        <path d="M220 70 L190 85 L190 150 L160 165 L160 300 L200 320 L220 310" />
-        <circle cx="220" cy="70" r="3" fill="#00f2fe" stroke="none"/>
-        <circle cx="220" cy="310" r="3" fill="#00f2fe" stroke="none"/>
-
-        <path d="M200 80 L180 90 L180 145 L150 160 L150 310 L190 330" />
-        <circle cx="200" cy="80" r="3" fill="#00f2fe" stroke="none"/>
-        <circle cx="190" cy="330" r="3" fill="#00f2fe" stroke="none"/>
-        
-        <path d="M230 85 L200 100 L200 140 L170 155 L170 240 L150 250 L150 350 L160 355" />
-        <circle cx="230" cy="85" r="3" fill="#00f2fe" stroke="none"/>
-        <circle cx="160" cy="355" r="3" fill="#00f2fe" stroke="none"/>
-        
-        <line x1="160" y1="230" x2="170" y2="235" />
-        <circle cx="160" cy="230" r="2.5" fill="#00f2fe" stroke="none"/>
-
-        <line x1="180" y1="360" x2="160" y2="350" />
-        <circle cx="180" cy="360" r="2.5" fill="#00f2fe" stroke="none"/>
-    </g>
-
   </g>
 </svg>
