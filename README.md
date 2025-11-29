@@ -1,3 +1,5 @@
+![alt text](web-ui/static/favicon.svg)
+
 # clairgrid
 
 PROOF OF CONCEPT
