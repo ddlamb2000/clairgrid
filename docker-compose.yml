@@ -65,6 +65,26 @@ services:
       - clairgrid
     depends_on:
       - db
+      - rabbitmq
+  web-ui-development:
+    build:
+      context: ./web-ui
+      dockerfile: Dockerfile.development
+    container_name: clairgrid-web-ui-development
+    image: clairgrid-web-ui-development
+    restart: unless-stopped
+    volumes:
+      - .:/usr/src/clairgrid/
+    ports:
+      - "5173:5173"
+    environment:
+      APPNAME: "clairgrid (development)"
+      DATABASES: "master,test,sandbox"
+      DEFAULTDB: "test"
+    networks:
+      - clairgrid
+    depends_on:
+      - rabbitmq
 configs:
   db-init:
     file: ./dbConfiguration/initdb.sql
