@@ -10,7 +10,7 @@ This innovative application requires no database knowledge or skills, as all asp
 
 Primarily designed for small businesses, the application enables the management of diverse and extensive organizational information, facilitating easy and natural sharing among stakeholders using only a web browser.
 
-εncooη also serves as the foundation for developing a comprehensive business-oriented application development toolkit.
+clairgrid also serves as the foundation for developing a comprehensive business-oriented application development toolkit.
 
 Copyright David Lambert 2025
 
