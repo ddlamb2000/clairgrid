@@ -2,6 +2,7 @@ import os
 import time
 import psycopg
 import uuids
+from migrationSteps import migrationSteps
 
 dbHost = os.getenv("DB_HOST")
 dbPort = os.getenv("DB_PORT")
@@ -18,22 +19,6 @@ f.close()
 
 print(f"{dbPassword=}")
 
-migrationSteps = {
-    1: "CREATE TABLE migrations ("
-			"gridUuid uuid NOT NULL, "
-			"uuid uuid NOT NULL, "
-			"created timestamp with time zone NOT NULL, "
-			"createdBy uuid NOT NULL, "
-			"updated timestamp with time zone NOT NULL, "
-			"updatedBy uuid NOT NULL, "
-			"enabled boolean NOT NULL, "
-			"text1 text,"
-			"int1 integer,"
-			"revision integer NOT NULL CHECK (revision > 0), "
-			"PRIMARY KEY (gridUuid, uuid)"
-			")",
-}
-
 psqlInfo = f"host={dbHost} port={dbPort} dbname={dbName} user={dbUserName} password={dbPassword} sslmode=disable connect_timeout=10"
 # Connect to an existing database
 with psycopg.connect(psqlInfo) as conn:
@@ -42,7 +27,8 @@ with psycopg.connect(psqlInfo) as conn:
     with conn.cursor() as cur:
 
         for key, statement in migrationSteps.items():
-            print(key, statement)
+            print(f"Update database {dbName} with statement {statement}")
+            cur.execute(statement)
 
         # Execute a command: this creates a new table
         # cur.execute("""
@@ -70,9 +56,9 @@ with psycopg.connect(psqlInfo) as conn:
 
         # You can use `cur.fetchmany()`, `cur.fetchall()` to return a list
         # of several records, or even iterate on the cursor
-        cur.execute("SELECT id, num FROM test order by num")
-        for record in cur:
-            print(record)
+        # cur.execute("SELECT id, num FROM test order by num")
+        # for record in cur:
+        #     print(record)
 
         # Make the changes to the database persistent
         conn.commit()
