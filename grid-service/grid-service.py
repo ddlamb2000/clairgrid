@@ -1,5 +1,7 @@
 import os
+import time
 import psycopg
+import uuids
 
 dbHost = os.getenv("DB_HOST")
 dbPort = os.getenv("DB_PORT")
@@ -7,6 +9,7 @@ dbName = os.getenv("DB_NAME")
 dbUserName = os.getenv("DB_USER_NAME")
 dbPasswordFile = os.getenv("DB_PASSWORD_FILE")
 
+print("Starting Grid Service", flush=True)
 print(f"{dbHost=} {dbPort=} {dbName=} {dbUserName=} {dbPasswordFile=}")
 
 f = open(dbPasswordFile)
@@ -15,7 +18,7 @@ f.close()
 
 print(f"{dbPassword=}")
 
-migrationStep = {
+migrationSteps = {
     1: "CREATE TABLE migrations ("
 			"gridUuid uuid NOT NULL, "
 			"uuid uuid NOT NULL, "
@@ -38,13 +41,16 @@ with psycopg.connect(psqlInfo) as conn:
     # Open a cursor to perform database operations
     with conn.cursor() as cur:
 
+        for key, statement in migrationSteps.items():
+            print(key, statement)
+
         # Execute a command: this creates a new table
-        cur.execute("""
-            CREATE TABLE test (
-                id serial PRIMARY KEY,
-                num integer,
-                data text)
-            """)
+        # cur.execute("""
+        #     CREATE TABLE test (
+        #         id serial PRIMARY KEY,
+        #         num integer,
+        #         data text)
+        #     """)
 
         # Pass data to fill a query placeholders and let Psycopg perform
         # the correct conversion (no SQL injections!)
@@ -70,3 +76,7 @@ with psycopg.connect(psqlInfo) as conn:
 
         # Make the changes to the database persistent
         conn.commit()
+
+while True:
+    print("Running Grid Service", flush=True)
+    time.sleep(10)
