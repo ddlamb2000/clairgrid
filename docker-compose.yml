@@ -12,13 +12,13 @@ services:
       - source: db-init
         target: /docker-entrypoint-initdb.d/clairgrid-initdb.sql
     secrets:
-      - db-password
+      - dbPassword
     volumes:
       - db:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: clairgrid
       POSTGRES_DB: clairgrid_master
-      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+      POSTGRES_PASSWORD_FILE: /run/secrets/dbPassword
   dbadmin:
     container_name: clairgrid-database-admin
     image: dpage/pgadmin4
@@ -57,9 +57,9 @@ services:
       DB_PORT: 5432
       DB_NAME: clairgrid_master
       DB_USER_NAME: clairgrid
-      DB_PASSWORD_FILE: /run/secrets/db-password
+      DB_PASSWORD_FILE: /run/secrets/dbPassword
     secrets:
-      - db-password
+      - dbPassword
     restart: unless-stopped
     networks:
       - clairgrid
@@ -92,8 +92,8 @@ networks:
   clairgrid:
     driver: bridge
 secrets:
-  db-password:
-    file: ./secrets/.db_password
+  dbPassword:
+    file: ./secrets/.dbPassword
 volumes:
   db:
     driver: local

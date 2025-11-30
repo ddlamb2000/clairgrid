@@ -1,23 +1,39 @@
 import os
 import psycopg
 
-db_host = os.getenv("DB_HOST")
-db_port = os.getenv("DB_PORT")
-db_name = os.getenv("DB_NAME")
-db_user_name = os.getenv("DB_USER_NAME")
-db_password_file = os.getenv("DB_PASSWORD_FILE")
+dbHost = os.getenv("DB_HOST")
+dbPort = os.getenv("DB_PORT")
+dbName = os.getenv("DB_NAME")
+dbUserName = os.getenv("DB_USER_NAME")
+dbPasswordFile = os.getenv("DB_PASSWORD_FILE")
 
-print(f"{db_host=} {db_port=} {db_name=} {db_user_name=} {db_password_file=}")
+print(f"{dbHost=} {dbPort=} {dbName=} {dbUserName=} {dbPasswordFile=}")
 
-f = open(db_password_file)
-db_password = f.read()
+f = open(dbPasswordFile)
+dbPassword = f.read()
 f.close()
 
-print(f"{db_password=}")
+print(f"{dbPassword=}")
 
-psql_info = f"host={db_host} port={db_port} dbname={db_name} user={db_user_name} password={db_password} sslmode=disable connect_timeout=10"
+migrationStep = {
+    1: "CREATE TABLE migrations ("
+			"gridUuid uuid NOT NULL, "
+			"uuid uuid NOT NULL, "
+			"created timestamp with time zone NOT NULL, "
+			"createdBy uuid NOT NULL, "
+			"updated timestamp with time zone NOT NULL, "
+			"updatedBy uuid NOT NULL, "
+			"enabled boolean NOT NULL, "
+			"text1 text,"
+			"int1 integer,"
+			"revision integer NOT NULL CHECK (revision > 0), "
+			"PRIMARY KEY (gridUuid, uuid)"
+			")",
+}
+
+psqlInfo = f"host={dbHost} port={dbPort} dbname={dbName} user={dbUserName} password={dbPassword} sslmode=disable connect_timeout=10"
 # Connect to an existing database
-with psycopg.connect(psql_info) as conn:
+with psycopg.connect(psqlInfo) as conn:
 
     # Open a cursor to perform database operations
     with conn.cursor() as cur:
