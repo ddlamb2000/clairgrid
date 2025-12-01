@@ -1,68 +1,43 @@
 import os
 import time
 import psycopg
-import uuids
 from migrationSteps import migrationSteps
 
-dbHost = os.getenv("DB_HOST")
-dbPort = os.getenv("DB_PORT")
-dbName = os.getenv("DB_NAME")
-dbUserName = os.getenv("DB_USER_NAME")
-dbPasswordFile = os.getenv("DB_PASSWORD_FILE")
+dbHost, dbPort, dbName = os.getenv("DB_HOST"), os.getenv("DB_PORT"), os.getenv("DB_NAME")
+dbUserName, dbPasswordFile = os.getenv("DB_USER_NAME"), os.getenv("DB_PASSWORD_FILE")
 
-print("Starting Grid Service", flush=True)
-print(f"{dbHost=} {dbPort=} {dbName=} {dbUserName=} {dbPasswordFile=}")
-
-f = open(dbPasswordFile)
-dbPassword = f.read()
-f.close()
-
-print(f"{dbPassword=}")
-
+dbPassword = open(dbPasswordFile).read().strip()
 psqlInfo = f"host={dbHost} port={dbPort} dbname={dbName} user={dbUserName} password={dbPassword} sslmode=disable connect_timeout=10"
+
+print(f"Starting grid service on database {dbName}", flush=True)
 # Connect to an existing database
 with psycopg.connect(psqlInfo) as conn:
-
     # Open a cursor to perform database operations
     with conn.cursor() as cur:
 
-        for key, statement in migrationSteps.items():
-            print(f"Update database {dbName} with statement {statement}")
-            cur.execute(statement)
+        latestMigrationSequence = 0
+        try:
+            cur.execute("SELECT max(sequence) FROM migrations")
+            latestMigrationSequence = cur.fetchone()[0]
+            print(f"Latest migration sequence: {latestMigrationSequence}")
+        except psycopg.Error as e:
+            print(f"Error checking migration status (it might be the first run): {e}")
+            conn.rollback()
 
-        # Execute a command: this creates a new table
-        # cur.execute("""
-        #     CREATE TABLE test (
-        #         id serial PRIMARY KEY,
-        #         num integer,
-        #         data text)
-        #     """)
+        try:
+            for sequence, statement in migrationSteps.items():
+                if sequence > latestMigrationSequence:
+                    print(f"Update database {dbName} with {sequence}: {statement}")
+                    cur.execute(statement)
 
-        # Pass data to fill a query placeholders and let Psycopg perform
-        # the correct conversion (no SQL injections!)
-        cur.execute(
-            "INSERT INTO test (num, data) VALUES (%s, %s)",
-            (100, "abc'def"))
+                    cur.execute(
+                        "INSERT INTO migrations (sequence, statement) VALUES (%s, %s)",
+                        (sequence, statement))
+                    conn.commit()
 
-        # Query the database and obtain data as Python objects.
-        cur.execute("SELECT * FROM test")
-        print(cur.fetchone())
-        # will print (1, 100, "abc'def")
-
-        # You can use `cur.executemany()` to perform an operation in batch
-        cur.executemany(
-            "INSERT INTO test (num) values (%s)",
-            [(33,), (66,), (99,)])
-
-        # You can use `cur.fetchmany()`, `cur.fetchall()` to return a list
-        # of several records, or even iterate on the cursor
-        # cur.execute("SELECT id, num FROM test order by num")
-        # for record in cur:
-        #     print(record)
-
-        # Make the changes to the database persistent
-        conn.commit()
+        except psycopg.Error as e:
+            print(f"Error executing migration sequence {sequence}: {e}")
 
 while True:
-    print("Running Grid Service", flush=True)
+    print(f"Running grid service on database {dbName}", flush=True)
     time.sleep(10)
