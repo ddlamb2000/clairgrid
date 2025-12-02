@@ -66,6 +66,27 @@ services:
     depends_on:
       - db
       - rabbitmq
+  grid-service-tests:
+    build:
+      context: ./grid-service
+      dockerfile: Dockerfile.tests
+    container_name: clairgrid-grid-service-tests
+    image: clairgrid-grid-service-tests
+    volumes:
+      - .:/usr/src/clairgrid/
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: clairgrid_test
+      DB_USER_NAME: clairgrid
+      DB_PASSWORD_FILE: /run/secrets/dbPassword
+    secrets:
+      - dbPassword
+    networks:
+      - clairgrid
+    depends_on:
+      - db
+      - rabbitmq
   web-ui-development:
     build:
       context: ./web-ui

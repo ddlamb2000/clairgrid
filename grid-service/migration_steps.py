@@ -1,6 +1,6 @@
 import uuids
 
-migrationSteps = {
+migration_steps = {
     10: "CREATE TABLE migrations ("
 			"sequence integer NOT NULL,"
 			"statement text NOT NULL,"
