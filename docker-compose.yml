@@ -12,13 +12,13 @@ services:
       - source: db-init
         target: /docker-entrypoint-initdb.d/clairgrid-initdb.sql
     secrets:
-      - dbPassword
+      - db-password
     volumes:
       - db:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: clairgrid
       POSTGRES_DB: clairgrid_master
-      POSTGRES_PASSWORD_FILE: /run/secrets/dbPassword
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
   dbadmin:
     container_name: clairgrid-database-admin
     image: dpage/pgadmin4:9.10.0
@@ -53,13 +53,17 @@ services:
     volumes:
       - .:/usr/src/clairgrid/
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: clairgrid_master
-      DB_USER_NAME: clairgrid
-      DB_PASSWORD_FILE: /run/secrets/dbPassword
+      DB_HOST: db # name of the database host
+      DB_PORT: 5432 # TCP port number of the database host
+      DB_NAME: clairgrid_master # name of the PostgreSQL database
+      DB_USER_NAME: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE: /run/secrets/db-password
+      TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
+      ROOT_USER_NAME: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE: /run/secrets/root-password
     secrets:
-      - dbPassword
+      - db-password
+      - root-password
     restart: unless-stopped
     networks:
       - clairgrid
@@ -79,10 +83,10 @@ services:
       DB_PORT: 5432
       DB_NAME: clairgrid_test
       DB_USER_NAME: clairgrid
-      DB_PASSWORD_FILE: /run/secrets/dbPassword
+      DB_PASSWORD_FILE: /run/secrets/db-password
       KEEP_ALIVE_AFTER_SECONDS: 60
     secrets:
-      - dbPassword
+      - db-password
     networks:
       - clairgrid
     depends_on:
@@ -115,8 +119,10 @@ networks:
   clairgrid:
     driver: bridge
 secrets:
-  dbPassword:
-    file: ./secrets/.dbPassword
+  db-password:
+    file: ./secrets/.db_password
+  root-password:
+    file: ./secrets/.root_password
 volumes:
   db:
     driver: local

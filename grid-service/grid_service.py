@@ -9,19 +9,30 @@ def get_db_connection_info():
     db_name = os.getenv("DB_NAME")
     db_user_name = os.getenv("DB_USER_NAME")
     db_password_file = os.getenv("DB_PASSWORD_FILE")
-    
+    timeout_threshold_milliseconds = os.getenv("TIMEOUT_THRESHOLD_MILLISECONDS")
+    root_user_name = os.getenv("ROOT_USER_NAME")
+    root_password_file = os.getenv("ROOT_PASSWORD_FILE")
+
     if not db_password_file:
-        raise ValueError("DB_PASSWORD_FILE environment variable is not set")
-        
+        raise ValueError("DB_PASSWORD_FILE environment variable is not set")        
     try:
         with open(db_password_file) as f:
             db_password = f.read().strip()
     except FileNotFoundError:
          raise ValueError(f"Password file not found at {db_password_file}")
 
-    return f"host={db_host} port={db_port} dbname={db_name} user={db_user_name} password={db_password} sslmode=disable connect_timeout=10", db_name
+    if not root_password_file:
+        raise ValueError("ROOT_PASSWORD_FILE environment variable is not set")
+    try:
+        with open(root_password_file) as f:
+            root_password = f.read().strip()
+    except FileNotFoundError:
+        raise ValueError(f"Password file not found at {root_password_file}")
 
-def run_migrations(conn, db_name):
+    return (f"host={db_host} port={db_port} dbname={db_name} user={db_user_name} password={db_password} sslmode=disable connect_timeout={int(timeout_threshold_milliseconds) // 1000}", 
+            db_name, root_user_name, root_password)
+
+def run_migrations(conn, db_name, root_user_name, root_password):
     with conn.cursor() as cur:
         latestMigrationSequence = 0
         try:
@@ -52,12 +63,13 @@ def run_migrations(conn, db_name):
 def main():
     print("Starting Grid Service", flush=True)
     try:
-        psql_info, db_name = get_db_connection_info()
+        psql_info, db_name, root_user_name, root_password = get_db_connection_info()
         print(f"Starting grid service on database {db_name}", flush=True)
         
-        # Connect to an existing database
         with psycopg.connect(psql_info) as conn:
-            run_migrations(conn, db_name)
+            run_migrations(conn, db_name, root_user_name, root_password)
+
+        print(f"Grid service on database {db_name} initialized", flush=True)
 
         while True:
             print(f"Running grid service on database {db_name}", flush=True)
