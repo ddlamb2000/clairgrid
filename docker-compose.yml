@@ -21,7 +21,7 @@ services:
       POSTGRES_PASSWORD_FILE: /run/secrets/dbPassword
   dbadmin:
     container_name: clairgrid-database-admin
-    image: dpage/pgadmin4
+    image: dpage/pgadmin4:9.10.0
     restart: unless-stopped
     networks:
       - clairgrid
@@ -80,6 +80,7 @@ services:
       DB_NAME: clairgrid_test
       DB_USER_NAME: clairgrid
       DB_PASSWORD_FILE: /run/secrets/dbPassword
+      KEEP_ALIVE_AFTER_SECONDS: 60
     secrets:
       - dbPassword
     networks:
@@ -87,6 +88,7 @@ services:
     depends_on:
       - db
       - rabbitmq
+    command: sh -c "./tests/run_all_tests.sh"
   web-ui-development:
     build:
       context: ./web-ui
