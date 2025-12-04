@@ -1,9 +1,32 @@
+"""
+Grid Service Module
+
+This module handles the initialization and maintenance of the Grid Service.
+It manages database connections, executes migrations, and keeps the service running.
+"""
+
 import os
 import time
 import psycopg
-from migration_steps import migration_steps
+from migration_steps import get_migration_steps
 
 def get_db_connection_info():
+    """
+    Retrieves database connection information from environment variables.
+
+    Reads various environment variables to construct the PostgreSQL connection string
+    and other configuration parameters.
+
+    Returns:
+        tuple: A tuple containing:
+            - str: The PostgreSQL connection string.
+            - str: The database name.
+            - str: The root user name.
+            - str: The root password.
+
+    Raises:
+        ValueError: If required environment variables or password files are missing.
+    """
     db_host = os.getenv("DB_HOST")
     db_port = os.getenv("DB_PORT")
     db_name = os.getenv("DB_NAME")
@@ -33,8 +56,25 @@ def get_db_connection_info():
             db_name, root_user_name, root_password)
 
 def run_migrations(conn, db_name, root_user_name, root_password):
+    """
+    Executes database migrations.
+
+    Checks the current migration sequence in the database and applies any
+    new steps defined in `migration_steps`.
+
+    Args:
+        conn (psycopg.Connection): The active database connection.
+        db_name (str): The name of the database being updated.
+        root_user_name (str): The name of the root user (unused in current logic but passed).
+        root_password (str): The password of the root user (unused in current logic but passed).
+
+    Raises:
+        psycopg.Error: If a database error occurs during migration.
+    """
     with conn.cursor() as cur:
         latestMigrationSequence = 0
+        migration_steps = get_migration_steps(root_user_name, root_password)
+        
         try:
             cur.execute("SELECT max(sequence) FROM migrations")
             result = cur.fetchone()
@@ -61,6 +101,12 @@ def run_migrations(conn, db_name, root_user_name, root_password):
             raise e
 
 def main():
+    """
+    Main entry point for the Grid Service.
+
+    Initializes the service, connects to the database, runs migrations,
+    and enters a keep-alive loop.
+    """
     print("Starting Grid Service", flush=True)
     try:
         psql_info, db_name, root_user_name, root_password = get_db_connection_info()
