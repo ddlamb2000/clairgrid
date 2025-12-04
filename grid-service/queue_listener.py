@@ -2,7 +2,7 @@ import json
 import time
 import pika
 
-class GridServiceListener:
+class QueueListener:
     """
     Listener for handling Grid Service requests via RabbitMQ.
     """
