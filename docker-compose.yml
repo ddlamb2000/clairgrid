@@ -61,6 +61,10 @@ services:
       TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
       ROOT_USER_NAME: root # user name for the user created with administrator privileges
       ROOT_PASSWORD_FILE: /run/secrets/root-password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: guest
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
     secrets:
       - db-password
       - root-password
@@ -123,6 +127,8 @@ secrets:
     file: ./secrets/.db_password
   root-password:
     file: ./secrets/.root_password
+  rabbitmq-password:
+    file: ./secrets/.rabbitmq-password
 volumes:
   db:
     driver: local

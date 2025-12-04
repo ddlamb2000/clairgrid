@@ -6,9 +6,9 @@ It manages database connections, executes migrations, and keeps the service runn
 """
 
 import os
-import time
 import psycopg
 from migration_steps import get_migration_steps
+from grid_service_listener import GridServiceListener
 
 def get_db_connection_info():
     """
@@ -114,12 +114,13 @@ def main():
         
         with psycopg.connect(psql_info) as conn:
             run_migrations(conn, db_name, root_user_name, root_password)
+            
+            print(f"Grid service on database {db_name} initialized", flush=True)
 
-        print(f"Grid service on database {db_name} initialized", flush=True)
-
-        while True:
-            print(f"Running grid service on database {db_name}", flush=True)
-            time.sleep(10)
+            # Start RabbitMQ listener
+            listener = GridServiceListener(conn, db_name)
+            rabbitmq_host = os.getenv("RABBITMQ_HOST", "rabbitmq")
+            listener.start(rabbitmq_host)
             
     except Exception as e:
         print(f"Service failed to start: {e}")
