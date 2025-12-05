@@ -5,7 +5,6 @@ This module handles the initialization and maintenance of the Grid Service.
 It manages database connections, executes migrations, and keeps the service running.
 """
 
-import os
 from queue_listener import QueueListener
 from database_manager import DatabaseManager
 
@@ -21,8 +20,7 @@ def main():
         db_manager = DatabaseManager()        
         try:
             listener = QueueListener(db_manager.conn, db_manager.db_name)
-            rabbitmq_host = os.getenv("RABBITMQ_HOST", "rabbitmq")
-            listener.start(rabbitmq_host)
+            listener.start()
         finally:
             db_manager.close()            
     except Exception as e:

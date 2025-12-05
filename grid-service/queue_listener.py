@@ -1,4 +1,5 @@
 import json
+import os
 import time
 import pika
 
@@ -9,6 +10,8 @@ class QueueListener:
     def __init__(self, db_conn, db_name):
         self.db_conn = db_conn
         self.db_name = db_name
+        self.rabbitmq_host = os.getenv("RABBITMQ_HOST", "rabbitmq")
+        self.queue_name = 'grid_service_requests'
 
     def on_request(self, ch, method, props, body):
         """
@@ -35,23 +38,23 @@ class QueueListener:
                              body=json.dumps(response))
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
-    def start(self, rabbitmq_host='rabbitmq', queue_name='grid_service_requests'):
+    def start(self):
         """
         Starts the RabbitMQ consumer.
         """
-        print(f"Connecting to RabbitMQ at {rabbitmq_host}...", flush=True)
+        print(f"Connecting to RabbitMQ at {self.rabbitmq_host}...", flush=True)
         connection = None
         while connection is None:
             try:
-                connection = pika.BlockingConnection(pika.ConnectionParameters(host=rabbitmq_host))
+                connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.rabbitmq_host))
             except pika.exceptions.AMQPConnectionError:
                 print("RabbitMQ not ready, retrying in 5 seconds...", flush=True)
                 time.sleep(5)
 
         channel = connection.channel()
-        channel.queue_declare(queue=queue_name)
+        channel.queue_declare(queue=self.queue_name)
         channel.basic_qos(prefetch_count=1)
-        channel.basic_consume(queue=queue_name, on_message_callback=self.on_request)
+        channel.basic_consume(queue=self.queue_name, on_message_callback=self.on_request)
 
         print(" [x] Awaiting RPC requests", flush=True)
         try:
@@ -59,4 +62,3 @@ class QueueListener:
         except KeyboardInterrupt:
             channel.stop_consuming()
             connection.close()
-
