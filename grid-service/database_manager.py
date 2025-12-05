@@ -1,8 +1,9 @@
 import os
 import psycopg
 from migration_steps import get_migration_steps
+from configuration_mixin import ConfigurationMixin
 
-class DatabaseManager:
+class DatabaseManager(ConfigurationMixin):
     """
     Manages database connection and migrations for the Grid Service.
     """
@@ -31,28 +32,6 @@ class DatabaseManager:
         self.root_user_name = os.getenv("ROOT_USER_NAME", "root")
         self.root_password_file = os.getenv("ROOT_PASSWORD_FILE")
         self.root_password = self._read_password_file(self.root_password_file, "ROOT_PASSWORD_FILE")
-
-    def _read_password_file(self, file_path, env_var_name):
-        """
-        Reads a password from a file.
-
-        Args:
-            file_path (str): The path to the password file.
-            env_var_name (str): The name of the environment variable (for error messages).
-
-        Returns:
-            str: The password read from the file.
-
-        Raises:
-            ValueError: If the file path is not provided or the file is not found.
-        """
-        if not file_path:
-            raise ValueError(f"{env_var_name} environment variable is not set")
-        try:
-            with open(file_path) as f:
-                return f.read().strip()
-        except FileNotFoundError:
-             raise ValueError(f"Password file not found at {file_path}")
 
     def get_connection_string(self):
         """

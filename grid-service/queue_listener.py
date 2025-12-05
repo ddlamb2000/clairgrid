@@ -2,8 +2,9 @@ import json
 import os
 import time
 import pika
+from configuration_mixin import ConfigurationMixin
 
-class QueueListener:
+class QueueListener(ConfigurationMixin):
     """
     Listener for handling Grid Service requests via RabbitMQ.
     """
@@ -20,13 +21,7 @@ class QueueListener:
         self.rabbitmq_user = os.getenv("RABBITMQ_USER", "guest")
         self.rabbitmq_password_file = os.getenv("RABBITMQ_PASSWORD_FILE")
         self.queue_name = 'grid_service_requests'
-
-        if self.rabbitmq_password_file:
-            try:
-                with open(self.rabbitmq_password_file) as f:
-                    self.rabbitmq_password = f.read().strip()
-            except FileNotFoundError:
-                 raise ValueError(f"Password file not found at {self.rabbitmq_password_file}")
+        self.rabbitmq_password = self._read_password_file(self.rabbitmq_password_file, "RABBITMQ_PASSWORD_FILE")
 
     def on_request(self, ch, method, props, body):
         """
