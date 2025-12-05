@@ -7,9 +7,8 @@ class QueueListener:
     """
     Listener for handling Grid Service requests via RabbitMQ.
     """
-    def __init__(self, db_conn, db_name):
-        self.db_conn = db_conn
-        self.db_name = db_name
+    def __init__(self, db_manager):
+        self.db_manager = db_manager
         self.rabbitmq_host = os.getenv("RABBITMQ_HOST", "rabbitmq")
         self.queue_name = 'grid_service_requests'
 
@@ -24,7 +23,7 @@ class QueueListener:
             # Placeholder: Implement actual request handling logic here
             response = {
                 "status": "success",
-                "message": f"Processed request for {self.db_name}",
+                "message": f"Processed request for {self.db_manager.db_name}",
                 "data": request
             }
         except Exception as e:

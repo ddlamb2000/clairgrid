@@ -19,7 +19,7 @@ def main():
     try:
         db_manager = DatabaseManager()        
         try:
-            listener = QueueListener(db_manager.conn, db_manager.db_name)
+            listener = QueueListener(db_manager)
             listener.start()
         finally:
             db_manager.close()            
