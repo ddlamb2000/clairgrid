@@ -30,21 +30,30 @@ class DatabaseManager:
         self.root_user_name = os.getenv("ROOT_USER_NAME", "root")
         self.root_password_file = os.getenv("ROOT_PASSWORD_FILE")
 
-        if not self.db_password_file:
-            raise ValueError("DB_PASSWORD_FILE environment variable is not set")
-        try:
-            with open(self.db_password_file) as f:
-                self.db_password = f.read().strip()
-        except FileNotFoundError:
-             raise ValueError(f"Password file not found at {self.db_password_file}")
+        self.db_password = self._read_password_file(self.db_password_file, "DB_PASSWORD_FILE")
+        self.root_password = self._read_password_file(self.root_password_file, "ROOT_PASSWORD_FILE")
 
-        if not self.root_password_file:
-            raise ValueError("ROOT_PASSWORD_FILE environment variable is not set")
+    def _read_password_file(self, file_path, env_var_name):
+        """
+        Reads a password from a file.
+
+        Args:
+            file_path (str): The path to the password file.
+            env_var_name (str): The name of the environment variable (for error messages).
+
+        Returns:
+            str: The password read from the file.
+
+        Raises:
+            ValueError: If the file path is not provided or the file is not found.
+        """
+        if not file_path:
+            raise ValueError(f"{env_var_name} environment variable is not set")
         try:
-            with open(self.root_password_file) as f:
-                self.root_password = f.read().strip()
+            with open(file_path) as f:
+                return f.read().strip()
         except FileNotFoundError:
-            raise ValueError(f"Password file not found at {self.root_password_file}")
+             raise ValueError(f"Password file not found at {file_path}")
 
     def get_connection_string(self):
         """
@@ -76,6 +85,28 @@ class DatabaseManager:
             self.conn.close()
             print(f"Database connection to {self.db_name} closed.", flush=True)
 
+    def _get_latest_migration_sequence(self, cur):
+        """
+        Retrieves the latest migration sequence applied to the database.
+
+        Args:
+            cur (psycopg.Cursor): The database cursor.
+
+        Returns:
+            int: The latest migration sequence number.
+        """
+        latestMigrationSequence = 0
+        try:
+            cur.execute("SELECT max(sequence) FROM migrations")
+            result = cur.fetchone()
+            if result and result[0] is not None:
+                latestMigrationSequence = result[0]
+            print(f"Latest migration sequence: {latestMigrationSequence}")
+        except psycopg.Error as e:
+            print(f"Error checking migration status (it might be the first run): {e}")
+            self.conn.rollback()
+        return latestMigrationSequence
+
     def run_migrations(self):
         """
         Executes database migrations using the internal connection.
@@ -91,18 +122,8 @@ class DatabaseManager:
              raise Exception("Database connection not established. Call connect() first.")
 
         with self.conn.cursor() as cur:
-            latestMigrationSequence = 0
             migration_steps = get_migration_steps(self.root_user_name, self.root_password)
-            
-            try:
-                cur.execute("SELECT max(sequence) FROM migrations")
-                result = cur.fetchone()
-                if result and result[0] is not None:
-                    latestMigrationSequence = result[0]
-                print(f"Latest migration sequence: {latestMigrationSequence}")
-            except psycopg.Error as e:
-                print(f"Error checking migration status (it might be the first run): {e}")
-                self.conn.rollback()
+            latestMigrationSequence = self._get_latest_migration_sequence(cur)
 
             try:
                 for sequence, statement in migration_steps.items():
