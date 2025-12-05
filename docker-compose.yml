@@ -68,6 +68,7 @@ services:
     secrets:
       - db-password
       - root-password
+      - rabbitmq-password
     restart: unless-stopped
     networks:
       - clairgrid

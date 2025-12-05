@@ -20,6 +20,13 @@ Copyright David Lambert 2025
 
 1. Docker: https://www.docker.com/
 1. Postgresql: https://www.postgresql.org/
+pgvector for Postgreql: https://github.com/pgvector/pgvector
+
+1. Svelte: https://svelte.dev/
+1. Flowbite Svelte: https://flowbite-svelte.com/
+1. Tailwindcss: https://tailwindcss.com/
+1. Python
+1. RabbitMQ
 
 # History
 
@@ -47,3 +54,4 @@ then enter:
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8));
 
+1. Create a file secrets/.rabbitmq-password with the password used for accessing the RabbitMQ instance

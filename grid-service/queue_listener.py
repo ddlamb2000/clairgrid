@@ -9,8 +9,24 @@ class QueueListener:
     """
     def __init__(self, db_manager):
         self.db_manager = db_manager
+        self.load_configuration()
+
+    def load_configuration(self):
+        """
+        Loads configuration from environment variables.
+        """
         self.rabbitmq_host = os.getenv("RABBITMQ_HOST", "rabbitmq")
+        self.rabbitmq_port = int(os.getenv("RABBITMQ_PORT", "5672"))
+        self.rabbitmq_user = os.getenv("RABBITMQ_USER", "guest")
+        self.rabbitmq_password_file = os.getenv("RABBITMQ_PASSWORD_FILE")
         self.queue_name = 'grid_service_requests'
+
+        if self.rabbitmq_password_file:
+            try:
+                with open(self.rabbitmq_password_file) as f:
+                    self.rabbitmq_password = f.read().strip()
+            except FileNotFoundError:
+                 raise ValueError(f"Password file not found at {self.rabbitmq_password_file}")
 
     def on_request(self, ch, method, props, body):
         """
@@ -41,11 +57,19 @@ class QueueListener:
         """
         Starts the RabbitMQ consumer.
         """
-        print(f"Connecting to RabbitMQ at {self.rabbitmq_host}...", flush=True)
+        print(f"Connecting to RabbitMQ at {self.rabbitmq_host}:{self.rabbitmq_port}...", flush=True)
+        
+        credentials = pika.PlainCredentials(self.rabbitmq_user, self.rabbitmq_password)
+        parameters = pika.ConnectionParameters(
+            host=self.rabbitmq_host,
+            port=self.rabbitmq_port,
+            credentials=credentials
+        )
+
         connection = None
         while connection is None:
             try:
-                connection = pika.BlockingConnection(pika.ConnectionParameters(host=self.rabbitmq_host))
+                connection = pika.BlockingConnection(parameters)
             except pika.exceptions.AMQPConnectionError:
                 print("RabbitMQ not ready, retrying in 5 seconds...", flush=True)
                 time.sleep(5)

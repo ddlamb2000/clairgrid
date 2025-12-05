@@ -26,11 +26,10 @@ class DatabaseManager:
         self.db_name = os.getenv("DB_NAME", "clairgrid_master")
         self.db_user_name = os.getenv("DB_USER_NAME", "clairgrid")
         self.db_password_file = os.getenv("DB_PASSWORD_FILE")
+        self.db_password = self._read_password_file(self.db_password_file, "DB_PASSWORD_FILE")
         self.timeout_threshold_milliseconds = os.getenv("TIMEOUT_THRESHOLD_MILLISECONDS", "5000")
         self.root_user_name = os.getenv("ROOT_USER_NAME", "root")
         self.root_password_file = os.getenv("ROOT_PASSWORD_FILE")
-
-        self.db_password = self._read_password_file(self.db_password_file, "DB_PASSWORD_FILE")
         self.root_password = self._read_password_file(self.root_password_file, "ROOT_PASSWORD_FILE")
 
     def _read_password_file(self, file_path, env_var_name):
