@@ -24,7 +24,11 @@
     }
   })
 
-  onDestroy(() => { context.stopStreaming()  })
+  onDestroy(() => {
+    if(data.ok && context.isStreaming) {
+      context.stopStreaming()
+    }
+  })
 </script>
 
 <svelte:head><title>{context.dbName} | {data.appName}</title></svelte:head>

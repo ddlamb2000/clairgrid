@@ -17,6 +17,7 @@ export const postMessage = async (params: Partial<Record<string, string>>, reque
   let channel: amqp.Channel | null = null
 
   try {
+    console.log(`Connecting to RabbitMQ at ${env.RABBITMQ_HOST}:${env.RABBITMQ_PORT}`)
     connection = await amqp.connect({
         protocol: 'amqp',
         hostname: env.RABBITMQ_HOST || 'rabbitmq',
@@ -33,21 +34,11 @@ export const postMessage = async (params: Partial<Record<string, string>>, reque
       return json({ error: 'Message invalid' }, { status: 400 })
     }
 
-    // Adapt format to match what Python expects (command, data, etc.)
-    // Assuming the web-ui sends { message: "...", headers: ... } matching MessageRequest
-    // But your Python service expects JSON like { "command": "...", ... }
-    // For now, we forward the payload directly or wrap it.
-    // Based on `data` being MessageRequest, `data.message` is likely the JSON string.
-    
-    // Check if we need to parse data.message if it's a stringified JSON
     let payload = data.message
     try {
-        // Try to ensure it is valid JSON if your service expects a JSON object
         JSON.parse(payload) 
     } catch {
-        // If not JSON, maybe wrap it? Or fail? 
-        // For 'ping', the python test sent: { "command": "ping", ... }
-        // If the UI sends that string in 'message', we are good.
+        return json({ error: 'Message payload invalid' }, { status: 400 })
     }
 
     const sent = channel.sendToQueue(queue, Buffer.from(payload), {

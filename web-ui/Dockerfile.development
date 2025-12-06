@@ -1,3 +1,3 @@
 FROM node:alpine3.22
 WORKDIR /usr/src/clairgrid/web-ui
-CMD ["sh", "-c", "npm install -g npm@11.6.4 && npm i -D @sveltejs/adapter-node && npm run dev -- --host"]
+CMD ["sh", "-c", "export RABBITMQ_PASSWORD=$(cat /run/secrets/rabbitmq-password) && npm install -g npm@11.6.4 && npm i -D @sveltejs/adapter-node && npm run dev -- --host"]

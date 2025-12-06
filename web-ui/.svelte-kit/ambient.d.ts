@@ -35,6 +35,7 @@ declare module '$env/static/private' {
 	export const npm_config_noproxy: string;
 	export const HOME: string;
 	export const npm_package_json: string;
+	export const RABBITMQ_PASSWORD_FILE: string;
 	export const npm_config_userconfig: string;
 	export const npm_config_local_prefix: string;
 	export const COLOR: string;
@@ -102,6 +103,7 @@ declare module '$env/dynamic/private' {
 		npm_config_noproxy: string;
 		HOME: string;
 		npm_package_json: string;
+		RABBITMQ_PASSWORD_FILE: string;
 		npm_config_userconfig: string;
 		npm_config_local_prefix: string;
 		COLOR: string;

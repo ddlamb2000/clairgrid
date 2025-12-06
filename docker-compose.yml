@@ -163,7 +163,9 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
-      RABBITMQ_PASSWORD: clairgrid
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
+    secrets:
+      - rabbitmq-password
     networks:
       - clairgrid
     depends_on:

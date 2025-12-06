@@ -3,7 +3,7 @@
   import * as Icon from 'flowbite-svelte-icons'
   import DynIcon from './DynIcon.svelte'
   import * as metadata from "$lib/metadata.svelte.ts"
-  let { context } = $props()
+  let { context, appName } = $props()
 </script>
 
 <Button size="xs" class="mt-1 mb-1 h-8 w-8 shadow-lg" color="green"
