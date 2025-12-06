@@ -1,3 +1,10 @@
+'''  
+    clairgrid : data structuration, presentation and navigation.
+    Copyright David Lambert 2025
+
+    This file contains the Queue Listener for the clairgrid Grid Service.
+'''
+
 import json
 import os
 import time

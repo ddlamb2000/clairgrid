@@ -1,3 +1,8 @@
+# clairgrid : data structuration, presentation and navigation.
+# Copyright David Lambert 2025
+
+# This file contains the Docker Compose configuration for the clairgrid application.
+
 name: "clairgrid"
 services:
 

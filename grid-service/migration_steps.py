@@ -1,3 +1,10 @@
+'''  
+    clairgrid : data structuration, presentation and navigation.
+    Copyright David Lambert 2025
+
+    This file contains the migration steps for the clairgrid database.
+'''
+
 import uuids
 
 def get_migration_steps(root_user_name, root_password):

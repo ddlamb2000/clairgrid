@@ -1,3 +1,10 @@
+'''  
+    clairgrid : data structuration, presentation and navigation.
+    Copyright David Lambert 2025
+
+    This file contains the Database Manager for the clairgrid Grid Service.
+'''
+
 import os
 import psycopg
 from migration_steps import get_migration_steps, get_deletion_steps

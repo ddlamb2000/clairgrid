@@ -1,9 +1,9 @@
-"""
-Grid Service Module
+'''  
+    clairgrid : data structuration, presentation and navigation.
+    Copyright David Lambert 2025
 
-This module handles the initialization and maintenance of the Grid Service.
-It manages database connections, executes migrations, and keeps the service running.
-"""
+    This file contains the Grid Service for the clairgrid application.
+'''
 
 from queue_listener import QueueListener
 from database_manager import DatabaseManager

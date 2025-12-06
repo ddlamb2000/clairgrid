@@ -1,3 +1,10 @@
+'''  
+    clairgrid : data structuration, presentation and navigation.
+    Copyright David Lambert 2025
+
+    This file contains the Configuration Mixin for the clairgrid Grid Service.
+'''
+
 class ConfigurationMixin:
     """
     Mixin class providing helper methods for loading configuration.
