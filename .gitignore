@@ -9,7 +9,6 @@
 *.autosave
 tmp/
 *.log
-secrets/*
 __pycache__/
 *.pyc
 node_modules/

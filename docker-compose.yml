@@ -135,11 +135,11 @@ networks:
     driver: bridge
 secrets:
   db-password:
-    file: ./secrets/.db_password
+    file: ./adminConfiguration/.db_password
   root-password:
-    file: ./secrets/.root_password
+    file: ./adminConfiguration/.root_password
   rabbitmq-password:
-    file: ./secrets/.rabbitmq-password
+    file: ./adminConfiguration/.rabbitmq-password
 volumes:
   db:
     driver: local

@@ -43,15 +43,17 @@ pgvector for Postgreql: https://github.com/pgvector/pgvector
 
 # Installation
 
-1. Create a file secrets/.db_password with the password used for accessing the Postgresql instance
-1. Create a file secrets/.root_password with the password set for the user created with administrator privileges
+1. Create a file adminConfiguration/.db_password with the password used for accessing the Postgresql instance
+1. Create a file adminConfiguration/.root_password with the password set for the user created with administrator privileges
 
-initial password set for the user created with administrator privileges
-password should be base64-encoded AND encrypted
-password is temporarly and needs to be changed after first login
-to generate a password, log to a PostgreSQL database
-then enter:
+```sql
+-- initial password set for the user created with administrator privileges
+-- password should be base64-encoded AND encrypted
+-- password is temporarly and needs to be changed after first login
+-- to generate a password, log to a PostgreSQL database
+-- then enter:
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8));
+```
 
-1. Create a file secrets/.rabbitmq-password with the password used for accessing the RabbitMQ instance
+1. Create a file adminConfiguration/.rabbitmq-password with the password used for accessing the RabbitMQ instance
