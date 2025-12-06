@@ -77,7 +77,7 @@ class QueueListener(ConfigurationMixin):
             try:
                 connection = pika.BlockingConnection(parameters)
             except pika.exceptions.AMQPConnectionError:
-                print(" [x] RabbitMQ not ready, retrying in 5 seconds...", flush=True)
+                print(" [x] Queue not ready, retrying in 5 seconds...", flush=True)
                 time.sleep(5)
 
         channel = connection.channel()
@@ -85,7 +85,7 @@ class QueueListener(ConfigurationMixin):
         channel.basic_qos(prefetch_count=1)
         channel.basic_consume(queue=self.queue_name, on_message_callback=self.on_request)
 
-        print(" [.] Awaiting RPC requests", flush=True)
+        print(f" [.] Awaiting requests on queue {self.queue_name}", flush=True)
         try:
             channel.start_consuming()
         except KeyboardInterrupt:

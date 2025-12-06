@@ -15,7 +15,7 @@ def main():
     Initializes the service, connects to the database, runs migrations,
     and enters a keep-alive loop.
     """
-    print("Starting Grid Service...", flush=True)
+    print("\nStarting Grid Service...", flush=True)
     try:
         db_manager = DatabaseManager()        
         try:

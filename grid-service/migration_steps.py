@@ -160,12 +160,13 @@ def get_migration_steps(root_user_name, root_password):
             ")",
     }
 
-deletion_steps = {
-    1: "DROP EXTENSION pgcrypto",
-    2: "DROP EXTENSION vector",
-    3: "DROP TABLE relationships",
-    4: "DROP TABLE texts",
-    5: "DROP TABLE ints",
-    6: "DROP TABLE rows",
-    7: "DROP TABLE migrations",
-}
+def get_deletion_steps():
+    return {
+        1: "DROP EXTENSION pgcrypto",
+        2: "DROP EXTENSION vector",
+        3: "DROP TABLE relationships",
+        4: "DROP TABLE texts",
+        5: "DROP TABLE ints",
+        6: "DROP TABLE rows",
+        7: "DROP TABLE migrations",
+    }

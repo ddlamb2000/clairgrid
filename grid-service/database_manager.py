@@ -1,6 +1,6 @@
 import os
 import psycopg
-from migration_steps import get_migration_steps
+from migration_steps import get_migration_steps, get_deletion_steps
 from configuration_mixin import ConfigurationMixin
 
 class DatabaseManager(ConfigurationMixin):
@@ -16,6 +16,7 @@ class DatabaseManager(ConfigurationMixin):
         self.conn = None
         self.load_configuration()        
         self.connect()
+        if self.db_name == "clairgrid_test": self.run_deletions()
         self.run_migrations()
 
     def load_configuration(self):
@@ -71,6 +72,36 @@ class DatabaseManager(ConfigurationMixin):
             self.conn.close()
             print(f"Database connection to {self.db_name} closed.", flush=True)
 
+    def _get_migration_table_exists(self, cur):
+        """
+        Checks if the 'migrations' table exists in the public schema.
+
+        Args:
+            cur (psycopg.Cursor): The database cursor.
+
+        Returns:
+            bool: True if the table exists, False otherwise.
+        """
+        migrationTableExists = False
+        try:
+            cur.execute('''
+                    SELECT EXISTS (
+                        SELECT 1
+                        FROM information_schema.tables
+                        WHERE table_schema = 'public'
+                        AND table_name = 'migrations'
+                    )
+            ''')
+            result = cur.fetchone()
+            if result and result[0] is not None:
+                migrationTableExists = result[0]
+            print(f"Migration table exists: {migrationTableExists}.")
+
+        except psycopg.Error as e:
+            self.conn.rollback()
+
+        return migrationTableExists
+
     def _get_latest_migration_sequence(self, cur):
         """
         Retrieves the latest migration sequence applied to the database.
@@ -81,6 +112,10 @@ class DatabaseManager(ConfigurationMixin):
         Returns:
             int: The latest migration sequence number.
         """
+        migrationTableExists = self._get_migration_table_exists(cur)
+        if not migrationTableExists:
+            return 0
+
         latestMigrationSequence = 0
         try:
             cur.execute("SELECT max(sequence) FROM migrations")
@@ -90,7 +125,6 @@ class DatabaseManager(ConfigurationMixin):
             print(f"Latest migration sequence is {latestMigrationSequence}.")
 
         except psycopg.Error as e:
-            print(f"Error checking migration status (it might be the first run): {e}")
             self.conn.rollback()
 
         return latestMigrationSequence
@@ -104,7 +138,6 @@ class DatabaseManager(ConfigurationMixin):
             sequence (int): The migration sequence number.
             statement (str): The SQL statement to execute.
         """
-        print(f"Update database {self.db_name} with {sequence}: {statement}")
         cur.execute(statement)
         cur.execute(
             "INSERT INTO migrations (sequence, statement) VALUES (%s, %s)",
@@ -130,10 +163,49 @@ class DatabaseManager(ConfigurationMixin):
             latestMigrationSequence = self._get_latest_migration_sequence(cur)
 
             try:
+                first_step = True
                 for sequence, statement in migration_steps.items():
                     if sequence > latestMigrationSequence:
+                        if first_step:
+                            print(f"Update database {self.db_name} with migration step {sequence}", end="")
+                            first_step = False
+                        else:
+                            print(f"...{sequence}", end="")
                         self._execute_migration_step(cur, sequence, statement)
+                if not first_step: print(".")
 
             except psycopg.Error as e:
                 print(f"Error executing migration sequence {sequence}: {e}")
+                raise e
+
+    def run_deletions(self):
+        """
+        Executes database deletions using the internal connection.
+
+        Applies steps defined in `deletion_steps`.
+
+        Raises:
+            psycopg.Error: If a database error occurs during deletion.
+            Exception: If database connection is not established.
+        """
+        if self.conn is None or self.conn.closed:
+             raise Exception("Database connection not established. Call connect() first.")
+
+        with self.conn.cursor() as cur:
+            deletion_steps = get_deletion_steps()
+
+            try:
+                first_step = True
+                for sequence, statement in deletion_steps.items():
+                    if first_step:
+                        print(f"Update database {self.db_name} with deletion step {sequence}", end="")
+                        first_step = False
+                    else:
+                        print(f"...{sequence}", end="")
+                    cur.execute(statement)
+                    self.conn.commit()
+                if not first_step: print(".")
+
+            except psycopg.Error as e:
+                print(f"Error executing deletion sequence {sequence}: {e}")
                 raise e

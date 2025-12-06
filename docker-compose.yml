@@ -1,5 +1,6 @@
 name: "clairgrid"
 services:
+
   db:
     container_name: clairgrid-database
     image: pgvector/pgvector:pg17
@@ -19,6 +20,7 @@ services:
       POSTGRES_USER: clairgrid
       POSTGRES_DB: clairgrid_master
       POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+  
   dbadmin:
     container_name: clairgrid-database-admin
     image: dpage/pgadmin4:9.10.0
@@ -34,6 +36,7 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
+  
   rabbitmq:
     container_name: clairgrid-rabbitmq
     image: rabbitmq:4.2.1-management
@@ -47,6 +50,7 @@ services:
       - "15672:15672"
     networks:
       - clairgrid
+  
   grid-service-development:
     build:
       context: ./grid-service
@@ -157,6 +161,7 @@ services:
       - clairgrid
     depends_on:
       - rabbitmq
+
 configs:
   db-init:
     file: ./adminConfiguration/initdb.sql
