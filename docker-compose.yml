@@ -89,7 +89,7 @@ services:
       DB_NAME: clairgrid_test
       DB_USER_NAME: clairgrid
       DB_PASSWORD_FILE: /run/secrets/db-password
-      KEEP_ALIVE_AFTER_SECONDS: 60
+      KEEP_ALIVE_AFTER_SECONDS: 600
     secrets:
       - db-password
     networks:
@@ -97,7 +97,7 @@ services:
     depends_on:
       - db
       - rabbitmq
-    command: sh -c "./tests/run_all_tests.sh"
+    command: sh -c "./run_all_tests.sh"
   web-ui-development:
     build:
       context: ./web-ui
