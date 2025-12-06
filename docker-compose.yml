@@ -97,7 +97,7 @@ services:
     depends_on:
       - db
       - rabbitmq
-    command: sh -c "./run_all_tests.sh"
+    command: sh -c "cd tests && ./run_all_tests.sh"
   web-ui-development:
     build:
       context: ./web-ui
