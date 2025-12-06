@@ -10,6 +10,7 @@ import os
 import time
 import pika
 from configuration_mixin import ConfigurationMixin
+from decorators import echo
 
 class QueueListener(ConfigurationMixin):
     """
@@ -30,34 +31,40 @@ class QueueListener(ConfigurationMixin):
         self.rabbitmq_password_file = os.getenv("RABBITMQ_PASSWORD_FILE")
         self.rabbitmq_password = self._read_password_file(self.rabbitmq_password_file, "RABBITMQ_PASSWORD_FILE")
 
-    def on_request(self, ch, method, props, body):
+    @echo
+    def process_request(self, request):
         """
-        Callback for handling incoming RabbitMQ messages.
+        Processes the parsed request using a match statement.
         """
-        print(f" [i] Received {props}", flush=True)
-        response = None
-        try:
-            request = json.loads(body)
-            correlation_id = props.correlation_id
-            print(f" [>] {request=}", flush=True)
-            if request['command'] == 'ping':
-                response = {
-                    "correlation_id": correlation_id,
+        match request.get('command'):
+            case 'ping':
+                return {
                     "status": "success",
                     "message": f"Processed request {request['command']} on {self.db_manager.db_name}",
                     "request": request
                 }
-            else:
-                response = {
-                    "correlation_id": correlation_id,
+            case _:
+                return {
                     "status": "error",
                     "message": "Unknown command",
                     "request": request
                 }
-            print(f" [<] {response=}", flush=True)
+
+    @echo
+    def on_request(self, ch, method, props, body):
+        """
+        Callback for handling incoming RabbitMQ messages.
+        """
+        print(f" [v] Received {props}", flush=True)
+        response = None
+        try:
+            request = json.loads(body)
+            print(f" [>] {request}", flush=True)
+            response = self.process_request(request)
+            print(f" [<] {response}", flush=True)
         except Exception as e:
-            print(f" [x] Error processing request: {e}", flush=True)
             response = {"status": "error", "message": str(e)}
+            print(f" [x] {response}", flush=True)
 
         if props.reply_to:
             ch.basic_publish(exchange='',
