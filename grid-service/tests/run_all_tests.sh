@@ -1,13 +1,9 @@
 #!/bin/bash
 
-echo "Test starting."
-python3 -m pytest unit
-python3 -m pytest system
-echo "Test completed."
+pytest unit
+pytest system # -o log_cli=true -o log_cli_level=INFO
 
 if [ -n "$KEEP_ALIVE_AFTER_SECONDS" ]; then
-    echo "clairgrid test keeping alive for $KEEP_ALIVE_AFTER_SECONDS seconds."
+    echo "Keeping alive for $KEEP_ALIVE_AFTER_SECONDS seconds."
     sleep $KEEP_ALIVE_AFTER_SECONDS
 fi
-
-echo "Test ended."

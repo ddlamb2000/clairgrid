@@ -37,7 +37,7 @@ class TestQueueListener(unittest.TestCase):
         mock_props.reply_to = "reply_queue"
         mock_props.correlation_id = "123"
         
-        body = json.dumps({"action": "test"}).encode('utf-8')
+        body = json.dumps({"command": "ping"}).encode('utf-8')
         
         self.listener.on_request(mock_ch, mock_method, mock_props, body)
         
@@ -54,7 +54,7 @@ class TestQueueListener(unittest.TestCase):
         # Check body
         response = json.loads(kwargs['body'])
         self.assertEqual(response['status'], 'success')
-        self.assertEqual(response['data']['action'], 'test')
+        self.assertEqual(response['request']['command'], 'ping')
         
         # Verify ack
         mock_ch.basic_ack.assert_called_once_with(delivery_tag=mock_method.delivery_tag)

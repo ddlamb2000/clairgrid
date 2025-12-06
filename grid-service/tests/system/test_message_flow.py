@@ -1,9 +1,13 @@
 import pytest
+import logging
 import uuid
+import pika
 
 # The queue name matches the expectation for a DB named 'tests'
 # queue_name = f'grid_service_requests_{db_name.lower()}'
 TARGET_QUEUE = "grid_service_requests_clairgrid_test"
+
+LOGGER = logging.getLogger(__name__)
 
 def test_ping_service(rpc_client):
     """
@@ -18,7 +22,9 @@ def test_ping_service(rpc_client):
     }
     
     try:
+        LOGGER.info(f"Sending request to {TARGET_QUEUE} {payload=}")
         response = rpc_client(TARGET_QUEUE, payload, timeout=5)
+        LOGGER.info(f"Received response {response=}")
         
         assert response is not None
         assert "status" in response
@@ -26,7 +32,7 @@ def test_ping_service(rpc_client):
         # Based on current placeholder logic in queue_listener.py:
         # "message": f"Processed request on {self.db_manager.db_name}"
         assert "Processed request" in response["message"]
-        assert response["data"] == payload
+        assert response["request"] == payload
         
     except TimeoutError:
         pytest.fail(f"Service did not respond on queue {TARGET_QUEUE}. Is the service running with DB_NAME=tests?")

@@ -27,18 +27,29 @@ class QueueListener(ConfigurationMixin):
         """
         Callback for handling incoming RabbitMQ messages.
         """
-        print(f" [.] Received {props=} {body=}", flush=True)
+        print(f" [i] Received {props}", flush=True)
         response = None
         try:
             request = json.loads(body)
-            # Placeholder: Implement actual request handling logic here
-            response = {
-                "status": "success",
-                "message": f"Processed request on {self.db_manager.db_name}",
-                "data": request
-            }
+            correlation_id = props.correlation_id
+            print(f" [>] {request=}", flush=True)
+            if request['command'] == 'ping':
+                response = {
+                    "correlation_id": correlation_id,
+                    "status": "success",
+                    "message": f"Processed request {request['command']} on {self.db_manager.db_name}",
+                    "request": request
+                }
+            else:
+                response = {
+                    "correlation_id": correlation_id,
+                    "status": "error",
+                    "message": "Unknown command",
+                    "request": request
+                }
+            print(f" [<] {response=}", flush=True)
         except Exception as e:
-            print(f"Error processing request: {e}", flush=True)
+            print(f" [x] Error processing request: {e}", flush=True)
             response = {"status": "error", "message": str(e)}
 
         if props.reply_to:
@@ -52,7 +63,7 @@ class QueueListener(ConfigurationMixin):
         """
         Starts the RabbitMQ consumer.
         """
-        print(f"Connecting to RabbitMQ at {self.rabbitmq_host}:{self.rabbitmq_port}...", flush=True)
+        print(f"Connecting to queue {self.queue_name} at {self.rabbitmq_host}:{self.rabbitmq_port}...", flush=True)
         
         credentials = pika.PlainCredentials(self.rabbitmq_user, self.rabbitmq_password)
         parameters = pika.ConnectionParameters(
@@ -66,7 +77,7 @@ class QueueListener(ConfigurationMixin):
             try:
                 connection = pika.BlockingConnection(parameters)
             except pika.exceptions.AMQPConnectionError:
-                print("RabbitMQ not ready, retrying in 5 seconds...", flush=True)
+                print(" [x] RabbitMQ not ready, retrying in 5 seconds...", flush=True)
                 time.sleep(5)
 
         channel = connection.channel()
@@ -74,7 +85,7 @@ class QueueListener(ConfigurationMixin):
         channel.basic_qos(prefetch_count=1)
         channel.basic_consume(queue=self.queue_name, on_message_callback=self.on_request)
 
-        print(" [x] Awaiting RPC requests", flush=True)
+        print(" [.] Awaiting RPC requests", flush=True)
         try:
             channel.start_consuming()
         except KeyboardInterrupt:
