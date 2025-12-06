@@ -653,7 +653,7 @@ export class Context extends ContextBase {
     this.isStreaming = true
     this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, heartbeatFrequency)
     this.#timeOutCheckId = setInterval(() => { this.updateTimeedOutRequests(timeOutCheckFrequency) }, timeOutCheckFrequency)
-    for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
+    // for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
   }  
 
   stopStreaming = () => {

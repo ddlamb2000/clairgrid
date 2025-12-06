@@ -1,5 +1,5 @@
 import { env } from "$env/dynamic/private"
-import { kafka } from '$lib/kafka'
+import { kafka } from '$lib/messaging'
 import { newUuid } from "$lib/utils.svelte.ts"
 import * as metadata from "$lib/metadata.svelte"
 

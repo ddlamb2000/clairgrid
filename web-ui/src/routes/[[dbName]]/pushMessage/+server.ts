@@ -1,6 +1,6 @@
 import { type RequestHandler, json } from '@sveltejs/kit'
 import { type KafkaMessageResponse } from '$lib/apiTypes'
-import { postMessage } from '$lib/kafka'
+import { postMessage } from '$lib/messaging'
 
 export const POST: RequestHandler = async ({ params, request, url }) => {
   const auth = request.headers.get("Authorization")

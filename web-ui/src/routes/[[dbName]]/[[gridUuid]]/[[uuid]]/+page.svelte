@@ -19,14 +19,12 @@
   onMount(() => {
     if(data.ok) {
       context.userPreferences.readUserPreferences()
-      // streaming using Kafka is deprecated
-      // context.startStreaming()
+      context.startStreaming()
       context.mount()
     }
   })
 
-  // streaming using Kafka is deprecated
-  // onDestroy(() => { context.stopStreaming()  })
+  onDestroy(() => { context.stopStreaming()  })
 </script>
 
 <svelte:head><title>{context.dbName} | {data.appName}</title></svelte:head>

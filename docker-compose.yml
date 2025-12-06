@@ -160,8 +160,12 @@ services:
       - "5173:5173"
     environment:
       APPNAME: "clairgrid (development)"
-      DATABASES: "master,test,sandbox"
-      DEFAULTDB: "test"
+      DATABASES: "clairgrid_master,clairgrid_test,clairgrid_sandbox"
+      DEFAULTDB: "clairgrid_test"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: clairgrid
+      RABBITMQ_PASSWORD: clairgrid
     networks:
       - clairgrid
     depends_on:

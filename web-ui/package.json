@@ -28,6 +28,7 @@
     "vite": "^6.0.0"
   },
   "dependencies": {
+    "amqplib": "^0.10.9",
     "kafkajs": "^2.2.4"
   }
 }
