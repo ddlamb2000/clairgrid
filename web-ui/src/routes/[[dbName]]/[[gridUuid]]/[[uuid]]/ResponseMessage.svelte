@@ -7,7 +7,7 @@
 
 {#if response !== undefined}
   <Badge color={response.response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">
-    {#if response.response.actionText}{response.response.actionText}{/if}
+    {#if response.response.commandText}{response.response.commandText}{/if}
     {#if response.response.textMessage}: {response.response.textMessage}{/if}
     <span class="font-light text-xs ms-1">
       <small>({response.response.elapsedMs} ms)</small>

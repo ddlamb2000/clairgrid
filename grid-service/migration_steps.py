@@ -5,7 +5,7 @@
     This file contains the migration steps for the clairgrid database.
 '''
 
-import uuids
+import metadata
 
 def get_migration_steps(root_user_name, root_password):
     return {
@@ -83,20 +83,20 @@ def get_migration_steps(root_user_name, root_password):
         80: "INSERT INTO rows "
                 "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
                 "VALUES ("
-                f"'{uuids.UuidGrids}',"
-                f"'{uuids.UuidGrids}',"
+                f"'{metadata.UuidGrids}',"
+                f"'{metadata.UuidGrids}',"
                 "true,"
                 "1,"
                 "now(),"
-                f"'{uuids.UuidRootUser}',"
+                f"'{metadata.UuidRootUser}',"
                 "now(),"
-                f"'{uuids.UuidRootUser}'"
+                f"'{metadata.UuidRootUser}'"
             ")",
 
         90: "INSERT INTO texts "
                 "(uuid, partition, text0) "
                 "VALUES ("
-                f"'{uuids.UuidGrids}',"
+                f"'{metadata.UuidGrids}',"
                 "0,"
                 "'Grids'"
             ")",
@@ -104,20 +104,20 @@ def get_migration_steps(root_user_name, root_password):
         100: "INSERT INTO rows "
                 "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
                 "VALUES ("
-                f"'{uuids.UuidColumns}',"
-                f"'{uuids.UuidGrids}',"
+                f"'{metadata.UuidColumns}',"
+                f"'{metadata.UuidGrids}',"
                 "true,"
                 "1,"
                 "now(),"
-                f"'{uuids.UuidRootUser}',"
+                f"'{metadata.UuidRootUser}',"
                 "now(),"
-                f"'{uuids.UuidRootUser}'"
+                f"'{metadata.UuidRootUser}'"
             ")",
 
         110: "INSERT INTO texts "
                 "(uuid, partition, text0) "
                 "VALUES ("
-                f"'{uuids.UuidColumns}',"
+                f"'{metadata.UuidColumns}',"
                 "0,"
                 "'Columns'"
             ")",
@@ -125,20 +125,20 @@ def get_migration_steps(root_user_name, root_password):
         120: "INSERT INTO rows "
                 "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
                 "VALUES ("
-                f"'{uuids.UuidUsers}',"
-                f"'{uuids.UuidGrids}',"
+                f"'{metadata.UuidUsers}',"
+                f"'{metadata.UuidGrids}',"
                 "true,"
                 "1,"
                 "now(),"
-                f"'{uuids.UuidRootUser}',"
+                f"'{metadata.UuidRootUser}',"
                 "now(),"
-                f"'{uuids.UuidRootUser}'"
+                f"'{metadata.UuidRootUser}'"
             ")",
 
         130: "INSERT INTO texts "
                 "(uuid, partition, text0) "
                 "VALUES ("
-                f"'{uuids.UuidUsers}',"
+                f"'{metadata.UuidUsers}',"
                 "0,"
                 "'Users'"
             ")",
@@ -146,21 +146,21 @@ def get_migration_steps(root_user_name, root_password):
         140: "INSERT INTO rows "
                 "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
                 "VALUES ("
-                f"'{uuids.UuidRootUser}',"
-                f"'{uuids.UuidUsers}',"
+                f"'{metadata.UuidRootUser}',"
+                f"'{metadata.UuidUsers}',"
                 "true,"
                 "1,"
                 "now(),"
-                f"'{uuids.UuidRootUser}',"
+                f"'{metadata.UuidRootUser}',"
                 "now(),"
-                f"'{uuids.UuidRootUser}'"
+                f"'{metadata.UuidRootUser}'"
             ")",
 
 
         150: "INSERT INTO texts "
                 "(uuid, partition, text0, text1) "
                 "VALUES ("
-                f"'{uuids.UuidRootUser}',"
+                f"'{metadata.UuidRootUser}',"
                 "0,"
                 f"'{root_user_name}',"
                 f"'{root_password}'"

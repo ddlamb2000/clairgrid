@@ -65,9 +65,9 @@
     {#each context.messageStack as message}
       {#if message.request && message.request.action === metadata.ActionPrompt}
         <li transition:fade>
-          {#if message.request.actionText}
+          {#if message.request.commandText}
             <Badge color="blue" rounded class="px-2.5 py-0.5 text-sm font-bold">
-              {message.request.actionText}
+              {message.request.commandText}
             </Badge>
             {#if message.request.answered}
               <Icon.CheckOutline class="inline-flex" />
@@ -81,7 +81,7 @@
           {/if}
         </li>
       {:else if message.response && message.response.sameContext && message.response.action === metadata.ActionPrompt}
-        {#if message.response.actionText && message.response.textMessage}
+        {#if message.response.commandText && message.response.textMessage}
           <li transition:fade class="text-sm font-normal ms-2 mt-2 mb-4">
             <ul>
               {#each splitStreamText(message.response.textMessage) as line}

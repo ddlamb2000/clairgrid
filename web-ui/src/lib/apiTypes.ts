@@ -91,8 +91,8 @@ export interface GridReferencePost {
 }
 
 export interface RequestContent {
-  action: string
-  actionText?: string
+  command: string
+  commandText?: string
   gridUuid?: string
   columnUuid?: string
   uuid?: string
@@ -106,8 +106,8 @@ export interface RequestContent {
 }
 
 export interface ResponseContent {
-  action: string
-  actionText?: string
+  command: string
+  commandText?: string
   responseNumber?: number
   status: string
   gridUuid?: string
@@ -144,8 +144,8 @@ export interface GridResponse {
 
 export interface TransactionItem {
   correlationId: string,
-  action?: string
-  actionText?: string
+  command?: string
+  commandText?: string
   responseNumber?: number
   textMessage?: string
   status?: string

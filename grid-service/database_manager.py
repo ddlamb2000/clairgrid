@@ -200,18 +200,19 @@ class DatabaseManager(ConfigurationMixin):
         with self.conn.cursor() as cur:
             deletion_steps = get_deletion_steps()
 
-            try:
-                first_step = True
-                for sequence, statement in deletion_steps.items():
-                    if first_step:
-                        print(f"Update database {self.db_name} with deletion step {sequence}", end="")
-                        first_step = False
-                    else:
-                        print(f"...{sequence}", end="")
+            first_step = True
+            for sequence, statement in deletion_steps.items():
+                if first_step:
+                    print(f"Update database {self.db_name} with deletion step {sequence}", end="")
+                    first_step = False
+                else:
+                    print(f"...{sequence}", end="")
+
+                try:
                     cur.execute(statement)
                     self.conn.commit()
-                if not first_step: print(".")
 
-            except psycopg.Error as e:
-                print(f"Error executing deletion sequence {sequence}: {e}")
-                raise e
+                except psycopg.Error as e:
+                    print(f"Error executing deletion sequence {sequence}: {e}")
+
+            if not first_step: print(".")

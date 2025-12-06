@@ -54,7 +54,7 @@ class TestQueueListener(unittest.TestCase):
         # Check body
         response = json.loads(kwargs['body'])
         self.assertEqual(response['status'], 'success')
-        self.assertEqual(response['request']['command'], 'ping')
+        self.assertEqual(response['command'], 'ping')
         
         # Verify ack
         mock_ch.basic_ack.assert_called_once_with(delivery_tag=mock_method.delivery_tag)

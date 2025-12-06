@@ -12,6 +12,7 @@ def rabbitmq_config():
     """
     with open(os.getenv("RABBITMQ_PASSWORD_FILE")) as f:
         password = f.read().strip()
+
     return {
         "host": os.getenv("RABBITMQ_HOST", "localhost"),
         "port": int(os.getenv("RABBITMQ_PORT", "5672")),
@@ -32,7 +33,7 @@ def rabbitmq_connection(rabbitmq_config):
     )
     
     connection = None
-    # Simple retry logic for waiting for RabbitMQ
+
     for _ in range(5):
         try:
             connection = pika.BlockingConnection(parameters)
@@ -53,8 +54,7 @@ def channel(rabbitmq_connection):
     """
     channel = rabbitmq_connection.channel()
     yield channel
-    if channel.is_open:
-        channel.close()
+    if channel.is_open: channel.close()
 
 @pytest.fixture(scope="function")
 def rpc_client(channel):

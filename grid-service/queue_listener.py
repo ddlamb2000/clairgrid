@@ -9,6 +9,7 @@ import json
 import os
 import time
 import pika
+import metadata
 from configuration_mixin import ConfigurationMixin
 from decorators import echo
 
@@ -39,15 +40,15 @@ class QueueListener(ConfigurationMixin):
         match request.get('command'):
             case 'ping':
                 return {
-                    "status": "success",
-                    "message": f"Processed request {request['command']} on {self.db_manager.db_name}",
-                    "request": request
+                    "command": request['command'],
+                    "status": metadata.SuccessStatus,
+                    "message": f"Pong from {self.db_manager.db_name}"
                 }
             case _:
                 return {
-                    "status": "error",
-                    "message": f"Unknown command",
-                    "request": request
+                    "command": request['command'],
+                    "status": metadata.FailedStatus,
+                    "message": f"Unknown command {request['command']}"
                 }
 
     @echo

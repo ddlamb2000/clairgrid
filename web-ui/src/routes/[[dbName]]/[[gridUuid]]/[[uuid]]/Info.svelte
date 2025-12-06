@@ -19,9 +19,9 @@
             <div class="ps-2 text-xs font-normal">
               <p>
                 {message.request.correlationId}
-                {#if message.request.actionText}
+                {#if message.request.commandText}
                   <Badge color="blue" rounded class="px-2.5 py-0.5">
-                    {message.request.actionText}
+                    {message.request.commandText}
                   </Badge>
                 {/if}
                 {#if message.request.answered}
@@ -48,9 +48,9 @@
             <div class="ps-2 text-xs font-normal">
               <p>
                 {message.response.correlationId}
-                {#if message.response.actionText}
+                {#if message.response.commandText}
                   <Badge color="blue" rounded class="px-2.5 py-0.5">
-                    {message.response.actionText}
+                    {message.response.commandText}
                   </Badge>
                 {/if}
                 <Badge color={message.response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">

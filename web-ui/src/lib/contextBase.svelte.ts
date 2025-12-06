@@ -41,8 +41,8 @@ export class ContextBase {
 
     this.trackRequest({
       correlationId: correlationId,
-      action: message.action,
-      actionText: message.actionText,
+      command: message.command,
+      commandText: message.commandText,
       gridUuid: message.gridUuid,
       dateTime: (new Date).toISOString()
     })
@@ -68,10 +68,10 @@ export class ContextBase {
   }
 
   trackResponse = (response: TransactionItem) => {
-    const initialRequest = this.messageStack.find((r) => r.request && !r.request.answered && !r.request.timeOut && r.request.messageKey == response.messageKey)
+    const initialRequest = this.messageStack.find((r) => r.request && !r.request.answered && !r.request.timeOut && r.request.correlationId == response.correlationId)
     if(initialRequest && initialRequest.request) initialRequest.request.answered = true
-    const responseIndex = this.messageStack.findIndex((r) => r.response && r.response.messageKey == response.messageKey)
-    if(response.action === metadata.ActionPrompt) {
+    const responseIndex = this.messageStack.findIndex((r) => r.response && r.response.correlationId == response.correlationId)
+    if(response.command === metadata.ActionPrompt) {
       if(response.textMessage) {
         if(responseIndex >= 0) {
           if(this.messageStack[responseIndex].response && this.messageStack[responseIndex].response.textMessage) {
@@ -109,7 +109,7 @@ export class ContextBase {
       r.response 
       && r.response.gridUuid === this.gridUuid
       && r.response.sameContext 
-      && (r.response.action === metadata.ActionLoad || r.response.action === metadata.ActionChangeGrid)
+      && (r.response.command === metadata.ActionLoad || r.response.command === metadata.ActionChangeGrid)
     )
   }
 
@@ -117,7 +117,7 @@ export class ContextBase {
     const last = this.messageStack.findLast((r) =>
       r.response 
       && r.response.sameContext
-      && r.response.action !== metadata.ActionHeartbeat
+      && r.response.command !== metadata.ActionHeartbeat
     )
     if(last && last.response && last.response.status === metadata.FailedStatus && !last.response.gridUuid) return last
     else return undefined

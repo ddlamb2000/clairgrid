@@ -16,7 +16,7 @@
   }
 
   const loadPrompt = () => {
-    if(!context.gotData(matchesProps)) context.pushTransaction({action: metadata.ActionLoad, gridUuid: gridPromptUuid})
+    if(!context.gotData(matchesProps)) context.pushTransaction({command: metadata.ActionLoad, gridUuid: gridPromptUuid})
   }
 </script>
   
