@@ -10,11 +10,13 @@ def rabbitmq_config():
     """
     Returns RabbitMQ configuration from environment variables or defaults.
     """
+    with open(os.getenv("RABBITMQ_PASSWORD_FILE")) as f:
+        password = f.read().strip()
     return {
         "host": os.getenv("RABBITMQ_HOST", "localhost"),
         "port": int(os.getenv("RABBITMQ_PORT", "5672")),
         "user": os.getenv("RABBITMQ_USER", "guest"),
-        "password": os.getenv("RABBITMQ_PASSWORD", "guest")
+        "password": password
     }
 
 @pytest.fixture(scope="session")
