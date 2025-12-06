@@ -3,7 +3,7 @@ import uuid
 
 # The queue name matches the expectation for a DB named 'tests'
 # queue_name = f'grid_service_requests_{db_name.lower()}'
-TARGET_QUEUE = "grid_service_requests_tests"
+TARGET_QUEUE = "grid_service_requests_clairgrid_test"
 
 def test_ping_service(rpc_client):
     """
