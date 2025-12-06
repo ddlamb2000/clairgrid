@@ -28,23 +28,10 @@ pgvector for Postgreql: https://github.com/pgvector/pgvector
 1. Python
 1. RabbitMQ
 
-# History
-
-2007 - Project factory (https://sourceforge.net/projects/projectfactory/). As an open source project for project management, Factory lets you organize actors in teams, define projects, create version-based plans, generate forecast calendars and track statuses. Small and stand alone, it runs on every system with Java.
-
-2012 - Prototype using Ruby on Rails and sqlite3 . First attempt to make somthing entirely generic and dynamic. The implementation of row-level security came very late and turned to be impossible to make.
-
-2022 - Prototype using Docker, Go, Go-gin, React and Postgreqsl. Adopting Go was great, but React wasn't. The code for the UI was a mess. The traditional approach as a monolith was a mistake.
-
-2025 - Encoon (https://github.com/ddlamb2000/encoon). Prototype using Docker, Go, Kafka, Postgreqsl and Svelte. Adoption an event-based architecture using Kafka. Svelte is sweet.
-
-
-# Notes for developers
-
 # Installation
 
-1. Create a file adminConfiguration/.db_password with the password used for accessing the Postgresql instance
-1. Create a file adminConfiguration/.root_password with the password set for the user created with administrator privileges
+1. Create a file `adminConfiguration/.db_password` with the password used for accessing the Postgresql instance
+1. Create a file `adminConfiguration/.root_password` with the password set for the user created with administrator privileges
 
 ```sql
 -- initial password set for the user created with administrator privileges
@@ -56,4 +43,16 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8));
 ```
 
-1. Create a file adminConfiguration/.rabbitmq-password with the password used for accessing the RabbitMQ instance
+1. Create a file `adminConfiguration/.rabbitmq-password` with the password used for accessing the RabbitMQ instance
+
+## History
+
+2007 - Project factory (https://sourceforge.net/projects/projectfactory/). As an open source project for project management, Factory lets you organize actors in teams, define projects, create version-based plans, generate forecast calendars and track statuses. Small and stand alone, it runs on every system with Java.
+
+2012 - Prototype using Ruby on Rails and sqlite3 . First attempt to make somthing entirely generic and dynamic. The implementation of row-level security came very late and turned to be impossible to make.
+
+2022 - Prototype using Docker, Go, Go-gin, React and Postgreqsl. Adopting Go was great, but React wasn't. The code for the UI was a mess. The traditional approach as a monolith was a mistake.
+
+2025 - Encoon (https://github.com/ddlamb2000/encoon). Prototype using Docker, Go, Kafka, Postgreqsl and Svelte. Adoption an event-based architecture using Kafka. Svelte is sweet.
+
+## Notes for developers
