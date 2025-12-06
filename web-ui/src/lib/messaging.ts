@@ -4,12 +4,12 @@
 import { env } from "$env/dynamic/private"
 import { json } from '@sveltejs/kit'
 import amqp from 'amqplib'
-import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/apiTypes'
+import type { MessageRequest, MessageResponse } from '$lib/apiTypes'
 
 export const postMessage = async (params: Partial<Record<string, string>>, request: Request) => {
   if(!params.dbName) {
     console.error('Missing dbName')
-    return json({ error: 'Missing dbName' } as KafkaMessageResponse, { status: 500 })
+    return json({ error: 'Missing dbName' } as MessageResponse, { status: 500 })
   }
 
   const queue = `grid_service_requests_${params.dbName}`
@@ -28,16 +28,16 @@ export const postMessage = async (params: Partial<Record<string, string>>, reque
     channel = await connection.createChannel()
     await channel.assertQueue(queue, { durable: false }) // Align durability with your python service
 
-    const data: KafkaMessageRequest = await request.json()
+    const data: MessageRequest = await request.json()
     if (!data.message.trim()) {
       return json({ error: 'Message invalid' }, { status: 400 })
     }
 
     // Adapt format to match what Python expects (command, data, etc.)
-    // Assuming the web-ui sends { message: "...", headers: ... } matching KafkaMessageRequest
+    // Assuming the web-ui sends { message: "...", headers: ... } matching MessageRequest
     // But your Python service expects JSON like { "command": "...", ... }
     // For now, we forward the payload directly or wrap it.
-    // Based on `data` being KafkaMessageRequest, `data.message` is likely the JSON string.
+    // Based on `data` being MessageRequest, `data.message` is likely the JSON string.
     
     // Check if we need to parse data.message if it's a stringified JSON
     let payload = data.message
@@ -51,20 +51,21 @@ export const postMessage = async (params: Partial<Record<string, string>>, reque
     }
 
     const sent = channel.sendToQueue(queue, Buffer.from(payload), {
-        headers: Object.fromEntries(data.headers.map(h => [h.key, h.value]))
-        // Add correlationId or replyTo if needed here
+        headers: Object.fromEntries(data.headers.map(h => [h.key, h.value])),
+        correlationId: data.correlationId,
+        replyTo: data.reply_to
     })
 
     if(sent) {
         console.log(`PUSH message to queue: ${queue}`)
-        return json({ } as KafkaMessageResponse)
+        return json({ } as MessageResponse)
     } else {
         throw new Error("Channel buffer full")
     }
 
   } catch (error) {
     console.error(`Error sending message to RabbitMQ queue ${queue}:`, error)
-    return json({ error: 'Failed to send message' } as KafkaMessageResponse, { status: 500 })
+    return json({ error: 'Failed to send message' } as MessageResponse, { status: 500 })
   } finally {
     if (channel) await channel.close()
     if (connection) await connection.close()

@@ -434,7 +434,8 @@ export class Context extends ContextBase {
     if(loginId === "" || loginPassword === "") return
     this.sendMessage(
       true,
-      metadata.ActionAuthentication + ":" + this.dbName + ":" + loginId,
+      newUuid(),
+      this.getContextUuid(),
       [
         {key: 'from', value: 'clairgrid frontend'},
         {key: 'url', value: this.url},
@@ -453,7 +454,8 @@ export class Context extends ContextBase {
   pushTransaction = async (request: RequestContent) => {
     return this.sendMessage(
       false,
-      request.action + ":" + this.dbName + ":" + this.user.getUser() + ":" + newUuid(),
+      newUuid(),
+      this.getContextUuid(),
       [
         {key: 'from', value: 'clairgrid frontend'},
         {key: 'url', value: this.url},
@@ -472,7 +474,8 @@ export class Context extends ContextBase {
   pushAdminMessage = async (request: RequestContent) => {
     return this.sendMessage(
       true,
-      request.action + ":" + this.dbName + ":" + this.user.getUser(),
+      newUuid(),
+      this.getContextUuid(),
       [
         {key: 'from', value: 'clairgrid frontend'},
         {key: 'url', value: this.url},

@@ -1,7 +1,7 @@
 // clairgrid : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-import type { KafkaMessageRequest, KafkaMessageHeader, KafkaMessageResponse } from '$lib/apiTypes'
+import type { MessageRequest, MessageHeader, MessageResponse } from '$lib/apiTypes'
 import type { RequestContent, TransactionItem, Transaction } from '$lib/apiTypes'
 import { UserPreferences } from '$lib/userPreferences.svelte.ts'
 import { User } from '$lib//user.svelte.ts'
@@ -26,7 +26,7 @@ export class ContextBase {
     this.uuid = uuid
   }
 
-  sendMessage = async (authMessage: boolean, messageKey: string, headers: KafkaMessageHeader[], message: RequestContent) => {
+  sendMessage = async (authMessage: boolean, correlationId: string, reply_to: string, headers: MessageHeader[], message: RequestContent) => {
     this.isSending = true
     const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
     if(!authMessage) {
@@ -36,11 +36,11 @@ export class ContextBase {
         return
       }
     }
-    const request: KafkaMessageRequest = { messageKey: messageKey, headers: headers, message: JSON.stringify(message) }    
+    const request: MessageRequest = { correlationId: correlationId, reply_to: reply_to, headers: headers, message: JSON.stringify(message) }
     console.log(`[Send] to ${uri}`, request)
 
     this.trackRequest({
-      messageKey: messageKey,
+      correlationId: correlationId,
       action: message.action,
       actionText: message.actionText,
       gridUuid: message.gridUuid,
@@ -56,7 +56,7 @@ export class ContextBase {
       },
       body: JSON.stringify(request)
     })
-    const data: KafkaMessageResponse = await response.json()
+    const data: MessageResponse = await response.json()
     this.isSending = false
     if (!response.ok) this.messageStatus = data.error || 'Failed to send message'
     else this.messageStatus = data.message

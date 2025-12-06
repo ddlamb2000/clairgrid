@@ -1,18 +1,19 @@
 // clairgrid : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-export interface KafkaMessageHeader {
+export interface MessageHeader {
   key: string
   value: string
 }
 
-export interface KafkaMessageRequest {
-  messageKey?: string
+export interface MessageRequest {
+  correlationId?: string
+  reply_to?: string
   message: string
-  headers: KafkaMessageHeader[]
+  headers: MessageHeader[]
 }
 
-export interface KafkaMessageResponse {
+export interface MessageResponse {
   message: string
   error?: string
 }
@@ -142,7 +143,7 @@ export interface GridResponse {
 }
 
 export interface TransactionItem {
-  messageKey: string,
+  correlationId: string,
   action?: string
   actionText?: string
   responseNumber?: number

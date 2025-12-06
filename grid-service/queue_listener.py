@@ -46,7 +46,7 @@ class QueueListener(ConfigurationMixin):
             case _:
                 return {
                     "status": "error",
-                    "message": "Unknown command",
+                    "message": f"Unknown command",
                     "request": request
                 }
 
@@ -71,7 +71,8 @@ class QueueListener(ConfigurationMixin):
                              routing_key=props.reply_to,
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
                              body=json.dumps(response))
-            ch.basic_ack(delivery_tag=method.delivery_tag)
+
+        ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def start(self):
         """

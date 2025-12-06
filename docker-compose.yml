@@ -142,8 +142,6 @@ services:
     networks:
       - clairgrid
     depends_on:
-      - db
-      - rabbitmq
       - grid-service-test
     command: sh -c "cd tests && ./run_all_tests.sh"
   
