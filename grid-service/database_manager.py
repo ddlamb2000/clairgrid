@@ -102,7 +102,6 @@ class DatabaseManager(ConfigurationMixin):
             result = cur.fetchone()
             if result and result[0] is not None:
                 migrationTableExists = result[0]
-            print(f"Migration table exists: {migrationTableExists}.")
 
         except psycopg.Error as e:
             self.conn.rollback()
