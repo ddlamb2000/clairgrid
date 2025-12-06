@@ -26,7 +26,7 @@ services:
     networks:
       - clairgrid
     volumes:
-      - ./dbConfiguration/dbAdmin.servers.development.json:/pgadmin4/servers.json
+      - ./adminConfiguration/dbAdmin.servers.development.json:/pgadmin4/servers.json
     ports:
       - "5050:80"
     depends_on:
@@ -37,6 +37,9 @@ services:
   rabbitmq:
     container_name: clairgrid-rabbitmq
     image: rabbitmq:4.2.1-management
+    configs:
+      - source: queue-configuration
+        target: /etc/rabbitmq/rabbitmq.conf
     healthcheck:
       test: "rabbitmqctl node_health_check"
     ports:
@@ -63,7 +66,7 @@ services:
       ROOT_PASSWORD_FILE: /run/secrets/root-password
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
-      RABBITMQ_USER: guest
+      RABBITMQ_USER: clairgrid
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
     secrets:
       - db-password
@@ -91,7 +94,7 @@ services:
       DB_PASSWORD_FILE: /run/secrets/db-password
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
-      RABBITMQ_USER: guest
+      RABBITMQ_USER: clairgrid
       RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
       KEEP_ALIVE_AFTER_SECONDS: 600
     secrets:
@@ -124,7 +127,9 @@ services:
       - rabbitmq
 configs:
   db-init:
-    file: ./dbConfiguration/initdb.sql
+    file: ./adminConfiguration/initdb.sql
+  queue-configuration:
+    file: ./adminConfiguration/rabbitmq.conf
 networks:
   clairgrid:
     driver: bridge
