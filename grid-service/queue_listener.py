@@ -10,7 +10,7 @@ class QueueListener(ConfigurationMixin):
     """
     def __init__(self, db_manager):
         self.db_manager = db_manager
-        self.queue_name = 'grid_service_requests'
+        self.queue_name = f'grid_service_requests_{self.db_manager.db_name.lower()}'
         self.load_configuration()
 
     def load_configuration(self):
@@ -27,14 +27,14 @@ class QueueListener(ConfigurationMixin):
         """
         Callback for handling incoming RabbitMQ messages.
         """
-        print(f" [.] Received {body}", flush=True)
+        print(f" [.] Received {props=} {body=}", flush=True)
         response = None
         try:
             request = json.loads(body)
             # Placeholder: Implement actual request handling logic here
             response = {
                 "status": "success",
-                "message": f"Processed request for {self.db_manager.db_name}",
+                "message": f"Processed request on {self.db_manager.db_name}",
                 "data": request
             }
         except Exception as e:

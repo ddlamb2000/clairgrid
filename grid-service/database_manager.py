@@ -40,7 +40,15 @@ class DatabaseManager(ConfigurationMixin):
         Returns:
             str: The PostgreSQL connection string.
         """
-        return f"host={self.db_host} port={self.db_port} dbname={self.db_name} user={self.db_user_name} password={self.db_password} sslmode=disable connect_timeout={int(self.timeout_threshold_milliseconds) // 1000}"
+        return (
+            f"host={self.db_host} "
+            f"port={self.db_port} "
+            f"dbname={self.db_name} "
+            f"user={self.db_user_name} "
+            f"password={self.db_password} "
+            f"sslmode=disable "
+            f"connect_timeout={int(self.timeout_threshold_milliseconds) // 1000}"
+        )
 
     def connect(self):
         """
@@ -79,11 +87,29 @@ class DatabaseManager(ConfigurationMixin):
             result = cur.fetchone()
             if result and result[0] is not None:
                 latestMigrationSequence = result[0]
-            print(f"Latest migration sequence: {latestMigrationSequence}")
+            print(f"Latest migration sequence is {latestMigrationSequence}.")
+
         except psycopg.Error as e:
             print(f"Error checking migration status (it might be the first run): {e}")
             self.conn.rollback()
+
         return latestMigrationSequence
+
+    def _execute_migration_step(self, cur, sequence, statement):
+        """
+        Executes a single migration step and records it.
+
+        Args:
+            cur (psycopg.Cursor): The database cursor.
+            sequence (int): The migration sequence number.
+            statement (str): The SQL statement to execute.
+        """
+        print(f"Update database {self.db_name} with {sequence}: {statement}")
+        cur.execute(statement)
+        cur.execute(
+            "INSERT INTO migrations (sequence, statement) VALUES (%s, %s)",
+            (sequence, statement))
+        self.conn.commit()
 
     def run_migrations(self):
         """
@@ -106,13 +132,7 @@ class DatabaseManager(ConfigurationMixin):
             try:
                 for sequence, statement in migration_steps.items():
                     if sequence > latestMigrationSequence:
-                        print(f"Update database {self.db_name} with {sequence}: {statement}")
-                        cur.execute(statement)
-
-                        cur.execute(
-                            "INSERT INTO migrations (sequence, statement) VALUES (%s, %s)",
-                            (sequence, statement))
-                        self.conn.commit()
+                        self._execute_migration_step(cur, sequence, statement)
 
             except psycopg.Error as e:
                 print(f"Error executing migration sequence {sequence}: {e}")
