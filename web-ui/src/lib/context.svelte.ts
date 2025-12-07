@@ -496,7 +496,7 @@ export class Context extends ContextBase {
     const socketName = 'ws://localhost:5174'
     const socket = new WebSocket(socketName)
     socket.onopen = () => {
-      console.log(`WebSocket ${socketName} opened`)
+      console.log(`WebSocket ${socketName} opened for incoming messages`)
     }
     socket.onmessage = (event) => {
       try {
@@ -511,7 +511,7 @@ export class Context extends ContextBase {
           // const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
           // const elapsedMs = nowDate - requestInitiatedOnDate
           // console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
-          console.log(`[Received] from ${uri}`, json)
+          console.log(`[Received] from ${socketName}`, json)
           this.trackResponse({
             correlationId: json.correlationId,
             command: json.command,
@@ -526,14 +526,17 @@ export class Context extends ContextBase {
           })
           // this.handleAction(json)
         } else {
-          console.error(`Invalid message from ${uri}`, json)
+          console.error(`Invalid message from ${socketName}`, json)
         }
       } catch(error) {
-        console.log(`Data from stream ${uri} is incorrect`, error, event.data)
+        console.log(`Data from stream ${socketName} is incorrect`, error, event.data)
       }
     }
+    socket.onerror = (error) => {
+      console.error(`WebSocket ${socketName} error for incoming messages:`, error)
+    }
     socket.onclose = () => {
-      console.log(`WebSocket ${socketName} closed`)
+      console.log(`WebSocket ${socketName} closed for incoming messages`)
     }
   }
 

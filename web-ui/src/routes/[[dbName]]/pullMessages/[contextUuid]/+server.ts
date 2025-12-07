@@ -19,7 +19,8 @@ export const GET = async ({ params, request, url }) => {
   console.log(`PULL: Start streaming #${consumerCount} for context ${params.contextUuid}`)
 
   let connection: any = null
-  let channel: any = null  
+  let requestChannel: any = null  
+  let callBackChannel: any = null  
   const stream = new ReadableStream({
     async start(controller) {
       try {
@@ -30,12 +31,39 @@ export const GET = async ({ params, request, url }) => {
           port: parseInt(env.RABBITMQ_PORT),
           username: env.RABBITMQ_USER,
           password: env.RABBITMQ_PASSWORD,
-        })        
-        const queueName = `grid_service_reply_${params.dbName}_${params.contextUuid}`
-        channel = await connection.createChannel()
-        const queue = await channel.assertQueue(queueName, { exclusive: true })
-        console.log(`PULL #${consumerCount}: Queue declared: ${queue.queue}`)
-        channel.consume(queue.queue, (msg: any) => {
+        })
+        const requestQueueName = `grid_service_requests_${params.dbName}`
+        const callBackQueueName = `grid_service_reply_${params.dbName}_${params.contextUuid}`
+        requestChannel = await connection.createChannel()
+        await requestChannel.assertQueue(requestQueueName, { durable: false })
+        callBackChannel = await connection.createChannel()
+        const callBackQueue = await callBackChannel.assertQueue(callBackQueueName, { exclusive: true })
+        console.log(`PULL #${consumerCount}: Queue declared: ${callBackQueue.queue}`)
+
+        wss.on('connection', (ws) => {
+          ws.on('error', (error) => {
+            console.error(`PULL #${consumerCount}: WebSocket error:`, error)
+          })
+          ws.on('message', (message) => {
+            console.log(`Got`, message.toString())
+            try {
+              const data = JSON.parse(message.toString())
+              const sent = requestChannel.sendToQueue(requestQueueName, Buffer.from(message.toString()), {
+                correlationId: data.correlationId,
+                replyTo: callBackQueueName 
+              })
+              if(sent) {
+                console.log(`PULL #${consumerCount}: Sent message to queue: ${requestQueueName}`)
+              } else {
+                console.error(`PULL #${consumerCount}: Failed to send message to queue: ${requestQueueName}`)
+              }
+            } catch (error) {
+              console.error(`PULL #${consumerCount}: Error sending message to queue: ${requestQueueName}`, error)
+            }
+          })
+        })
+
+        callBackChannel.consume(callBackQueue.queue, (msg: any) => {
           if(msg) {
             const content = msg.content.toString()
             console.log(`PULL #${consumerCount}: Received message`, content)
@@ -44,7 +72,7 @@ export const GET = async ({ params, request, url }) => {
                 if(client.readyState === WebSocket.OPEN) client.send(content)
               })
             }
-            channel.ack(msg)
+            callBackChannel.ack(msg)
           }
         })
       } catch (error) {
@@ -54,7 +82,8 @@ export const GET = async ({ params, request, url }) => {
     },
     async cancel() {
       console.log(`PULL #${consumerCount}: Abort streaming`)
-      if (channel) await channel.close()
+      if (requestChannel) await requestChannel.close()
+      if (callBackChannel) await callBackChannel.close()
       if (connection) await connection.close()
     }
   })

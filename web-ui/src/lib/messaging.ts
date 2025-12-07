@@ -56,8 +56,8 @@ export const postMessage = async (params: Partial<Record<string, string>>, reque
     }
 
   } catch (error) {
-    console.error(`Error sending message to RabbitMQ queue ${queueName}:`, error)
-    return json({ error: 'Failed to send message' } as MessageResponse, { status: 500 })
+    console.error(`Error sending message to queue ${queueName}:`, error)
+    return json({ error: `Failed to send message to the queue ${queueName}` } as MessageResponse, { status: 500 })
   } finally {
     if(channel) await channel.close()
     if(connection) await connection.close()

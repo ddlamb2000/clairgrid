@@ -9,6 +9,7 @@ import * as metadata from "$lib/metadata.svelte"
 import { newUuid } from './utils.svelte'
 
 const messageStackLimit = 500
+const socketName = 'ws://localhost:5174'
 
 export class ContextBase {
   #contextUuid: string = $state(newUuid())
@@ -32,7 +33,6 @@ export class ContextBase {
 
   sendMessage = async (authMessage: boolean, headers: MessageHeader[], message: RequestContent) => {
     this.isSending = true
-    const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
     if(!authMessage) {
       if(!this.user.checkLocalToken()) {
         this.messageStatus = "Not authorized "
@@ -40,8 +40,12 @@ export class ContextBase {
         return
       }
     }
-    const request: MessageRequest = { correlationId: newUuid(), reply_to: this.#contextUuid, headers: headers, message: JSON.stringify(message) }
-    console.log(`[Send] to ${uri}`, request)
+    const request: MessageRequest = { 
+      correlationId: newUuid(),
+      reply_to: this.#contextUuid,
+      headers: headers,
+      message: JSON.stringify(message)
+    }
 
     this.trackRequest({
       correlationId: request.correlationId,
@@ -52,18 +56,16 @@ export class ContextBase {
     })
 
     this.messageStatus = 'Sending'
-    const response = await fetch(uri, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.user.getToken()
-      },
-      body: JSON.stringify(request)
-    })
-    const data: MessageResponse = await response.json()
-    this.isSending = false
-    if (!response.ok) this.messageStatus = data.error || 'Failed to send message'
-    else this.messageStatus = data.message
+
+    const socketName = 'ws://localhost:5174'
+    const socket = new WebSocket(socketName)
+
+    socket.onopen = () => {
+      console.log(`[Send] to ${socketName}`, request)
+      socket.send(JSON.stringify(request))
+      socket.close()
+    }
+
   }
 
   trackRequest = (request: TransactionItem) => {

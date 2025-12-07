@@ -143,7 +143,7 @@ export interface GridResponse {
 }
 
 export interface TransactionItem {
-  correlationId: string,
+  correlationId?: string,
   command?: string
   commandText?: string
   responseNumber?: number
