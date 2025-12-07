@@ -27,6 +27,18 @@ export class Context extends ContextBase {
     super(dbName, url, gridUuid, uuid)
   }
 
+  authentication = async (loginId: string, loginPassword: string) => {
+    if(loginId === "" || loginPassword === "") return
+    this.sendMessage(
+      {
+        command: metadata.ActionAuthentication,
+        commandText: 'Login',
+        loginId: loginId,
+        passwordHash: btoa(loginPassword)
+      }
+    )
+  }
+
   load = async () => {
     this.sendMessage({
       command: metadata.ActionLoad,
@@ -423,18 +435,6 @@ export class Context extends ContextBase {
     return this.focus && this.focus.isFocused(set.grid, column, row)
   }
       
-  authentication = async (loginId: string, loginPassword: string) => {
-    if(loginId === "" || loginPassword === "") return
-    this.sendMessage(
-      {
-        command: metadata.ActionAuthentication,
-        commandText: 'Login',
-        loginId: loginId,
-        passwordHash: btoa(loginPassword)
-      }
-    )
-  }
-
   logout = async () => {
     this.user.removeToken()
     this.purge()

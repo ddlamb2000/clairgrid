@@ -10,10 +10,12 @@ export const GET = async ({ params, request, url }) => {
     console.error(`Socket server(${consumerCount}): missing dbName or contextUuid`)
     return new Response(JSON.stringify({ error: 'missing dbName or contextUuid' }), { status: 500 })
   }
+
   consumerCount += 1
   let connection: any = null
   let requestChannel: any = null  
   let callBackChannel: any = null  
+
   const stream = new ReadableStream({
     async start(controller) {
       try {
@@ -32,6 +34,7 @@ export const GET = async ({ params, request, url }) => {
         callBackChannel = await connection.createChannel()
         const callBackQueue = await callBackChannel.assertQueue(callBackQueueName, { exclusive: true })
         console.log(`Socket server(${consumerCount}): callback queue declared: ${callBackQueue.queue}`)
+
         wss.on('connection', (ws) => {
           ws.on('error', (error) => {
             console.error(`Socket server(${consumerCount}): WebSocket error for client connection:`, error)
