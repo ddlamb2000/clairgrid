@@ -57,7 +57,6 @@ export class ContextBase {
 
     this.messageStatus = 'Sending'
 
-    const socketName = 'ws://localhost:5174'
     const socket = new WebSocket(socketName)
 
     socket.onopen = () => {
