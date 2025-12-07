@@ -23,7 +23,6 @@ export class Context extends ContextBase {
   gridsInMemory: number = $state(0)
   rowsInMemory: number = $state(0)
   focus = new Focus
-  #contextUuid = newUuid()
 
   constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
     super(dbName, gridUuid, uuid)
@@ -411,8 +410,6 @@ export class Context extends ContextBase {
     this.dataSet = []
   }
 
-  getContextUuid = () => this.#contextUuid
-
   hasDataSet = () => this.dataSet.length > 0
 
   gotData = (matchesProps: Function) => this.dataSet.find((set: GridResponse) => matchesProps(set))
@@ -434,12 +431,10 @@ export class Context extends ContextBase {
     if(loginId === "" || loginPassword === "") return
     this.sendMessage(
       true,
-      newUuid(),
-      this.getContextUuid(),
       [
         {key: 'from', value: 'clairgrid frontend'},
         {key: 'url', value: this.url},
-        {key: 'contextUuid', value: this.#contextUuid},
+        {key: 'contextUuid', value: this.getContextUuid()},
         {key: 'requestInitiatedOn', value: (new Date).toISOString()}
       ],
       {
@@ -454,8 +449,6 @@ export class Context extends ContextBase {
   pushTransaction = async (request: RequestContent) => {
     return this.sendMessage(
       false,
-      newUuid(),
-      this.getContextUuid(),
       [
         {key: 'from', value: 'clairgrid frontend'},
         {key: 'url', value: this.url},
@@ -474,8 +467,6 @@ export class Context extends ContextBase {
   pushAdminMessage = async (request: RequestContent) => {
     return this.sendMessage(
       true,
-      newUuid(),
-      this.getContextUuid(),
       [
         {key: 'from', value: 'clairgrid frontend'},
         {key: 'url', value: this.url},
@@ -650,13 +641,13 @@ export class Context extends ContextBase {
   }
 
   startStreaming = async () => {
-    const uri = `/${this.dbName}/pullMessages`
+    const uri = `/${this.dbName}/pullMessages/${this.getContextUuid()}`
     this.user.checkLocalToken()
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
     this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ command: metadata.ActionHeartbeat }) }, heartbeatFrequency)
     this.#timeOutCheckId = setInterval(() => { this.updateTimeedOutRequests(timeOutCheckFrequency) }, timeOutCheckFrequency)
-    // for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
+    for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
   }  
 
   stopStreaming = () => {

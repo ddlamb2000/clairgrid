@@ -6,10 +6,12 @@ import type { RequestContent, TransactionItem, Transaction } from '$lib/apiTypes
 import { UserPreferences } from '$lib/userPreferences.svelte.ts'
 import { User } from '$lib//user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
+import { newUuid } from './utils.svelte'
 
 const messageStackLimit = 500
 
 export class ContextBase {
+  #contextUuid: string = $state(newUuid())
   user: User
   userPreferences: UserPreferences = new UserPreferences
   dbName: string = $state("")
@@ -26,7 +28,9 @@ export class ContextBase {
     this.uuid = uuid
   }
 
-  sendMessage = async (authMessage: boolean, correlationId: string, reply_to: string, headers: MessageHeader[], message: RequestContent) => {
+  getContextUuid = () => this.#contextUuid
+
+  sendMessage = async (authMessage: boolean, headers: MessageHeader[], message: RequestContent) => {
     this.isSending = true
     const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
     if(!authMessage) {
@@ -36,11 +40,11 @@ export class ContextBase {
         return
       }
     }
-    const request: MessageRequest = { correlationId: correlationId, reply_to: reply_to, headers: headers, message: JSON.stringify(message) }
+    const request: MessageRequest = { correlationId: newUuid(), reply_to: this.#contextUuid, headers: headers, message: JSON.stringify(message) }
     console.log(`[Send] to ${uri}`, request)
 
     this.trackRequest({
-      correlationId: correlationId,
+      correlationId: request.correlationId,
       command: message.command,
       commandText: message.commandText,
       gridUuid: message.gridUuid,
