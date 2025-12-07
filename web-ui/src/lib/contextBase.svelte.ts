@@ -60,12 +60,12 @@ export class ContextBase {
         dateTime: (new Date).toISOString()
       })
 
-      const socket = new WebSocket(socketName)
-      socket.onopen = () => {
+      const webSocket = new WebSocket(socketName)
+      webSocket.onopen = () => {
         this.messageStatus = 'Sending'
         console.log(`[>]`, request)
-        socket.send(JSON.stringify(request))
-        socket.close()
+        webSocket.send(JSON.stringify(request))
+        webSocket.close()
         this.messageStatus = ''
       }
     } catch (error) {
