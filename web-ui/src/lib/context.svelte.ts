@@ -499,32 +499,32 @@ export class Context extends ContextBase {
       console.log(`WebSocket ${socketName} opened`)
     }
     socket.onmessage = (event) => {
-      console.log(`WebSocket ${socketName} message received`, event.data)
       try {
         const json = JSON.parse(event.data)
-        if(json.value && json.headers) {
-          const message: ResponseContent = JSON.parse(json.value)
-          const fromHeader = String.fromCharCode(...json.headers.from.data)
-          const contextUuid = String.fromCharCode(...json.headers.contextUuid.data)
-          const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
-          const now = (new Date).toISOString()
-          const nowDate = Date.parse(now)
-          const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
-          const elapsedMs = nowDate - requestInitiatedOnDate
-          console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
+        if(json) {
+          // const message: ResponseContent = JSON.parse(json.value)
+          // const fromHeader = String.fromCharCode(...json.headers.from.data)
+          // const contextUuid = String.fromCharCode(...json.headers.contextUuid.data)
+          // const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
+          // const now = (new Date).toISOString()
+          // const nowDate = Date.parse(now)
+          // const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
+          // const elapsedMs = nowDate - requestInitiatedOnDate
+          // console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
+          console.log(`[Received] from ${uri}`, json)
           this.trackResponse({
-            correlationId: json.key,
-            command: message.command,
-            commandText: message.commandText,
-            responseNumber: message.responseNumber,
-            textMessage: message.textMessage,
-            gridUuid: message.gridUuid,
-            status: message.status,
-            sameContext: contextUuid === this.getContextUuid(),
-            elapsedMs: elapsedMs,
-            dateTime: (new Date).toISOString()
+            correlationId: json.correlationId,
+            command: json.command,
+            commandText: json.commandText,
+            // responseNumber: message.responseNumber,
+            // textMessage: message.textMessage,
+            // gridUuid: message.gridUuid,
+            // status: message.status,
+            // sameContext: contextUuid === this.getContextUuid(),
+            // elapsedMs: elapsedMs,
+            // dateTime: (new Date).toISOString()
           })
-          this.handleAction(message)
+          // this.handleAction(json)
         } else {
           console.error(`Invalid message from ${uri}`, json)
         }

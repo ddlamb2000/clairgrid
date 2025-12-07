@@ -67,13 +67,13 @@ class QueueListener(ConfigurationMixin):
             response = {"status": "error", "message": str(e)}
             print(f" [x] {response}", flush=True)
 
-        if props.reply_to:
+        if props.reply_to and response:
+            response["correlationId"] = props.correlation_id
             ch.basic_publish(exchange='',
                              routing_key=props.reply_to,
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
                              body=json.dumps(response))
-
-        ch.basic_ack(delivery_tag=method.delivery_tag)
+            ch.basic_ack(delivery_tag=method.delivery_tag)
 
     def start(self):
         """
