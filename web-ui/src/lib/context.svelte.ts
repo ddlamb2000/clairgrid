@@ -18,23 +18,20 @@ export class Context extends ContextBase {
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #hearbeatId: any = null
   #timeOutCheckId: any = null
-  url: string = $state("")
   dataSet: GridResponse[] = $state([])
   gridsInMemory: number = $state(0)
   rowsInMemory: number = $state(0)
   focus = new Focus
 
   constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
-    super(dbName, gridUuid, uuid)
-    this.url = url
+    super(dbName, url, gridUuid, uuid)
   }
 
   load = async () => {
-    this.pushTransaction({
+    this.sendMessage({
       command: metadata.ActionLoad,
       commandText: "Load " + (this.uuid !== "" ? "row" : "grid"),
-      gridUuid: this.gridUuid,
-      uuid: this.uuid
+      rowUuid: this.uuid
     })
   }
 
@@ -42,12 +39,11 @@ export class Context extends ContextBase {
     console.log("changeFocus[1]", row !== undefined ? row.uuid : undefined)
     if(grid) {
       console.log("changeFocus[2]", row !== undefined ? row.uuid : undefined)
-      await this.pushTransaction(
+      await this.sendMessage(
         {
           command: metadata.ActionLocateGrid,
-          gridUuid: grid.uuid,
           columnUuid: column !== undefined ? column.uuid : undefined,
-          uuid: row !== undefined ? row.uuid : undefined
+          rowUuid: row !== undefined ? row.uuid : undefined
         }
       )
     }
@@ -81,7 +77,7 @@ export class Context extends ContextBase {
           }
         }
       }
-      this.pushTransaction(
+      this.sendMessage(
         {
           command: metadata.ActionChangeGrid,
           commandText: 'Update',
@@ -169,7 +165,7 @@ export class Context extends ContextBase {
             uuid: rowReference.uuid }  
         )
       }
-      return this.pushTransaction({
+      return this.sendMessage({
         command: metadata.ActionChangeGrid,
         commandText: 'Add column',
         gridUuid: metadata.UuidColumns,
@@ -184,7 +180,7 @@ export class Context extends ContextBase {
     if(!set.rows) set.rows = []
     set.rows.push(row)
     set.countRows += 1
-    return this.pushTransaction({
+    return this.sendMessage({
       command: metadata.ActionChangeGrid,
       commandText: 'Add row',
       gridUuid: set.grid.uuid,
@@ -202,7 +198,7 @@ export class Context extends ContextBase {
       const deletedRow: RowType = { gridUuid: set.grid.uuid, uuid: row.uuid }
       set.rows.splice(rowIndex, 1)
       set.countRows -= 1
-      return this.pushTransaction({
+      return this.sendMessage({
         command: metadata.ActionChangeGrid,
         commandText: 'Remove row',
         gridUuid: set.grid.uuid,
@@ -215,7 +211,7 @@ export class Context extends ContextBase {
     if(set.grid.columns && set.grid.columns !== undefined && column !== undefined && column.uuid !== undefined) {
       const columnIndex = set.grid.columns.findIndex((c) => c.uuid === column.uuid)
       set.grid.columns.splice(columnIndex, 1)
-      return this.pushTransaction({
+      return this.sendMessage({
         command: metadata.ActionChangeGrid,
         commandText: 'Remove column',
         gridUuid: metadata.UuidColumns,
@@ -243,7 +239,7 @@ export class Context extends ContextBase {
 
   newGrid = async () => {
     const gridUuid = newUuid()
-    await this.pushTransaction({
+    await this.sendMessage({
       command: metadata.ActionChangeGrid,
       commandText: 'New grid',
       gridUuid: metadata.UuidGrids,
@@ -281,7 +277,7 @@ export class Context extends ContextBase {
       if(row.references !== undefined) row.references.push(reference)
       else row.references = [reference]
     }
-    return this.pushTransaction({
+    return this.sendMessage({
       command: metadata.ActionChangeGrid,
       commandText: 'Add value',
       gridUuid: set.grid.uuid,
@@ -307,7 +303,7 @@ export class Context extends ContextBase {
         }
       }
     }
-    return this.pushTransaction({
+    return this.sendMessage({
       command: metadata.ActionChangeGrid,
       commandText: 'Remove value',
       gridUuid: set.grid.uuid,
@@ -325,7 +321,7 @@ export class Context extends ContextBase {
 
   changeGrid = debounce(
     async (grid: GridType) => {
-      this.pushTransaction(
+      this.sendMessage(
         {
           command: metadata.ActionChangeGrid,
           commandText: 'Update grid',
@@ -339,7 +335,7 @@ export class Context extends ContextBase {
 
   changeColumn = debounce(
     async (grid: GridType, column: ColumnType) => {
-      this.pushTransaction(
+      this.sendMessage(
         {
           command: metadata.ActionChangeGrid,
           commandText: 'Update column',
@@ -389,7 +385,7 @@ export class Context extends ContextBase {
   }  
 
   prompt = (prompt: string) => {
-    this.pushTransaction(
+    this.sendMessage(
       {
         command: metadata.ActionPrompt,
         commandText: prompt
@@ -430,51 +426,12 @@ export class Context extends ContextBase {
   authentication = async (loginId: string, loginPassword: string) => {
     if(loginId === "" || loginPassword === "") return
     this.sendMessage(
-      true,
-      [
-        {key: 'from', value: 'clairgrid frontend'},
-        {key: 'url', value: this.url},
-        {key: 'contextUuid', value: this.getContextUuid()},
-        {key: 'requestInitiatedOn', value: (new Date).toISOString()}
-      ],
       {
         command: metadata.ActionAuthentication,
         commandText: 'Login',
-        userid: loginId,
-        password: btoa(loginPassword)
+        loginId: loginId,
+        passwordHash: btoa(loginPassword)
       }
-    )
-  }
-
-  pushTransaction = async (request: RequestContent) => {
-    return this.sendMessage(
-      false,
-      [
-        {key: 'from', value: 'clairgrid frontend'},
-        {key: 'url', value: this.url},
-        {key: 'contextUuid', value: this.getContextUuid()},
-        {key: 'dbName', value: this.dbName},
-        {key: 'userUuid', value: this.user.getUserUuid()},
-        {key: 'user', value: this.user.getUser()},
-        {key: 'jwt', value: this.user.getToken()},
-        {key: 'gridUuid', value: this.gridUuid},
-        {key: 'requestInitiatedOn', value: (new Date).toISOString()}
-      ],
-      request
-    )
-  }
-
-  pushAdminMessage = async (request: RequestContent) => {
-    return this.sendMessage(
-      true,
-      [
-        {key: 'from', value: 'clairgrid frontend'},
-        {key: 'url', value: this.url},
-        {key: 'contextUuid', value: this.getContextUuid()},
-        {key: 'dbName', value: this.dbName},
-        {key: 'requestInitiatedOn', value: (new Date).toISOString()}
-      ],
-      request
     )
   }
 
@@ -511,7 +468,7 @@ export class Context extends ContextBase {
           // const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
           // const elapsedMs = nowDate - requestInitiatedOnDate
           // console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
-          console.log(`[Received] from ${socketName}`, json)
+          console.log(`[<]`, json)
           this.trackResponse({
             correlationId: json.correlationId,
             command: json.command,
@@ -573,7 +530,7 @@ export class Context extends ContextBase {
               if(message.dataSet.grid.columns) {
                 for(const column of message.dataSet.grid.columns) {
                   if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional && message.dataSet) {
-                    this.pushTransaction({
+                    this.sendMessage({
                       command: metadata.ActionLoad,
                       commandText: "Load associated grid",
                       gridUuid: column.gridPromptUuid,
@@ -588,7 +545,7 @@ export class Context extends ContextBase {
               if(message.dataSet.grid.columnsUsage) {
                 for(const usage of message.dataSet.grid.columnsUsage) {
                   if(usage.grid) {
-                    this.pushTransaction({
+                    this.sendMessage({
                       command: metadata.ActionLoad,
                       commandText: "Load usage grid",
                       gridUuid: usage.grid.uuid,
@@ -617,7 +574,7 @@ export class Context extends ContextBase {
     this.user.checkLocalToken()
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
-    this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ command: metadata.ActionHeartbeat }) }, heartbeatFrequency)
+    this.#hearbeatId = setInterval(() => { this.sendMessage({ command: metadata.ActionHeartbeat }) }, heartbeatFrequency)
     this.#timeOutCheckId = setInterval(() => { this.updateTimeedOutRequests(timeOutCheckFrequency) }, timeOutCheckFrequency)
     for await (let line of this.getStreamIteration(uri)) {}
   }  

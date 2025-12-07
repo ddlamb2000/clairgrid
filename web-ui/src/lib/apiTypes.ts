@@ -1,6 +1,31 @@
 // clairgrid : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
+export interface RequestType {
+  requestUuid?: string
+  contextUuid?: string
+  from?: string
+  url?: string
+  dbName?: string
+  userUuid?: string
+  user?: string
+  jwt?: string
+  command: string
+  commandText?: string
+  loginId?: string
+  passwordHash?: string
+  requestInitiatedOn?: string
+  rowUuid?: string
+  columnUuid?: string
+}
+
+
+
+
+
+
+
+
 export interface MessageHeader {
   key: string
   value: string

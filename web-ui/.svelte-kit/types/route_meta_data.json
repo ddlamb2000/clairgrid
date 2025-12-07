@@ -1,13 +1,7 @@
 {
 	"/": [],
-	"/[[dbName]]/authentication": [
-		"src/routes/[[dbName]]/authentication/+server.ts"
-	],
 	"/[[dbName]]/pullMessages/[contextUuid]": [
 		"src/routes/[[dbName]]/pullMessages/[contextUuid]/+server.ts"
-	],
-	"/[[dbName]]/pushMessage": [
-		"src/routes/[[dbName]]/pushMessage/+server.ts"
 	],
 	"/[[dbName]]/[[gridUuid]]/[[uuid]]": [
 		"src/routes/[[dbName]]/[[gridUuid]]/[[uuid]]/+page.server.ts"

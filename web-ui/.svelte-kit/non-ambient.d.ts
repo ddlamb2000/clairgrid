@@ -27,27 +27,23 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/" | "/[[dbName]]/authentication" | "/[[dbName]]/pullMessages" | "/[[dbName]]/pullMessages/[contextUuid]" | "/[[dbName]]/pushMessage" | "/[[dbName]]/[[gridUuid]]/[[uuid]]" | "/[[dbName]]/[[gridUuid]]" | "/[[dbName]]";
+		RouteId(): "/" | "/[[dbName]]/pullMessages" | "/[[dbName]]/pullMessages/[contextUuid]" | "/[[dbName]]/[[gridUuid]]/[[uuid]]" | "/[[dbName]]/[[gridUuid]]" | "/[[dbName]]";
 		RouteParams(): {
-			"/[[dbName]]/authentication": { dbName?: string };
 			"/[[dbName]]/pullMessages": { dbName?: string };
 			"/[[dbName]]/pullMessages/[contextUuid]": { dbName?: string; contextUuid: string };
-			"/[[dbName]]/pushMessage": { dbName?: string };
 			"/[[dbName]]/[[gridUuid]]/[[uuid]]": { dbName?: string; gridUuid?: string; uuid?: string };
 			"/[[dbName]]/[[gridUuid]]": { dbName?: string; gridUuid?: string };
 			"/[[dbName]]": { dbName?: string }
 		};
 		LayoutParams(): {
 			"/": { dbName?: string; contextUuid?: string; gridUuid?: string; uuid?: string };
-			"/[[dbName]]/authentication": { dbName?: string };
 			"/[[dbName]]/pullMessages": { dbName?: string; contextUuid?: string };
 			"/[[dbName]]/pullMessages/[contextUuid]": { dbName?: string; contextUuid: string };
-			"/[[dbName]]/pushMessage": { dbName?: string };
 			"/[[dbName]]/[[gridUuid]]/[[uuid]]": { dbName?: string; gridUuid?: string; uuid?: string };
 			"/[[dbName]]/[[gridUuid]]": { dbName?: string; gridUuid?: string; uuid?: string };
 			"/[[dbName]]": { dbName?: string; contextUuid?: string; gridUuid?: string; uuid?: string }
 		};
-		Pathname(): "/" | `${string}/authentication` & {} | `${string}/authentication/` & {} | `${string}/pullMessages` & {} | `${string}/pullMessages/` & {} | `${string}/pullMessages/${string}` & {} | `${string}/pullMessages/${string}/` & {} | `${string}/pushMessage` & {} | `${string}/pushMessage/` & {} | `${string}${string}${string}` & {} | `${string}${string}${string}/` & {} | `${string}${string}` & {} | `${string}${string}/` & {} | `${string}` & {} | `${string}/` & {};
+		Pathname(): "/" | `${string}/pullMessages` & {} | `${string}/pullMessages/` & {} | `${string}/pullMessages/${string}` & {} | `${string}/pullMessages/${string}/` & {} | `${string}${string}${string}` & {} | `${string}${string}${string}/` & {} | `${string}${string}` & {} | `${string}${string}/` & {} | `${string}` & {} | `${string}/` & {};
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
 		Asset(): "/favicon.svg" | "/robots.txt" | string & {};
 	}

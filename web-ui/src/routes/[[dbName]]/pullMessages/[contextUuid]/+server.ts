@@ -42,7 +42,7 @@ export const GET = async ({ params, request, url }) => {
             try {
               const data = JSON.parse(message.toString())
               const sent = requestChannel.sendToQueue(requestQueueName, Buffer.from(message.toString()), {
-                correlationId: data.correlationId,
+                correlationId: data.requestUuid,
                 replyTo: callBackQueueName 
               })
               if(sent) {

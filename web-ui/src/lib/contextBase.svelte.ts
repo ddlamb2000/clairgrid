@@ -1,8 +1,7 @@
 // clairgrid : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-import type { MessageRequest, MessageHeader, MessageResponse } from '$lib/apiTypes'
-import type { RequestContent, TransactionItem, Transaction } from '$lib/apiTypes'
+import type { RequestType, TransactionItem, Transaction } from '$lib/apiTypes'
 import { UserPreferences } from '$lib/userPreferences.svelte.ts'
 import { User } from '$lib//user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
@@ -21,50 +20,58 @@ export class ContextBase {
   isSending: boolean = $state(false)
   messageStatus: string = $state("")
   messageStack: Transaction[] = $state([{}])
+  url: string = $state("")
 
-  constructor(dbName: string | undefined, gridUuid: string, uuid: string) {
+  constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
     this.dbName = dbName || ""
     this.user = new User(this.dbName)
     this.gridUuid = gridUuid
     this.uuid = uuid
+    this.url = url
   }
 
   getContextUuid = () => this.#contextUuid
 
-  sendMessage = async (authMessage: boolean, headers: MessageHeader[], message: RequestContent) => {
+  sendMessage = async (request: RequestType) => {
     this.isSending = true
-    if(!authMessage) {
+    request.requestUuid = newUuid()
+    request.contextUuid = this.#contextUuid
+    request.dbName = this.dbName
+    request.userUuid = this.user.getUserUuid()
+    request.user = this.user.getUser()
+    request.jwt = this.user.getToken()
+    request.requestInitiatedOn = (new Date).toISOString()
+    request.from = 'clairgrid frontend'
+    request.url = this.url
+    if(request.command !== metadata.ActionAuthentication && request.command !== metadata.ActionHeartbeat) {
       if(!this.user.checkLocalToken()) {
         this.messageStatus = "Not authorized "
         this.isSending = false
         return
       }
     }
-    const request: MessageRequest = { 
-      correlationId: newUuid(),
-      reply_to: this.#contextUuid,
-      headers: headers,
-      message: JSON.stringify(message)
+    try {
+      this.trackRequest({
+        correlationId: request.requestUuid,
+        command: request.command,
+        commandText: request.commandText,
+        dateTime: (new Date).toISOString()
+      })
+
+      const socket = new WebSocket(socketName)
+      socket.onopen = () => {
+        this.messageStatus = 'Sending'
+        console.log(`[>]`, request)
+        socket.send(JSON.stringify(request))
+        socket.close()
+        this.messageStatus = ''
+      }
+    } catch (error) {
+      console.error('Error sending message:', error)
+      this.messageStatus = 'Error'
+    } finally {
+      this.isSending = false
     }
-
-    this.trackRequest({
-      correlationId: request.correlationId,
-      command: message.command,
-      commandText: message.commandText,
-      gridUuid: message.gridUuid,
-      dateTime: (new Date).toISOString()
-    })
-
-    this.messageStatus = 'Sending'
-
-    const socket = new WebSocket(socketName)
-
-    socket.onopen = () => {
-      console.log(`[Send] to ${socketName}`, request)
-      socket.send(JSON.stringify(request))
-      socket.close()
-    }
-
   }
 
   trackRequest = (request: TransactionItem) => {
