@@ -1,4 +1,3 @@
-export const InitializationKey = "INIT"
 export const ActionHeartbeat = "ping"
 export const ActionAuthentication = "authentication"
 export const ActionLoad = "load"

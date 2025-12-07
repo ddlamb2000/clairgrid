@@ -156,6 +156,7 @@ services:
       - .:/usr/src/clairgrid/
     ports:
       - "5173:5173"
+      - "5174:5174"
     environment:
       APPNAME: "clairgrid (development)"
       DATABASES: "clairgrid_master,clairgrid_test,clairgrid_sandbox"

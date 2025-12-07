@@ -493,79 +493,48 @@ export class Context extends ContextBase {
       console.error(`Failed to fetch stream from ${uri}`)
       return
     }
-    const utf8Decoder = new TextDecoder("utf-8")
-    let reader = response.body.getReader()
-    let { value: chunk, done: readerDone } = await reader.read()
-    chunk = chunk ? utf8Decoder.decode(chunk, { stream: true }) : ""
-    let re = /\r\n|\n|\r/gm
-    let startIndex = 0
-
-    for (;;) {
-      const chunkString =  chunk !== undefined ? chunk.toString() : ""
-      if(chunkString.endsWith(metadata.StopString)) {
-        chunk = ""
-        console.log("Received chunk with stop")
-        const chunks = chunkString.split(metadata.StopString)
-        for(const chunkPartial of chunks) {
-          if(chunkPartial.length > 0) {
-            try {
-              const json = JSON.parse(chunkPartial)
-              if(json.key && json.key === metadata.InitializationKey) {
-                console.log("Stream initialized")
-                this.trackResponse({
-                  messageKey: metadata.InitializationKey,
-                  status: metadata.SuccessStatus,
-                  textMessage: "Stream initialized",
-                  dateTime: (new Date).toISOString()
-                })
-              } else if(json.value && json.headers) {
-                const message: ResponseContent = JSON.parse(json.value)
-                const fromHeader = String.fromCharCode(...json.headers.from.data)
-                const contextUuid = String.fromCharCode(...json.headers.contextUuid.data)
-                const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
-                const now = (new Date).toISOString()
-                const nowDate = Date.parse(now)
-                const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
-                const elapsedMs = nowDate - requestInitiatedOnDate
-                console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
-                this.trackResponse({
-                  messageKey: json.key,
-                  command: message.action,
-                  commandText: message.commandText,
-                  responseNumber: message.responseNumber,
-                  textMessage: message.textMessage,
-                  gridUuid: message.gridUuid,
-                  status: message.status,
-                  sameContext: contextUuid === this.getContextUuid(),
-                  elapsedMs: elapsedMs,
-                  dateTime: (new Date).toISOString()
-                })
-                await this.handleAction(message)
-              } else {
-                console.error(`Invalid message from ${uri}`, json)
-              }
-            } catch(error) {
-              console.log(`Data from stream ${uri} is incorrect`, error, chunkPartial)
-            }
-          }
-        }
-      }
-
-      let result = re.exec(chunk)
-      if(!result) {
-        if (readerDone) break
-        let remainder = chunk.substr(startIndex)
-        {
-          ({ value: chunk, done: readerDone } = await reader.read())
-        }
-        chunk = remainder + (chunk ? utf8Decoder.decode(chunk, { stream: true }) : "")
-        startIndex = re.lastIndex = 0
-        continue
-      }
-      yield chunk.substring(startIndex, result.index)
-      startIndex = re.lastIndex
+    const socketName = 'ws://localhost:5174'
+    const socket = new WebSocket(socketName)
+    socket.onopen = () => {
+      console.log(`WebSocket ${socketName} opened`)
     }
-    if(startIndex < chunk.length) yield chunk.substr(startIndex)
+    socket.onmessage = (event) => {
+      console.log(`WebSocket ${socketName} message received`, event.data)
+      try {
+        const json = JSON.parse(event.data)
+        if(json.value && json.headers) {
+          const message: ResponseContent = JSON.parse(json.value)
+          const fromHeader = String.fromCharCode(...json.headers.from.data)
+          const contextUuid = String.fromCharCode(...json.headers.contextUuid.data)
+          const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
+          const now = (new Date).toISOString()
+          const nowDate = Date.parse(now)
+          const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
+          const elapsedMs = nowDate - requestInitiatedOnDate
+          console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
+          this.trackResponse({
+            correlationId: json.key,
+            command: message.command,
+            commandText: message.commandText,
+            responseNumber: message.responseNumber,
+            textMessage: message.textMessage,
+            gridUuid: message.gridUuid,
+            status: message.status,
+            sameContext: contextUuid === this.getContextUuid(),
+            elapsedMs: elapsedMs,
+            dateTime: (new Date).toISOString()
+          })
+          this.handleAction(message)
+        } else {
+          console.error(`Invalid message from ${uri}`, json)
+        }
+      } catch(error) {
+        console.log(`Data from stream ${uri} is incorrect`, error, event.data)
+      }
+    }
+    socket.onclose = () => {
+      console.log(`WebSocket ${socketName} closed`)
+    }
   }
 
   handleAction = async (message: ResponseContent) => {
@@ -633,7 +602,7 @@ export class Context extends ContextBase {
               this.focus.set(message.dataSet.grid, undefined, undefined)
             }
           }
-        } else if(message.action == metadata.ActionLocateGrid) {
+        } else if(message.command == metadata.ActionLocateGrid) {
           this.locateGrid(message.gridUuid, message.columnUuid, message.uuid)
         }
       }
@@ -647,7 +616,7 @@ export class Context extends ContextBase {
     this.isStreaming = true
     this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ command: metadata.ActionHeartbeat }) }, heartbeatFrequency)
     this.#timeOutCheckId = setInterval(() => { this.updateTimeedOutRequests(timeOutCheckFrequency) }, timeOutCheckFrequency)
-    for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
+    for await (let line of this.getStreamIteration(uri)) {}
   }  
 
   stopStreaming = () => {
