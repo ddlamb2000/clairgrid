@@ -13,7 +13,7 @@ def echo(func):
     """
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        print(f"Calling {func.__name__}...", flush=True)
+        print(f"{func.__name__}()", end= " ",flush=True)
         return func(*args, **kwargs)
     return wrapper
 

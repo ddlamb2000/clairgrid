@@ -39,42 +39,49 @@ class QueueListener(ConfigurationMixin):
         """
         match request.get('command'):
             case 'ping':
-                return {
-                    "command": request['command'],
-                    "status": metadata.SuccessStatus,
-                    "message": f"Pong from {self.db_manager.db_name}"
-                }
+                return { "status": metadata.SuccessStatus, "message": "Pong" }
             case _:
-                return {
-                    "command": request['command'],
-                    "status": metadata.FailedStatus,
-                    "message": f"Unknown command {request['command']}"
-                }
+                return { "status": metadata.FailedStatus, "message": "Unknown command" }
 
     @echo
     def on_request(self, ch, method, props, body):
         """
         Callback for handling incoming RabbitMQ messages.
         """
-        print(f" [v] Received {props}", flush=True)
-        response = None
         try:
             request = json.loads(body)
-            print(f" [>] {request}", flush=True)
-            response = self.process_request(request)
-            print(f" [<] {response}", flush=True)
+            reply = {
+                "command": request['command'],
+                "requestInitiatedOn": request['requestInitiatedOn'],
+                "requestUuid": request['requestUuid'],
+                "contextUuid": request['contextUuid'],
+                "from": request['from'],
+                "dbName": request['dbName']
+            }
+            if request.get('commandText'): reply['commandText'] = request['commandText']
+            if request.get('url'): reply['url'] = request['url']
+            if request.get('userUuid'): reply['userUuid'] = request['userUuid']
+            if request.get('user'): reply['user'] = request['user']
+            if request.get('jwt'): reply['jwt'] = request['jwt']
+            try:
+                print(f"<request {request}", flush=True)
+                reply = reply | self.process_request(request)
+                print(f">reply {reply}", flush=True)
+            except Exception as e:
+                reply = reply | {"status": "error", "can't process request, message": str(e)}
         except Exception as e:
-            response = {"status": "error", "message": str(e)}
-            print(f" [x] {response}", flush=True)
+            reply = {"status": "error", "invalid request, message": str(e)}
+            print(f">reply {reply}", flush=True)
 
-        if props.reply_to and response:
-            response["correlationId"] = props.correlation_id
+        if props.reply_to and reply:
+            reply["correlationId"] = props.correlation_id
             ch.basic_publish(exchange='',
                              routing_key=props.reply_to,
                              properties=pika.BasicProperties(correlation_id=props.correlation_id),
-                             body=json.dumps(response))
+                             body=json.dumps(reply))
             ch.basic_ack(delivery_tag=method.delivery_tag)
 
+    @echo
     def start(self):
         """
         Starts the RabbitMQ consumer.
@@ -93,7 +100,7 @@ class QueueListener(ConfigurationMixin):
             try:
                 connection = pika.BlockingConnection(parameters)
             except pika.exceptions.AMQPConnectionError:
-                print(" [x] Queue not ready, retrying in 5 seconds...", flush=True)
+                print("Queue not ready, retrying in 5 seconds...", flush=True)
                 time.sleep(5)
 
         channel = connection.channel()
@@ -101,7 +108,7 @@ class QueueListener(ConfigurationMixin):
         channel.basic_qos(prefetch_count=1)
         channel.basic_consume(queue=self.queue_name, on_message_callback=self.on_request)
 
-        print(f" [.] Awaiting requests on queue {self.queue_name}", flush=True)
+        print(f"Awaiting requests on queue {self.queue_name}", flush=True)
         try:
             channel.start_consuming()
         except KeyboardInterrupt:

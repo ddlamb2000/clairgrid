@@ -463,12 +463,12 @@ export class Context extends ContextBase {
           // const fromHeader = String.fromCharCode(...json.headers.from.data)
           // const contextUuid = String.fromCharCode(...json.headers.contextUuid.data)
           // const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
-          // const now = (new Date).toISOString()
-          // const nowDate = Date.parse(now)
-          // const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
-          // const elapsedMs = nowDate - requestInitiatedOnDate
+          const now = (new Date).toISOString()
+          const nowDate = Date.parse(now)
+          const requestInitiatedOnDate = Date.parse(json.requestInitiatedOn)
+          const elapsedMs = nowDate - requestInitiatedOnDate
           // console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
-          console.log(`[<]`, json)
+          console.log(`[<] (${elapsedMs} ms)`, json)
           this.trackResponse({
             correlationId: json.correlationId,
             command: json.command,
@@ -476,10 +476,10 @@ export class Context extends ContextBase {
             // responseNumber: message.responseNumber,
             // textMessage: message.textMessage,
             // gridUuid: message.gridUuid,
-            // status: message.status,
+            status: json.status,
             // sameContext: contextUuid === this.getContextUuid(),
-            // elapsedMs: elapsedMs,
-            // dateTime: (new Date).toISOString()
+            elapsedMs: elapsedMs,
+            dateTime: (new Date).toISOString()
           })
           // this.handleAction(json)
         } else {

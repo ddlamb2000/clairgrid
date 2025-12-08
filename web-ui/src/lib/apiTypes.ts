@@ -15,16 +15,31 @@ export interface RequestType {
   loginId?: string
   passwordHash?: string
   requestInitiatedOn?: string
+  gridUuid?: string
   rowUuid?: string
   columnUuid?: string
 }
 
-
-
-
-
-
-
+export interface ReplyType {
+  requestUuid?: string
+  contextUuid?: string
+  command: string
+  commandText?: string
+  status: string
+	message?: string
+  from?: string
+  url?: string
+  dbName?: string
+  userUuid?: string
+  user?: string
+	firstName?: string
+	lastName?: string
+	jwt?: string
+  requestInitiatedOn?: string
+  gridUuid?: string
+  rowUuid?: string
+  columnUuid?: string
+}
 
 export interface MessageHeader {
   key: string
@@ -182,7 +197,7 @@ export interface TransactionItem {
   elapsedMs?: number
 }
 
-export interface Transaction {
-  request?: TransactionItem
-  response?: TransactionItem
+export interface TransactionType {
+  request?: RequestType
+  reply?: ReplyType
 }
