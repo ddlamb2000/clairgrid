@@ -4,15 +4,14 @@ import uuid
 import pika
 
 # The queue name matches the expectation for a DB named 'tests'
-# queue_name = f'grid_service_requests_{db_name.lower()}'
-TARGET_QUEUE = "grid_service_requests_clairgrid_test"
-
+# queue_name = f'grid_service{db_name.lower()}'
+TARGET_QUEUE = "grid_service_clairgrid_test"
 LOGGER = logging.getLogger(__name__)
 
 def test_ping_service(rpc_client):
     """
     Test that the service is reachable and responds to a basic request.
-    Assumes the service is running and listening on 'grid_service_requests_tests'.
+    Assumes the service is running and listening on 'grid_service_tests'.
     """
     payload = {
         "command": "ping",

@@ -6,7 +6,6 @@ export class Focus {
   #row?: RowType | undefined = $state(undefined)
 
   reset = () => {
-    console.log("[Focus.reset()]")
     this.#grid = undefined
     this.#column = undefined
     this.#row = undefined

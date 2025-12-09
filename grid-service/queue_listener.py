@@ -19,7 +19,7 @@ class QueueListener(ConfigurationMixin):
     """
     def __init__(self, db_manager):
         self.db_manager = db_manager
-        self.queue_name = f'grid_service_requests_{self.db_manager.db_name.lower()}'
+        self.queue_name = f'grid_service_{self.db_manager.db_name.lower()}'
         self.load_configuration()
 
     def load_configuration(self):
@@ -38,8 +38,8 @@ class QueueListener(ConfigurationMixin):
         Processes the parsed request using a match statement.
         """
         match request.get('command'):
-            case 'ping':
-                return { "status": metadata.SuccessStatus, "message": "Pong" }
+            case metadata.ActionHeartbeat:
+                return { "status": metadata.SuccessStatus }
             case _:
                 return { "status": metadata.FailedStatus, "message": "Unknown command" }
 

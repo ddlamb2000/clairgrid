@@ -26,7 +26,7 @@ class TestQueueListener(unittest.TestCase):
     def test_init_config(self):
         """Test configuration loading in init."""
         self.assertEqual(self.listener.rabbitmq_host, "localhost")
-        self.assertEqual(self.listener.queue_name, "grid_service_requests_test_db")
+        self.assertEqual(self.listener.queue_name, "grid_service_test_db")
 
     def test_on_request_success(self):
         """Test on_request handling a valid message."""

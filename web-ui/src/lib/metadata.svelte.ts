@@ -1,4 +1,5 @@
-export const ActionHeartbeat = "ping"
+export const ActionInitialization = "init"
+export const ActionHeartbeat = "heartbeat"
 export const ActionAuthentication = "authentication"
 export const ActionLoad = "load"
 export const ActionChangeGrid = "change"

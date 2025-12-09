@@ -6,7 +6,6 @@ import { ContextBase } from '$lib/contextBase.svelte.ts'
 import type { GridResponse, RowType, ColumnType, GridType, ReferenceType } from '$lib/apiTypes'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { replaceState } from "$app/navigation"
-import type { RequestContent } from '$lib/apiTypes'
 import { Focus } from '$lib/focus.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
 
@@ -406,13 +405,11 @@ export class Context extends ContextBase {
   }
 
   reset = () => {
-    console.log("[Context.reset()]")
     this.focus.reset()
     this.isSending = false
   }
   
   purge = () => {
-    console.log("[Context.purge()]")
     this.user.reset()
     this.reset()
     this.dataSet = []
@@ -450,51 +447,74 @@ export class Context extends ContextBase {
       console.error(`Failed to fetch stream from ${uri}`)
       return
     }
-    const socketName = 'ws://localhost:5174'
-    const socket = new WebSocket(socketName)
-    socket.onopen = () => {
-      console.log(`WebSocket ${socketName} opened for incoming messages`)
-    }
-    socket.onmessage = (event) => {
-      try {
-        const json = JSON.parse(event.data)
-        if(json) {
-          // const message: ResponseContent = JSON.parse(json.value)
-          // const fromHeader = String.fromCharCode(...json.headers.from.data)
-          // const contextUuid = String.fromCharCode(...json.headers.contextUuid.data)
-          // const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
-          const now = (new Date).toISOString()
-          const nowDate = Date.parse(now)
-          const requestInitiatedOnDate = Date.parse(json.requestInitiatedOn)
-          const elapsedMs = nowDate - requestInitiatedOnDate
-          // console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
-          console.log(`[<] (${elapsedMs} ms)`, json)
-          this.trackResponse({
-            correlationId: json.correlationId,
-            command: json.command,
-            commandText: json.commandText,
-            // responseNumber: message.responseNumber,
-            // textMessage: message.textMessage,
-            // gridUuid: message.gridUuid,
-            status: json.status,
-            // sameContext: contextUuid === this.getContextUuid(),
-            elapsedMs: elapsedMs,
-            dateTime: (new Date).toISOString()
-          })
-          // this.handleAction(json)
-        } else {
-          console.error(`Invalid message from ${socketName}`, json)
+    const utf8Decoder = new TextDecoder("utf-8")
+    let reader = response.body.getReader()
+    let { value: chunkUint8, done: readerDone } = await reader.read()
+    let chunk = chunkUint8 ? utf8Decoder.decode(chunkUint8, { stream: true }) : ""
+    let re = /\r\n|\n|\r/gm
+    let startIndex = 0
+
+    for (;;) {
+      const chunkString =  chunk !== undefined ? chunk.toString() : ""
+      if(chunkString.endsWith(metadata.StopString)) {
+        chunk = ""
+        const chunks = chunkString.split(metadata.StopString)
+        for(const chunkPartial of chunks) {
+          if(chunkPartial.length > 0) {
+            try {
+              const json = JSON.parse(chunkPartial)
+              if(json.command && json.command === metadata.ActionInitialization) {
+                console.log("Stream initialized")
+                this.trackResponse({
+                  command: metadata.ActionInitialization,
+                  status: metadata.SuccessStatus,
+                  textMessage: "Stream initialized",
+                  dateTime: (new Date).toISOString()
+                })
+              } else if(json) {
+                const now = (new Date).toISOString()
+                const nowDate = Date.parse(now)
+                const requestInitiatedOnDate = Date.parse(json.requestInitiatedOn)
+                const elapsedMs = nowDate - requestInitiatedOnDate
+                console.log(`[<] (${elapsedMs} ms)`, json)
+                this.trackResponse({
+                  correlationId: json.correlationId,
+                  command: json.command,
+                  commandText: json.commandText,
+                  // responseNumber: message.responseNumber,
+                  // textMessage: message.textMessage,
+                  // gridUuid: message.gridUuid,
+                  status: json.status,
+                  // sameContext: contextUuid === this.getContextUuid(),
+                  elapsedMs: elapsedMs,
+                  dateTime: (new Date).toISOString()
+                })
+                await this.handleAction(json)
+              } else {
+                console.error(`Invalid message from ${uri}`, json)
+              }
+            } catch(error) {
+              console.log(`Data from stream ${uri} is incorrect`, error, chunkPartial)
+            }
+          }
         }
-      } catch(error) {
-        console.log(`Data from stream ${socketName} is incorrect`, error, event.data)
       }
+
+      let result = re.exec(chunk)
+      if(!result) {
+        if (readerDone) break
+        let remainder = chunk.substring(startIndex)
+        {
+          ({ value: chunkUint8, done: readerDone } = await reader.read())
+        }
+        chunk = remainder + (chunkUint8 ? utf8Decoder.decode(chunkUint8, { stream: true }) : "")
+        startIndex = re.lastIndex = 0
+        continue
+      }
+      yield chunk.substring(startIndex, result.index)
+      startIndex = re.lastIndex
     }
-    socket.onerror = (error) => {
-      console.error(`WebSocket ${socketName} error for incoming messages:`, error)
-    }
-    socket.onclose = () => {
-      console.log(`WebSocket ${socketName} closed for incoming messages`)
-    }
+      if(startIndex < chunk.length) yield chunk.substring(startIndex)
   }
 
   handleAction = async (message: ResponseContent) => {
@@ -576,13 +596,15 @@ export class Context extends ContextBase {
     this.isStreaming = true
     this.#hearbeatId = setInterval(() => { this.sendMessage({ command: metadata.ActionHeartbeat }) }, heartbeatFrequency)
     this.#timeOutCheckId = setInterval(() => { this.updateTimeedOutRequests(timeOutCheckFrequency) }, timeOutCheckFrequency)
-    for await (let line of this.getStreamIteration(uri)) {}
-  }  
-
-  stopStreaming = () => {
-    this.isStreaming = false
-    if(this.#hearbeatId) clearInterval(this.#hearbeatId)
-    if(this.#timeOutCheckId) clearInterval(this.#timeOutCheckId)
-    if(this.reader && this.reader !== undefined) this.reader.cancel()
+    try {
+      for await (let line of this.getStreamIteration(uri)) { }
+    } catch (error) {
+      console.log(`Streaming from ${uri} stopped`)
+    } finally {
+      this.isStreaming = false
+      if(this.#hearbeatId) clearInterval(this.#hearbeatId)
+      if(this.#timeOutCheckId) clearInterval(this.#timeOutCheckId)
+      if(this.reader && this.reader !== undefined) this.reader.cancel()
+    }
   }
 }

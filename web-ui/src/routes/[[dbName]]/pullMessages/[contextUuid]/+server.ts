@@ -4,6 +4,7 @@
 import { env } from "$env/dynamic/private"
 import { connect } from 'amqplib'
 import { WebSocketServer, WebSocket } from 'ws'
+import * as metadata from '$lib/metadata.svelte'
 
 let consumerCount = 0
 let webSocketServer: WebSocketServer | null = null
@@ -31,8 +32,8 @@ export const GET = async ({ params, request, url }) => {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        const requestQueueName = `grid_service_requests_${params.dbName}`
-        const callBackQueueName = `grid_service_replies_${params.dbName}_${params.contextUuid}`
+        const requestQueueName = `grid_service_${params.dbName?.toLocaleLowerCase()}`
+        const callBackQueueName = params.contextUuid
 
         if(consumerCount > 0 && webSocketServer !== null) {
           console.log(`socket(${consumerCount}): webSocketServer already initialized`)
@@ -40,10 +41,11 @@ export const GET = async ({ params, request, url }) => {
           await initInfrastructure(requestQueueName, callBackQueueName)
         }
         consumerCount += 1
-        controller.enqueue(".")
+        controller.enqueue(JSON.stringify({command: metadata.ActionInitialization}) + metadata.StopString)
+        console.log(`socket(${consumerCount}): stream initialized`)
 
         initWebSocket(controller, requestQueueName, callBackQueueName)
-        initCallbackConsumer()
+        initCallbackConsumer(controller)
       } catch (error) {
         console.error(`socket(${consumerCount}) error connecting/subscribing:`, error)
         controller.error(error)
@@ -109,13 +111,12 @@ const initWebSocket = (controller: ReadableStreamDefaultController, requestQueue
   if(webSocketServer !== null) {
     webSocketServer.on('connection', (ws) => {
       ws.on('message', (message) => {
-        controller.enqueue(".")
         try {
           const data = JSON.parse(message.toString())
           console.log(`socket(${consumerCount}) <socket ${data.requestUuid} ${message.toString()}`)
           const sent = requestChannel.sendToQueue(requestQueueName, Buffer.from(message.toString()), {
             correlationId: data.requestUuid,
-            replyTo: callBackQueueName 
+            replyTo: data.contextUuid
           })
           if(sent) {
             console.log(`socket(${consumerCount}) >queue ${data.requestUuid} to ${requestQueueName}`)
@@ -136,20 +137,14 @@ const initWebSocket = (controller: ReadableStreamDefaultController, requestQueue
 /**
  * Initializes the callback consumer to handle messages from RabbitMQ.
  */
-const initCallbackConsumer = () => {
+const initCallbackConsumer = (controller: ReadableStreamDefaultController) => {
   if(callBackChannel !== null && callBackQueue !== null) {
     callBackChannel.consume(callBackQueue.queue, (message: any) => {
       if(message) {
         const content = message.content.toString()
         console.log(`socket(${consumerCount}) <queue  ${content}`)
-        if(webSocketServer !== null) {
-          webSocketServer.clients.forEach((client) => {
-            if(client.readyState === WebSocket.OPEN) {
-              client.send(content)
-              console.log(`socket(${consumerCount}) >socket ${content}`)
-            }
-          })
-        }
+        controller.enqueue(content + metadata.StopString)
+        console.log(`socket(${consumerCount}) >stream ${content}`)
         callBackChannel.ack(message)
       }
     })
