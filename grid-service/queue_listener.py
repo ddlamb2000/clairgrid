@@ -21,6 +21,7 @@ class QueueListener(ConfigurationMixin):
         self.db_manager = db_manager
         self.queue_name = f'grid_service_{self.db_manager.db_name.lower()}'
         self.load_configuration()
+        self._init_command_handlers()
 
     def load_configuration(self):
         """
@@ -32,16 +33,52 @@ class QueueListener(ConfigurationMixin):
         self.rabbitmq_password_file = os.getenv("RABBITMQ_PASSWORD_FILE")
         self.rabbitmq_password = self._read_password_file(self.rabbitmq_password_file, "RABBITMQ_PASSWORD_FILE")
 
+    def _init_command_handlers(self):
+        self.command_handlers = {
+            metadata.ActionHeartbeat: self._handle_heartbeat,
+            metadata.ActionAuthentication: self._handle_authentication,
+            metadata.ActionLoad: self._handle_load,
+            metadata.ActionChangeGrid: self._handle_change_grid,
+            metadata.ActionLocateGrid: self._handle_locate_grid,
+            metadata.ActionPrompt: self._handle_prompt,
+        }
+
+    @echo
+    def _handle_heartbeat(self, request):
+        return { "status": metadata.SuccessStatus }
+
+    @echo
+    def _handle_authentication(self, request):
+        return { "status": metadata.FailedStatus, "message": "Not implemented" }
+
+    @echo
+    def _handle_load(self, request):
+        return { "status": metadata.FailedStatus, "message": "Not implemented" }
+
+    @echo
+    def _handle_change_grid(self, request):
+        return { "status": metadata.FailedStatus, "message": "Not implemented" }
+
+    @echo
+    def _handle_locate_grid(self, request):
+        return { "status": metadata.FailedStatus, "message": "Not implemented" }
+
+    @echo
+    def _handle_prompt(self, request):
+        return { "status": metadata.FailedStatus, "message": "Not implemented" }
+
     @echo
     def process_request(self, request):
         """
-        Processes the parsed request using a match statement.
+        Processes the parsed request using a dictionary of command handlers.
         """
-        match request.get('command'):
-            case metadata.ActionHeartbeat:
-                return { "status": metadata.SuccessStatus }
-            case _:
-                return { "status": metadata.FailedStatus, "message": "Unknown command" }
+        command = request.get('command')
+        handler = self.command_handlers.get(command)
+        
+        if handler:
+            return handler(request)
+        else:
+            return { "status": metadata.FailedStatus, "message": "Unknown command" }
 
     @echo
     def on_request(self, ch, method, props, body):
