@@ -1,7 +1,7 @@
 {
 	"/": [],
-	"/[[dbName]]/pullMessages/[contextUuid]": [
-		"src/routes/[[dbName]]/pullMessages/[contextUuid]/+server.ts"
+	"/[[dbName]]/[contextUuid]/streaming": [
+		"src/routes/[[dbName]]/[contextUuid]/streaming/+server.ts"
 	],
 	"/[[dbName]]/[[gridUuid]]/[[uuid]]": [
 		"src/routes/[[dbName]]/[[gridUuid]]/[[uuid]]/+page.server.ts"

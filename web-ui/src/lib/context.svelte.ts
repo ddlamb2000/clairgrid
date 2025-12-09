@@ -590,7 +590,7 @@ export class Context extends ContextBase {
   }
 
   startStreaming = async () => {
-    const uri = `/${this.dbName}/pullMessages/${this.getContextUuid()}`
+    const uri = `/${this.dbName}/${this.getContextUuid()}/streaming`
     this.user.checkLocalToken()
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
