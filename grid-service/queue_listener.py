@@ -12,6 +12,7 @@ import pika
 import metadata
 from configuration_mixin import ConfigurationMixin
 from decorators import echo
+from authentication_handler import AuthenticationHandler
 
 class QueueListener(ConfigurationMixin):
     """
@@ -21,6 +22,7 @@ class QueueListener(ConfigurationMixin):
         self.db_manager = db_manager
         self.queue_name = f'grid_service_{self.db_manager.db_name.lower()}'
         self.load_configuration()
+        self.authentication_handler = AuthenticationHandler(self.db_manager)
         self._init_command_handlers()
 
     def load_configuration(self):
@@ -36,7 +38,7 @@ class QueueListener(ConfigurationMixin):
     def _init_command_handlers(self):
         self.command_handlers = {
             metadata.ActionHeartbeat: self._handle_heartbeat,
-            metadata.ActionAuthentication: self._handle_authentication,
+            metadata.ActionAuthentication: self.authentication_handler.handle,
             metadata.ActionLoad: self._handle_load,
             metadata.ActionChangeGrid: self._handle_change_grid,
             metadata.ActionLocateGrid: self._handle_locate_grid,
@@ -46,10 +48,6 @@ class QueueListener(ConfigurationMixin):
     @echo
     def _handle_heartbeat(self, request):
         return { "status": metadata.SuccessStatus }
-
-    @echo
-    def _handle_authentication(self, request):
-        return { "status": metadata.FailedStatus, "message": "Not implemented" }
 
     @echo
     def _handle_load(self, request):

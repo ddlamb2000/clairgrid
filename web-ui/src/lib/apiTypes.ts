@@ -30,6 +30,7 @@ export interface ReplyType {
   from?: string
   url?: string
   dbName?: string
+  loginId?: string
   userUuid?: string
   user?: string
 	firstName?: string

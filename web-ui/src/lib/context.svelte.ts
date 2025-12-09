@@ -521,11 +521,11 @@ export class Context extends ContextBase {
     if(message.command == metadata.ActionAuthentication) {
       if(message.status == metadata.SuccessStatus) {
         if(message.jwt && this.user.checkToken(message.jwt)) {
-          console.log(`Logged in: ${message.firstName} ${message.lastName}`)
+          console.log(`Logged in: ${message.user}`)
           this.user.setToken(message.jwt)
           this.mount()
         } else {
-          console.error(`Invalid token for ${message.firstName}`)
+          console.error(`Token is missing or invalid for user ${message.loginId}`)
         }
       } else {
         this.user.removeToken()

@@ -9,6 +9,7 @@ import os
 import psycopg
 from migration_steps import get_migration_steps, get_deletion_steps
 from configuration_mixin import ConfigurationMixin
+from decorators import echo
 
 class DatabaseManager(ConfigurationMixin):
     """
@@ -134,6 +135,22 @@ class DatabaseManager(ConfigurationMixin):
             self.conn.rollback()
 
         return latestMigrationSequence
+
+    @echo
+    def select(self, statement):
+        result = None
+        if self.conn is None or self.conn.closed:
+             raise Exception("Database connection not established. Call connect() first.")
+
+        with self.conn.cursor() as cur:
+            try:
+                cur.execute(statement)
+                result = cur.fetchone()
+
+            except psycopg.Error as e:
+                print(f"Error selecting from database: {e}")
+
+        return result
 
     def _execute_migration_step(self, cur, sequence, statement):
         """
