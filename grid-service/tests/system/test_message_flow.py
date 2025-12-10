@@ -14,10 +14,12 @@ def test_ping_service(rpc_client):
     Assumes the service is running and listening on 'grid_service_tests'.
     """
     payload = {
-        "command": "ping",
-        "data": {
-            "timestamp": "2023-10-27T10:00:00Z"
-        }
+        "command": "heartbeat",
+        "requestInitiatedOn": "2025-12-10T10:00:00Z",
+        "requestUuid": "1234567890",
+        "contextUuid": "1234567890",
+        "from": "test",
+        "dbName": "tests"
     }
     
     try:
@@ -27,8 +29,7 @@ def test_ping_service(rpc_client):
         assert response is not None
         assert "status" in response
         assert response["status"] == "success"
-        assert "Pong" in response["message"]
-        assert response["command"] == "ping"
+        assert response["command"] == "heartbeat"
         
     except TimeoutError:
         pytest.fail(f"Service did not respond on queue {TARGET_QUEUE}. Is the service running with DB_NAME=tests?")

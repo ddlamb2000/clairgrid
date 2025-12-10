@@ -12,7 +12,6 @@ import pika
 import metadata
 from configuration_mixin import ConfigurationMixin
 from decorators import echo
-from authentication_handler import AuthenticationHandler
 
 class QueueListener(ConfigurationMixin):
     """
@@ -22,7 +21,6 @@ class QueueListener(ConfigurationMixin):
         self.db_manager = db_manager
         self.queue_name = f'grid_service_{self.db_manager.db_name.lower()}'
         self.load_configuration()
-        self.authentication_handler = AuthenticationHandler(self.db_manager)
         self._init_command_handlers()
 
     def load_configuration(self):
@@ -38,7 +36,7 @@ class QueueListener(ConfigurationMixin):
     def _init_command_handlers(self):
         self.command_handlers = {
             metadata.ActionHeartbeat: self._handle_heartbeat,
-            metadata.ActionAuthentication: self.authentication_handler.handle,
+            metadata.ActionAuthentication: self._handle_authentication,
             metadata.ActionLoad: self._handle_load,
             metadata.ActionChangeGrid: self._handle_change_grid,
             metadata.ActionLocateGrid: self._handle_locate_grid,
@@ -64,6 +62,37 @@ class QueueListener(ConfigurationMixin):
     @echo
     def _handle_prompt(self, request):
         return { "status": metadata.FailedStatus, "message": "Not implemented" }
+
+    @echo
+    def _handle_authentication(self, request):
+        result = self.db_manager.select(
+            '''SELECT 1
+                    FROM information_schema.tables
+                    WHERE table_schema = 'public'
+                    AND table_name = 'migrations'
+            '''
+		# "SELECT uuid, " +
+		# 	"text2, " +
+		# 	"text3 " +
+		# 	"FROM users " +
+		# 	"WHERE gridUuid = $1 " +
+		# 	"AND enabled = true " +
+		# 	"AND text1 = $2 " +
+		# 	"AND text4 = crypt($3, text4)"
+
+
+        )
+        if result:
+            return { 
+                "status": metadata.SuccessStatus, 
+                "message": "Authentication successful", 
+                "loginId": request['loginId'] 
+            }
+        else:
+            return { 
+                "status": metadata.FailedStatus,
+                "loginId": request['loginId'],
+                "message": "Invalid username or passphrase" }
 
     @echo
     def process_request(self, request):
@@ -105,7 +134,7 @@ class QueueListener(ConfigurationMixin):
             except Exception as e:
                 reply = reply | {"status": "error", "can't process request, message": str(e)}
         except Exception as e:
-            reply = {"status": "error", "invalid request, message": str(e)}
+            reply = {"status": "error", "message": f"invalid request: {str(e)}"}
             print(f">reply {reply}", flush=True)
 
         if props.reply_to and reply:

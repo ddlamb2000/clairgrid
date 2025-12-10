@@ -37,7 +37,14 @@ class TestQueueListener(unittest.TestCase):
         mock_props.reply_to = "reply_queue"
         mock_props.correlation_id = "123"
         
-        body = json.dumps({"command": "ping"}).encode('utf-8')
+        body = json.dumps({
+            "command": "heartbeat",
+            "requestInitiatedOn": "2025-12-10T10:00:00Z",
+            "requestUuid": "11",
+            "contextUuid": "1234567890",
+            "from": "test",
+            "dbName": "tests"
+        }).encode('utf-8')
         
         self.listener.on_request(mock_ch, mock_method, mock_props, body)
         
@@ -54,7 +61,7 @@ class TestQueueListener(unittest.TestCase):
         # Check body
         response = json.loads(kwargs['body'])
         self.assertEqual(response['status'], 'success')
-        self.assertEqual(response['command'], 'ping')
+        self.assertEqual(response['command'], 'heartbeat')
         
         # Verify ack
         mock_ch.basic_ack.assert_called_once_with(delivery_tag=mock_method.delivery_tag)
@@ -65,6 +72,7 @@ class TestQueueListener(unittest.TestCase):
         mock_method = MagicMock()
         mock_props = MagicMock()
         mock_props.reply_to = "reply_queue"
+        mock_props.correlation_id = "123"
         
         body = b"invalid json"
         
@@ -76,9 +84,11 @@ class TestQueueListener(unittest.TestCase):
         
         response = json.loads(kwargs['body'])
         self.assertEqual(response['status'], 'error')
+        self.assertEqual(response['message'], 'invalid request: Expecting value: line 1 column 1 (char 0)')
+
         
         # Verify ack
-        mock_ch.basic_ack.assert_called_once()
+        mock_ch.basic_ack.assert_called_once_with(delivery_tag=mock_method.delivery_tag)
 
     @patch("queue_listener.pika.BlockingConnection")
     @patch("queue_listener.time.sleep")

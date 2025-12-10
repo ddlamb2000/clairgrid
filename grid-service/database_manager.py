@@ -24,7 +24,7 @@ class DatabaseManager(ConfigurationMixin):
         self.conn = None
         self.load_configuration()        
         self.connect()
-        if self.db_name == "clairgrid_test": self.run_deletions()
+        # if self.db_name == "clairgrid_test": self.run_deletions()
         self.run_migrations()
 
     def load_configuration(self):
