@@ -1,5 +1,8 @@
 {
 	"/": [],
+	"/[[dbName]]/[contextUuid]/send": [
+		"src/routes/[[dbName]]/[contextUuid]/send/+server.ts"
+	],
 	"/[[dbName]]/[contextUuid]/streaming": [
 		"src/routes/[[dbName]]/[contextUuid]/streaming/+server.ts"
 	],

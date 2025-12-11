@@ -8,7 +8,6 @@ import * as metadata from "$lib/metadata.svelte"
 import { newUuid } from './utils.svelte'
 
 const messageStackLimit = 500
-const socketName = 'ws://localhost:5174'
 
 export class ContextBase {
   #contextUuid: string = $state(newUuid())
@@ -60,14 +59,20 @@ export class ContextBase {
         dateTime: (new Date).toISOString()
       })
 
-      const webSocket = new WebSocket(socketName)
-      webSocket.onopen = () => {
-        this.messageStatus = 'Sending'
-        console.log(`[>]`, request)
-        webSocket.send(JSON.stringify(request))
-        webSocket.close()
-        this.messageStatus = ''
-      }
+      const uri = `/${this.dbName}/${this.#contextUuid}/send`
+      this.messageStatus = 'Sending'
+      console.log(`[>]`, request)
+      const response = await fetch(uri, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + this.user.getToken()
+        },
+        body: JSON.stringify(request)
+      })
+      const data = await response.json()
+      if (!response.ok) this.messageStatus = data.error || 'Failed to send message'
+      else this.messageStatus = data.message
     } catch (error) {
       console.error('Error sending message:', error)
       this.messageStatus = 'Error'

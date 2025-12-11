@@ -454,7 +454,7 @@ export class Context extends ContextBase {
     let re = /\r\n|\n|\r/gm
     let startIndex = 0
 
-    for (;;) {
+    for(;;) {
       const chunkString =  chunk !== undefined ? chunk.toString() : ""
       if(chunkString.endsWith(metadata.StopString)) {
         chunk = ""
@@ -502,7 +502,7 @@ export class Context extends ContextBase {
 
       let result = re.exec(chunk)
       if(!result) {
-        if (readerDone) break
+        if(readerDone) break
         let remainder = chunk.substring(startIndex)
         {
           ({ value: chunkUint8, done: readerDone } = await reader.read())
@@ -514,7 +514,7 @@ export class Context extends ContextBase {
       yield chunk.substring(startIndex, result.index)
       startIndex = re.lastIndex
     }
-      if(startIndex < chunk.length) yield chunk.substring(startIndex)
+    if(startIndex < chunk.length) yield chunk.substring(startIndex)
   }
 
   handleAction = async (message: ResponseContent) => {
