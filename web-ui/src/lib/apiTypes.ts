@@ -18,6 +18,10 @@ export interface RequestType {
   gridUuid?: string
   rowUuid?: string
   columnUuid?: string
+  answered?: boolean
+  timeOut?: boolean
+  elapsedMs?: number
+  dateTime?: string
 }
 
 export interface ReplyType {
@@ -40,21 +44,11 @@ export interface ReplyType {
   gridUuid?: string
   rowUuid?: string
   columnUuid?: string
-}
-
-export interface TransactionItem {
-  requestUuid?: string,
-  command?: string
-  contextUuid?: string
-  commandText?: string
-  status?: string
-  message?: string
-  gridUuid?: string
-  dateTime?: string
-  sameContext?: boolean
   answered?: boolean
   timeOut?: boolean
   elapsedMs?: number
+  dateTime?: string
+  sameContext?: boolean
 }
 
 export interface TransactionType {

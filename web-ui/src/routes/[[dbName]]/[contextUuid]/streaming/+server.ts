@@ -34,6 +34,7 @@ export const GET = async ({ params, request, url }) => {
           from: 'clairgrid api', 
           url: url.toString(), 
           command: metadata.ActionInitialization, 
+          commandText: 'Initialization'
         })
         console.log(`streaming: stream initialized`)
       } catch (error) {

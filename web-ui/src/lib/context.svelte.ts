@@ -31,7 +31,7 @@ export class Context extends ContextBase {
     this.sendMessage(
       {
         command: metadata.ActionAuthentication,
-        commandText: 'Login',
+        commandText: `Login ${loginId}`,
         loginId: loginId,
         passwordHash: btoa(loginPassword)
       }
@@ -508,7 +508,7 @@ export class Context extends ContextBase {
     if(startIndex < chunk.length) yield chunk.substring(startIndex)
   }
 
-  handleAction = async (message: ResponseContent) => {
+  handleAction = async (message: ReplyType) => {
     if(message.command == metadata.ActionAuthentication) {
       if(message.status == metadata.SuccessStatus) {
         if(message.jwt && this.user.checkToken(message.jwt)) {
@@ -585,7 +585,7 @@ export class Context extends ContextBase {
     this.user.checkLocalToken()
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
-    this.#hearbeatId = setInterval(() => { this.sendMessage({ command: metadata.ActionHeartbeat }) }, heartbeatFrequency)
+    this.#hearbeatId = setInterval(() => { this.sendMessage({ command: metadata.ActionHeartbeat, commandText: 'Heartbeat' }) }, heartbeatFrequency)
     this.#timeOutCheckId = setInterval(() => { this.updateTimeedOutRequests(timeOutCheckFrequency) }, timeOutCheckFrequency)
     try {
       for await (let line of this.getStreamIteration(uri)) { }

@@ -8,7 +8,7 @@
 {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
   {#if context.hasDataSet() && context.focus.hasFocus()}
     <Badge color="blue" rounded class="px-2.5">{@html context.focus.getGridName()}</Badge>
-    <ResponseMessage response={context.getGridLastResponse()} />
+    <ResponseMessage reply={context.getGridLastResponse()} />
     {#if context.focus.hasColumn()}
       <Badge color="indigo" rounded class="px-2.5">{@html context.focus.getColumnName()} ({@html context.focus.getColumnType()})</Badge>
     {/if}
@@ -18,8 +18,6 @@
       <Badge color="dark" rounded class="px-2.5">Updated on <DateTime dateTime={context.focus.getUpdateDate()} /></Badge>
     {/if}
   {:else}
-    <ResponseMessage response={context.getGridLastResponse()} />
+    <ResponseMessage reply={context.getGridLastResponse()} />
   {/if}
-{:else}
-  <ResponseMessage response={context.getNonGridLastFailResponse()} />
 {/if}

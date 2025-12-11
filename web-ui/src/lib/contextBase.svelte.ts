@@ -1,7 +1,7 @@
 // clairgrid : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-import type { RequestType, TransactionItem, Transaction } from '$lib/apiTypes'
+import type { ReplyType, RequestType, TransactionType } from '$lib/apiTypes'
 import { UserPreferences } from '$lib/userPreferences.svelte.ts'
 import { User } from '$lib//user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
@@ -18,7 +18,7 @@ export class ContextBase {
   uuid: string = $state("")
   isSending: boolean = $state(false)
   messageStatus: string = $state("")
-  messageStack: Transaction[] = $state([{}])
+  messageStack: TransactionType[] = $state([{}])
   url: string = $state("")
 
   constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
@@ -81,29 +81,29 @@ export class ContextBase {
     }
   }
 
-  trackRequest = (request: TransactionItem) => {
+  trackRequest = (request: RequestType) => {
     this.messageStack.push({request : request})
     if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
   }
 
-  trackResponse = (response: TransactionItem) => {
-    const initialRequest = this.messageStack.find((r) => r.request && !r.request.answered && !r.request.timeOut && r.request.correlationId == response.correlationId)
+  trackResponse = (response: ReplyType) => {
+    const initialRequest = this.messageStack.find((r) => r.request && !r.request.answered && !r.request.timeOut && r.request.requestUuid == response.requestUuid)
     if(initialRequest && initialRequest.request) initialRequest.request.answered = true
-    const responseIndex = this.messageStack.findIndex((r) => r.response && r.response.correlationId == response.correlationId)
+    const responseIndex = this.messageStack.findIndex((r) => r.reply && r.reply.requestUuid == response.requestUuid)
     if(response.command === metadata.ActionPrompt) {
-      if(response.textMessage) {
+      if(response.message) {
         if(responseIndex >= 0) {
-          if(this.messageStack[responseIndex].response && this.messageStack[responseIndex].response.textMessage) {
-            this.messageStack[responseIndex].response.textMessage = this.messageStack[responseIndex].response.textMessage + response.textMessage
-            this.messageStack[responseIndex].response.dateTime = response.dateTime
-            this.messageStack[responseIndex].response.elapsedMs = response.elapsedMs
+          if(this.messageStack[responseIndex].reply && this.messageStack[responseIndex].reply.message) {
+            this.messageStack[responseIndex].reply.message = this.messageStack[responseIndex].reply.message + response.message
+            this.messageStack[responseIndex].reply.dateTime = response.dateTime
+            this.messageStack[responseIndex].reply.elapsedMs = response.elapsedMs
           }
         }
-        else this.messageStack.push({response : response})
+        else this.messageStack.push({reply : response})
       }
     }
     else {
-      this.messageStack.push({response : response})
+      this.messageStack.push({reply : response})
     }
     if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 25)
   }
@@ -124,21 +124,21 @@ export class ContextBase {
   }
 
   getGridLastResponse = () => {
-    return this.messageStack.findLast((r) =>
-      r.response 
-      && r.response.gridUuid === this.gridUuid
-      && r.response.sameContext 
-      && (r.response.command === metadata.ActionLoad || r.response.command === metadata.ActionChangeGrid)
-    )
+    return [...this.messageStack].reverse().find((r) =>
+      r.reply 
+      && r.reply.gridUuid === this.gridUuid
+      && r.reply.sameContext 
+      && (r.reply.command === metadata.ActionLoad || r.reply.command === metadata.ActionChangeGrid)
+    )?.reply
   }
 
   getNonGridLastFailResponse = () => {
-    const last = this.messageStack.findLast((r) =>
-      r.response 
-      && r.response.sameContext
-      && r.response.command !== metadata.ActionHeartbeat
+    const last = [...this.messageStack].reverse().find((r) =>
+      r.reply 
+      && r.reply.sameContext
+      && r.reply.command !== metadata.ActionHeartbeat
     )
-    if(last && last.response && last.response.status === metadata.FailedStatus && !last.response.gridUuid) return last
+    if(last && last.reply && last.reply.status === metadata.FailedStatus && !last.reply.gridUuid) return last.reply
     else return undefined
   }
 }

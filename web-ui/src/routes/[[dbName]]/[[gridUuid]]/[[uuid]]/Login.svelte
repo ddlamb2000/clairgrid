@@ -35,7 +35,7 @@
           </div>
         </div>
         <div class="mt-2 font-semibold">
-          <ResponseMessage response={context.getNonGridLastFailResponse()} />
+          <ResponseMessage reply={context.getNonGridLastFailResponse()} />
         </div>
         <Button type="submit" color="blue" size="md" class="w-full" onclick={() => context.authentication(loginId, loginPassword)}>
             Sign in
