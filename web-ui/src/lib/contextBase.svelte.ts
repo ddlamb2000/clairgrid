@@ -34,8 +34,8 @@ export class ContextBase {
   sendMessage = async (request: RequestType) => {
     this.isSending = true
     request.requestUuid = newUuid()
-    request.contextUuid = this.#contextUuid
     request.dbName = this.dbName
+    request.contextUuid = this.#contextUuid
     request.requestInitiatedOn = (new Date).toISOString()
     request.from = 'clairgrid frontend'
     request.url = this.url
@@ -53,12 +53,12 @@ export class ContextBase {
     }
     try {
       this.trackRequest({
-        correlationId: request.requestUuid,
+        requestUuid: request.requestUuid,
+        contextUuid: request.contextUuid,
         command: request.command,
         commandText: request.commandText,
         dateTime: (new Date).toISOString()
       })
-
       const uri = `/${this.dbName}/${this.#contextUuid}/send`
       this.messageStatus = 'Sending'
       console.log(`[>]`, request)

@@ -3,10 +3,10 @@
 
 export interface RequestType {
   requestUuid?: string
+  dbName?: string
   contextUuid?: string
   from?: string
   url?: string
-  dbName?: string
   userUuid?: string
   user?: string
   jwt?: string
@@ -41,6 +41,27 @@ export interface ReplyType {
   rowUuid?: string
   columnUuid?: string
 }
+
+export interface TransactionItem {
+  requestUuid?: string,
+  command?: string
+  contextUuid?: string
+  commandText?: string
+  status?: string
+  message?: string
+  gridUuid?: string
+  dateTime?: string
+  sameContext?: boolean
+  answered?: boolean
+  timeOut?: boolean
+  elapsedMs?: number
+}
+
+export interface TransactionType {
+  request?: RequestType
+  reply?: ReplyType
+}
+
 
 export interface MessageHeader {
   key: string
@@ -183,22 +204,3 @@ export interface GridResponse {
   filterColumnValue?: string
 }
 
-export interface TransactionItem {
-  correlationId?: string,
-  command?: string
-  commandText?: string
-  responseNumber?: number
-  textMessage?: string
-  status?: string
-  gridUuid?: string
-  dateTime?: string
-  sameContext?: boolean
-  answered?: boolean
-  timeOut?: boolean
-  elapsedMs?: number
-}
-
-export interface TransactionType {
-  request?: RequestType
-  reply?: ReplyType
-}

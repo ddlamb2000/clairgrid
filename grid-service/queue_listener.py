@@ -35,7 +35,8 @@ class QueueListener(ConfigurationMixin):
 
     def _init_command_handlers(self):
         self.command_handlers = {
-            metadata.ActionHeartbeat: self._handle_heartbeat,
+            metadata.ActionInitialization: self._handle_nothing,
+            metadata.ActionHeartbeat: self._handle_nothing,
             metadata.ActionAuthentication: self._handle_authentication,
             metadata.ActionLoad: self._handle_load,
             metadata.ActionChangeGrid: self._handle_change_grid,
@@ -44,7 +45,7 @@ class QueueListener(ConfigurationMixin):
         }
 
     @echo
-    def _handle_heartbeat(self, request):
+    def _handle_nothing(self, request):
         return { "status": metadata.SuccessStatus }
 
     @echo
@@ -66,21 +67,12 @@ class QueueListener(ConfigurationMixin):
     @echo
     def _handle_authentication(self, request):
         result = self.db_manager.select(
-            '''SELECT 1
-                    FROM information_schema.tables
-                    WHERE table_schema = 'public'
-                    AND table_name = 'migrations'
-            '''
-		# "SELECT uuid, " +
-		# 	"text2, " +
-		# 	"text3 " +
-		# 	"FROM users " +
-		# 	"WHERE gridUuid = $1 " +
-		# 	"AND enabled = true " +
-		# 	"AND text1 = $2 " +
-		# 	"AND text4 = crypt($3, text4)"
-
-
+            "SELECT uuid, text2, text3"
+            " FROM rows"
+            " WHERE gridUuid = $1"
+            " AND enabled = true"
+            " AND text1 = $2"
+            " AND text4 = crypt($3, text4)"
         )
         if result:
             return { 

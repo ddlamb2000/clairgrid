@@ -12,6 +12,7 @@ UuidMigrations = "18414786-31cb-47fd-bd18-fa474099bd94"
 UuidColumnTypes = "2114a6ae-013c-4bb1-be6e-3ee875ae517f"
 UuidRootUser = "3a33485c-7683-4482-aa5d-0aa51e58d79d"
 
+ActionInitialization = "init"
 ActionHeartbeat = "heartbeat"
 ActionAuthentication = "authentication"
 ActionLoad = "load"

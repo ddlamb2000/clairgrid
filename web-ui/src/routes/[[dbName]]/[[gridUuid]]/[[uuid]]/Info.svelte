@@ -18,7 +18,7 @@
             <Icon.AnnotationOutline class="w-4 h-4" />
             <div class="ps-2 text-xs font-normal">
               <p>
-                {message.request.correlationId}
+                {message.request.requestUuid}
                 {#if message.request.commandText}
                   <Badge color="blue" rounded class="px-2.5 py-0.5">
                     {message.request.commandText}
@@ -47,7 +47,7 @@
             {/if}
             <div class="ps-2 text-xs font-normal">
               <p>
-                {message.response.correlationId}
+                {message.response.requestUuid}
                 {#if message.response.commandText}
                   <Badge color="blue" rounded class="px-2.5 py-0.5">
                     {message.response.commandText}

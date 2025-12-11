@@ -463,29 +463,20 @@ export class Context extends ContextBase {
           if(chunkPartial.length > 0) {
             try {
               const json = JSON.parse(chunkPartial)
-              if(json.command && json.command === metadata.ActionInitialization) {
-                console.log("Stream initialized")
-                this.trackResponse({
-                  command: metadata.ActionInitialization,
-                  status: metadata.SuccessStatus,
-                  textMessage: "Stream initialized",
-                  dateTime: (new Date).toISOString()
-                })
-              } else if(json) {
+              if(json) {
                 const now = (new Date).toISOString()
                 const nowDate = Date.parse(now)
                 const requestInitiatedOnDate = Date.parse(json.requestInitiatedOn)
                 const elapsedMs = nowDate - requestInitiatedOnDate
                 console.log(`[<] (${elapsedMs} ms)`, json)
                 this.trackResponse({
-                  correlationId: json.correlationId,
+                  requestUuid: json.requestUuid,
                   command: json.command,
                   commandText: json.commandText,
-                  // responseNumber: message.responseNumber,
-                  // textMessage: message.textMessage,
-                  // gridUuid: message.gridUuid,
+                  message: json.message,
+                  gridUuid: json.gridUuid,
                   status: json.status,
-                  // sameContext: contextUuid === this.getContextUuid(),
+                  sameContext: json.contextUuid === this.getContextUuid(),
                   elapsedMs: elapsedMs,
                   dateTime: (new Date).toISOString()
                 })

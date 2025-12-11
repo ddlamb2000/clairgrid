@@ -2,7 +2,8 @@
 // Copyright David Lambert 2025
 
 import * as metadata from '$lib/metadata.svelte'
-import { initMessaging, closeMessaging, initCallbackConsumer } from '$lib/messaging'
+import { initMessaging, closeMessaging, initCallbackConsumer, sendMessage } from '$lib/messaging'
+import { newUuid } from '$lib/utils.svelte'
 
 /**
  * Handles the GET request to establish an SSE stream.
@@ -24,9 +25,17 @@ export const GET = async ({ params, request, url }) => {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        controller.enqueue(JSON.stringify({command: metadata.ActionInitialization}) + metadata.StopString)
-        console.log(`streaming: stream initialized`)
         initCallbackConsumer(controller)
+        await sendMessage({
+          requestUuid: newUuid(), 
+          dbName: params.dbName, 
+          contextUuid: params.contextUuid, 
+          requestInitiatedOn: (new Date).toISOString(),
+          from: 'clairgrid api', 
+          url: url.toString(), 
+          command: metadata.ActionInitialization, 
+        })
+        console.log(`streaming: stream initialized`)
       } catch (error) {
         console.error(`streaming: error connecting/subscribing:`, error)
         controller.error(error)
