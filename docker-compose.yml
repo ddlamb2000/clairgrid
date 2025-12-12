@@ -117,6 +117,36 @@ services:
       - db
       - rabbitmq
   
+  grid-service-sandbox:
+    build:
+      context: ./grid-service
+      dockerfile: Dockerfile.production
+    container_name: clairgrid-grid-service-sandbox
+    image: clairgrid-grid-service-sandbox
+    environment:
+      DB_HOST: db # name of the database host
+      DB_PORT: 5432 # TCP port number of the database host
+      DB_NAME: clairgrid_sandbox # name of the PostgreSQL database
+      DB_USER_NAME: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE: /run/secrets/db-password
+      TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
+      ROOT_USER_NAME: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE: /run/secrets/root-password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: clairgrid
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
+    secrets:
+      - db-password
+      - root-password
+      - rabbitmq-password
+    restart: unless-stopped
+    networks:
+      - clairgrid
+    depends_on:
+      - db
+      - rabbitmq
+
   grid-service-test-automation:
     build:
       context: ./grid-service
@@ -160,6 +190,30 @@ services:
       APPNAME: "clairgrid (development)"
       DATABASES: "clairgrid_master,clairgrid_test,clairgrid_sandbox"
       DEFAULTDB: "clairgrid_test"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: clairgrid
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
+    secrets:
+      - rabbitmq-password
+    networks:
+      - clairgrid
+    depends_on:
+      - rabbitmq
+
+  web-ui-sandbox:
+    build:
+      context: ./web-ui
+      dockerfile: Dockerfile.production
+    container_name: web-ui-sandbox
+    image: web-ui-sandbox
+    restart: unless-stopped
+    ports:
+      - "5174:3000"
+    environment:
+      APPNAME: "clairgrid (sandbox)"
+      DATABASES: "clairgrid_master,clairgrid_test,clairgrid_sandbox"
+      DEFAULTDB: "clairgrid_sandbox"
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid

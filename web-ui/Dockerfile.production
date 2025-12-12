@@ -1,0 +1,15 @@
+# clairgrid : data structuration, presentation and navigation.
+# Copyright David Lambert 2025
+
+FROM node:25-alpine3.22
+WORKDIR /usr/src/clairgrid/web-ui
+COPY src src
+COPY static static
+COPY package.json package.json
+COPY postcss.config.js postcss.config.js
+COPY svelte.config.js svelte.config.js
+COPY tailwind.config.ts tailwind.config.ts
+COPY tsconfig.json tsconfig.json
+COPY vite.config.ts vite.config.ts
+RUN npm install -g npm@11.6.1 && npm i -D @sveltejs/adapter-node && npm run build
+CMD ["sh", "-c", "export RABBITMQ_PASSWORD=$(cat /run/secrets/rabbitmq-password) && node build"]

@@ -1,8 +1,6 @@
 # clairgrid : data structuration, presentation and navigation.
 # Copyright David Lambert 2025
 
-# This file contains the Development Dockerfile for the clairgrid Grid Service.
-
 FROM python:3.14.2
 WORKDIR /usr/src/clairgrid/grid-service
 COPY requirements.txt .
