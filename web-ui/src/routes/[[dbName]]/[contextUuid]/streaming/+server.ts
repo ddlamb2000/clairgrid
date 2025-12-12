@@ -27,7 +27,7 @@ export const GET = async ({ params, request, url }) => {
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        initCallbackConsumer(contextUuid, controller)
+        initCallbackConsumer(dbName, contextUuid, controller)
         await sendMessage({
           requestUuid: newUuid(), 
           dbName: dbName, 
