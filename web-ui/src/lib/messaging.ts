@@ -3,13 +3,20 @@ import { connect } from 'amqplib'
 import * as metadata from '$lib/metadata.svelte'
 
 let connection: any = null
-let requestChannel: any = null  
-let requestQueueName: string = ""
-let callBackChannel: any = null  
-let callBackQueue: any = null
-let callBackQueueName: string = ""
+let requestChannels: Map<string, any> = new Map()
+let callBackChannels: Map<string, any> = new Map()
+let callBackQueues: Map<string, any> = new Map()
+
+const getRequestQueueName = (dbName: string) => `grid_service_${dbName.toLocaleLowerCase()}`
+const getCallBackQueueName = (contextUuid: string) => `callback_${contextUuid}`
+
+const logChannels = () => {
+  console.log(`Open request channels: ${Array.from(requestChannels.keys()).join(', ')}`)
+  console.log(`Open callback channels: ${Array.from(callBackChannels.keys()).join(', ')}`)
+}
 
 export const initMessaging = async (dbName: string, contextUuid: string) => {
+  console.log(`Initializing messaging for ${dbName} and ${contextUuid}`)
   if(connection === null) {
     connection = await connect({
       protocol: 'amqp',
@@ -19,23 +26,38 @@ export const initMessaging = async (dbName: string, contextUuid: string) => {
       password: env.RABBITMQ_PASSWORD,
     })
   }
-  if(requestChannel === null) {
-    requestQueueName = `grid_service_${dbName.toLocaleLowerCase()}`
-    requestChannel = await connection.createChannel()
+  if(!requestChannels.has(dbName)) {
+    const requestChannel = await connection.createChannel()
+    const requestQueueName = getRequestQueueName(dbName)
     await requestChannel.assertQueue(requestQueueName, { durable: false })
     console.log(`Request queue ${requestQueueName} declared`)
+    requestChannels.set(dbName, requestChannel)
   }
-  if(callBackChannel === null) {
-    callBackQueueName = `callback_${contextUuid}`
-    callBackChannel = await connection.createChannel()
-    callBackQueue = await callBackChannel.assertQueue(callBackQueueName, { exclusive: true })
+  if(!callBackChannels.has(contextUuid)) {
+    const callBackQueueName = getCallBackQueueName(contextUuid)
+    const channel = await connection.createChannel()
+    const queue = await channel.assertQueue(callBackQueueName, { exclusive: true })
     console.log(`Callback queue ${callBackQueueName} declared`)
-  }  
+    callBackChannels.set(contextUuid, channel)
+    callBackQueues.set(contextUuid, queue)
+  }
+  logChannels()
 }
 
 export const sendMessage = async (request: any) => {
   const requestText = JSON.stringify(request)
   console.log(`<api`, requestText)
+  const requestChannel = requestChannels.get(request.dbName)
+  const requestQueueName = getRequestQueueName(request.dbName)
+  if (!requestChannel) {
+    console.error(`send: no request channel for db ${request.dbName}`)
+    return
+  }
+  const callBackQueueName = getCallBackQueueName(request.contextUuid)
+  if (!callBackQueueName) {
+    console.error(`send: no call back queue for context ${request.contextUuid}`)
+    return
+  }
   const sent = await requestChannel.sendToQueue(requestQueueName, Buffer.from(requestText), {
     correlationId: request.requestUuid,
     replyTo: callBackQueueName
@@ -44,8 +66,10 @@ export const sendMessage = async (request: any) => {
   else console.error(`send: failed to send message to queue: ${requestQueueName} with callback queue ${callBackQueueName}`)
 }
 
-export const initCallbackConsumer = (controller: ReadableStreamDefaultController) => {
-  if(callBackChannel !== null && callBackQueue !== null) {
+export const initCallbackConsumer = (contextUuid: string, controller: ReadableStreamDefaultController) => {
+  const callBackChannel = callBackChannels.get(contextUuid)
+  const callBackQueue = callBackQueues.get(contextUuid)
+  if(callBackChannel && callBackQueue) {
     callBackChannel.consume(callBackQueue.queue, (message: any) => {
       if(message) {
         const content = message.content.toString()
@@ -58,12 +82,26 @@ export const initCallbackConsumer = (controller: ReadableStreamDefaultController
   }
 }
 
-export const closeMessaging = async () => {
-  console.log(`Closing connections and channels`)
-  if(requestChannel !== null) await requestChannel.close()
-  if(callBackChannel !== null) await callBackChannel.close()
-  if(connection !== null) await connection.close()
-  requestChannel = null
-  callBackChannel = null
-  connection = null
+export const closeMessaging = async (dbName: string, contextUuid: string) => {
+  console.log(`Closing messaging for ${dbName} and ${contextUuid}`)
+  const requestChannel = requestChannels.get(dbName)
+  if (requestChannel) {
+    await requestChannel.close()
+    requestChannels.delete(dbName)
+  }
+  const callBackChannel = callBackChannels.get(contextUuid)
+  if(callBackChannel) {
+    await callBackChannel.close()
+    callBackChannels.delete(contextUuid)
+    callBackQueues.delete(contextUuid)
+  }
+  
+  if(connection !== null && requestChannels.size === 0 && callBackChannels.size === 0) {
+    await connection.close()
+    connection = null
+    requestChannels.clear()
+    callBackChannels.clear()
+    callBackQueues.clear()
+  }
+  logChannels()
 }

@@ -20,16 +20,18 @@ export const GET = async ({ params, request, url }) => {
     console.error(`streaming: missing dbName or contextUuid`)
     return new Response(JSON.stringify({ error: 'missing dbName or contextUuid' }), { status: 500 })
   }
-  await initMessaging(params.dbName, params.contextUuid)
+  const dbName = params.dbName
+  const contextUuid = params.contextUuid
 
+  await initMessaging(dbName, contextUuid)
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        initCallbackConsumer(controller)
+        initCallbackConsumer(contextUuid, controller)
         await sendMessage({
           requestUuid: newUuid(), 
-          dbName: params.dbName, 
-          contextUuid: params.contextUuid, 
+          dbName: dbName, 
+          contextUuid: contextUuid, 
           requestInitiatedOn: (new Date).toISOString(),
           from: 'clairgrid api', 
           url: url.toString(), 
@@ -44,7 +46,7 @@ export const GET = async ({ params, request, url }) => {
     },
     async cancel() {
       console.log(`streaming: canceling streaming`)
-      await closeMessaging()
+      await closeMessaging(dbName, contextUuid)
     }
   })
 

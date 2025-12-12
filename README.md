@@ -56,3 +56,6 @@ SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8));
 2025 - Encoon (https://github.com/ddlamb2000/encoon). Prototype using Docker, Go, Kafka, Postgreqsl and Svelte. Adoption an event-based architecture using Kafka. Svelte is sweet.
 
 ## Notes for developers
+
+- Look at https://vitest.dev/ for unit testing
+- Look at https://playwright.dev/ for E2E testing
