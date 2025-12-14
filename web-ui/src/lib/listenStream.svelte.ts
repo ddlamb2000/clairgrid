@@ -4,7 +4,7 @@
 import * as metadata from "$lib/metadata.svelte"
 import type { ReplyType, RequestType } from '$lib/apiTypes'
 
-export interface IGetStreamContext {
+export interface IListenStreamContext {
   dbName: string
   getContextUuid: () => string
   user: { checkLocalToken: () => boolean, checkToken: (jwt: string) => boolean, setToken: (jwt: string) => void, removeToken: () => void, reset: () => void }
@@ -17,13 +17,13 @@ export interface IGetStreamContext {
 const heartbeatFrequency = 60000
 const timeOutCheckFrequency = 10000
 
-export class GetStream {
+export class ListenStream {
   isStreaming: boolean = $state(false)
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #hearbeatId: any = null
   #timeOutCheckId: any = null
   
-  constructor(private context: IGetStreamContext) {}
+  constructor(private context: IListenStreamContext) {}
 
   startStreaming = async () => {
     const uri = `/${this.context.dbName}/${this.context.getContextUuid()}/streaming`

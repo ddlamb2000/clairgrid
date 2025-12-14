@@ -7,11 +7,11 @@ import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { replaceState } from "$app/navigation"
 import { Focus } from '$lib/focus.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
-import { GetStream } from '$lib/getStream.svelte.ts'
+import { ListenStream } from '$lib/listenStream.svelte.ts'
 
 export class Context extends ContextBase {
-  getStream: GetStream
-  get isStreaming() { return this.getStream.isStreaming }
+  listenStream: ListenStream
+  get isStreaming() { return this.listenStream.isStreaming }
 
   dataSet: GridResponse[] = $state([])
   gridsInMemory: number = $state(0)
@@ -20,7 +20,7 @@ export class Context extends ContextBase {
 
   constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
     super(dbName, url, gridUuid, uuid)
-    this.getStream = new GetStream(this)
+    this.listenStream = new ListenStream(this)
   }
 
   authentication = async (loginId: string, loginPassword: string) => {
@@ -511,6 +511,6 @@ export class Context extends ContextBase {
   }
 
   startStreaming = async () => {
-    return this.getStream.startStreaming()
+    return this.listenStream.startStreaming()
   }
 }
