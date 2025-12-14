@@ -175,5 +175,5 @@ def get_deletion_steps():
         4: "DROP TABLE texts",
         5: "DROP TABLE ints",
         6: "DROP TABLE rows",
-        7: "DROP TABLE migrations",
+        7: "DROP TABLE migrations"
     }

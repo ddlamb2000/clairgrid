@@ -28,7 +28,7 @@ services:
   
   dbadmin:
     container_name: clairgrid-database-admin
-    image: dpage/pgadmin4:9.10.0
+    image: dpage/pgadmin4:9.11.0
     restart: unless-stopped
     networks:
       - clairgrid
@@ -161,6 +161,9 @@ services:
       DB_NAME: clairgrid_test
       DB_USER_NAME: clairgrid
       DB_PASSWORD_FILE: /run/secrets/db-password
+      TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
+      ROOT_USER_NAME: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE: /run/secrets/root-password
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
@@ -168,12 +171,13 @@ services:
       KEEP_ALIVE_AFTER_SECONDS: 6000
     secrets:
       - db-password
+      - root-password
       - rabbitmq-password
     networks:
       - clairgrid
     depends_on:
       - grid-service-test
-    command: sh -c "cd tests && ./run_all_tests.sh"
+    command: sh -c "./run_all_tests.sh"
   
   web-ui-development:
     build:
