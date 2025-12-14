@@ -1,3 +1,6 @@
+// clairgrid : data structuration, presentation and navigation.
+// Copyright David Lambert 2025
+
 import { env } from "$env/dynamic/private"
 import { connect } from 'amqplib'
 import * as metadata from '$lib/metadata.svelte'

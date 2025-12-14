@@ -1,3 +1,6 @@
+// clairgrid : data structuration, presentation and navigation.
+// Copyright David Lambert 2025
+
 import { type RequestHandler } from '@sveltejs/kit'
 import { sendMessage  } from '$lib/messaging'
 

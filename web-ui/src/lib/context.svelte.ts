@@ -1,22 +1,18 @@
 // clairgrid : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-import type { ResponseContent } from '$lib/apiTypes'
 import { ContextBase } from '$lib/contextBase.svelte.ts'
-import type { GridResponse, RowType, ColumnType, GridType, ReferenceType } from '$lib/apiTypes'
+import type { GridResponse, RowType, ColumnType, GridType, ReferenceType, ReplyType } from '$lib/apiTypes'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { replaceState } from "$app/navigation"
 import { Focus } from '$lib/focus.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
-
-const heartbeatFrequency = 60000
-const timeOutCheckFrequency = 10000
+import { GetStream } from '$lib/getStream.svelte.ts'
 
 export class Context extends ContextBase {
-  isStreaming: boolean = $state(false)
-  reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
-  #hearbeatId: any = null
-  #timeOutCheckId: any = null
+  getStream: GetStream
+  get isStreaming() { return this.getStream.isStreaming }
+
   dataSet: GridResponse[] = $state([])
   gridsInMemory: number = $state(0)
   rowsInMemory: number = $state(0)
@@ -24,6 +20,7 @@ export class Context extends ContextBase {
 
   constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
     super(dbName, url, gridUuid, uuid)
+    this.getStream = new GetStream(this)
   }
 
   authentication = async (loginId: string, loginPassword: string) => {
@@ -170,10 +167,10 @@ export class Context extends ContextBase {
       if(rowReference !== undefined) {
         referencedValuesAdded.push(
           { owned: true,
-            columnName: "relationship2",
-            fromUuid: uuidColumn,
-            toGridUuid: metadata.UuidGrids,
-            uuid: rowReference.uuid }  
+          columnName: "relationship2",
+          fromUuid: uuidColumn,
+          toGridUuid: metadata.UuidGrids,
+          uuid: rowReference.uuid }  
         )
       }
       return this.sendMessage({
@@ -295,10 +292,10 @@ export class Context extends ContextBase {
       dataSet: {
         referencedValuesAdded: [
           { owned: true,
-            columnName: column.name,
-            fromUuid: row.uuid,
-            toGridUuid: rowPrompt.gridUuid,
-            uuid: rowPrompt.uuid },
+          columnName: column.name,
+          fromUuid: row.uuid,
+          toGridUuid: rowPrompt.gridUuid,
+          uuid: rowPrompt.uuid },
         ] 
       }
     })    
@@ -441,73 +438,6 @@ export class Context extends ContextBase {
     if(this.gridUuid !== "") this.load()
   }
 
-  async * getStreamIteration(uri: string) {
-    let response = await fetch(uri)
-    if(!response.ok || !response.body) {
-      console.error(`Failed to fetch stream from ${uri}`)
-      return
-    }
-    const utf8Decoder = new TextDecoder("utf-8")
-    let reader = response.body.getReader()
-    let { value: chunkUint8, done: readerDone } = await reader.read()
-    let chunk = chunkUint8 ? utf8Decoder.decode(chunkUint8, { stream: true }) : ""
-    let re = /\r\n|\n|\r/gm
-    let startIndex = 0
-
-    for(;;) {
-      const chunkString =  chunk !== undefined ? chunk.toString() : ""
-      if(chunkString.endsWith(metadata.StopString)) {
-        chunk = ""
-        const chunks = chunkString.split(metadata.StopString)
-        for(const chunkPartial of chunks) {
-          if(chunkPartial.length > 0) {
-            try {
-              const json = JSON.parse(chunkPartial)
-              if(json) {
-                const now = (new Date).toISOString()
-                const nowDate = Date.parse(now)
-                const requestInitiatedOnDate = Date.parse(json.requestInitiatedOn)
-                const elapsedMs = nowDate - requestInitiatedOnDate
-                console.log(`[<] (${elapsedMs} ms)`, json)
-                this.trackResponse({
-                  requestUuid: json.requestUuid,
-                  command: json.command,
-                  commandText: json.commandText,
-                  message: json.message,
-                  gridUuid: json.gridUuid,
-                  status: json.status,
-                  sameContext: json.contextUuid === this.getContextUuid(),
-                  elapsedMs: elapsedMs,
-                  dateTime: (new Date).toISOString()
-                })
-                await this.handleAction(json)
-              } else {
-                console.error(`Invalid message from ${uri}`, json)
-              }
-            } catch(error) {
-              console.log(`Data from stream ${uri} is incorrect`, error, chunkPartial)
-            }
-          }
-        }
-      }
-
-      let result = re.exec(chunk)
-      if(!result) {
-        if(readerDone) break
-        let remainder = chunk.substring(startIndex)
-        {
-          ({ value: chunkUint8, done: readerDone } = await reader.read())
-        }
-        chunk = remainder + (chunkUint8 ? utf8Decoder.decode(chunkUint8, { stream: true }) : "")
-        startIndex = re.lastIndex = 0
-        continue
-      }
-      yield chunk.substring(startIndex, result.index)
-      startIndex = re.lastIndex
-    }
-    if(startIndex < chunk.length) yield chunk.substring(startIndex)
-  }
-
   handleAction = async (message: ReplyType) => {
     if(message.command == metadata.ActionAuthentication) {
       if(message.status == metadata.SuccessStatus) {
@@ -581,21 +511,6 @@ export class Context extends ContextBase {
   }
 
   startStreaming = async () => {
-    const uri = `/${this.dbName}/${this.getContextUuid()}/streaming`
-    this.user.checkLocalToken()
-    console.log(`Start streaming from ${uri}`)
-    this.isStreaming = true
-    this.#hearbeatId = setInterval(() => { this.sendMessage({ command: metadata.ActionHeartbeat, commandText: 'Heartbeat' }) }, heartbeatFrequency)
-    this.#timeOutCheckId = setInterval(() => { this.updateTimeedOutRequests(timeOutCheckFrequency) }, timeOutCheckFrequency)
-    try {
-      for await (let line of this.getStreamIteration(uri)) { }
-    } catch (error) {
-      console.log(`Streaming from ${uri} stopped`)
-    } finally {
-      this.isStreaming = false
-      if(this.#hearbeatId) clearInterval(this.#hearbeatId)
-      if(this.#timeOutCheckId) clearInterval(this.#timeOutCheckId)
-      if(this.reader && this.reader !== undefined) this.reader.cancel()
-    }
+    return this.getStream.startStreaming()
   }
 }

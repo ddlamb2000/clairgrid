@@ -18,10 +18,16 @@ export interface RequestType {
   gridUuid?: string
   rowUuid?: string
   columnUuid?: string
+  uuid?: string
   answered?: boolean
   timeOut?: boolean
   elapsedMs?: number
   dateTime?: string
+  filterColumnOwned?: boolean
+  filterColumnName?: string
+  filterColumnGridUuid?: string
+  filterColumnValue?: string
+  dataSet?: GridPost
 }
 
 export interface ReplyType {
@@ -44,11 +50,13 @@ export interface ReplyType {
   gridUuid?: string
   rowUuid?: string
   columnUuid?: string
+  uuid?: string
   answered?: boolean
   timeOut?: boolean
   elapsedMs?: number
   dateTime?: string
   sameContext?: boolean
+  dataSet?: GridResponse
 }
 
 export interface TransactionType {
@@ -197,4 +205,3 @@ export interface GridResponse {
   filterColumnGridUuid?: string
   filterColumnValue?: string
 }
-
