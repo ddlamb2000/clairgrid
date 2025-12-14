@@ -24,7 +24,7 @@ def main():
         finally:
             db_manager.close()            
     except Exception as e:
-        print(f"Service failed to start: {e}")
+        print(f"Service failed: {e}")
     print("Grid Service stopped.", flush=True)
     
 if __name__ == "__main__":

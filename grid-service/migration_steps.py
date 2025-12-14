@@ -158,10 +158,12 @@ def get_migration_steps(root_user_name, root_password):
 
 
         150: "INSERT INTO texts "
-                "(uuid, partition, text0, text1) "
+                "(uuid, partition, text0, text1, text2, text3) "
                 "VALUES ("
                 f"'{metadata.UuidRootUser}',"
                 "0,"
+                f"'{root_user_name}',"
+                f"'{root_user_name}',"
                 f"'{root_user_name}',"
                 f"'{root_password}'"
             ")",

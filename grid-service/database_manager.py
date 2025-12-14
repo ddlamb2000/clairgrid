@@ -141,14 +141,14 @@ class DatabaseManager(ConfigurationMixin):
         return latestMigrationSequence
 
     @echo
-    def select(self, statement):
+    def select(self, statement, params=None):
         result = None
         if self.conn is None or self.conn.closed:
              raise Exception("Database connection not established. Call connect() first.")
 
         with self.conn.cursor() as cur:
             try:
-                cur.execute(statement)
+                cur.execute(statement, params)
                 result = cur.fetchone()
             except psycopg.Error as e:
                 print(f"Error selecting from database: {e}")
