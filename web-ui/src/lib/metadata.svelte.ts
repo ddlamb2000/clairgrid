@@ -1,3 +1,6 @@
+// clairgrid : data structuration, presentation and navigation.
+// Copyright David Lambert 2025
+
 export const ActionInitialization = "init"
 export const ActionHeartbeat = "heartbeat"
 export const ActionAuthentication = "authentication"

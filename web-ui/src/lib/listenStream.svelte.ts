@@ -3,11 +3,19 @@
 
 import * as metadata from "$lib/metadata.svelte"
 import type { ReplyType, RequestType } from '$lib/apiTypes'
+import { newUuid } from '$lib/utils.svelte'
 
 export interface IListenStreamContext {
   dbName: string
+  gridUuid: string
   getContextUuid: () => string
-  user: { checkLocalToken: () => boolean, checkToken: (jwt: string) => boolean, setToken: (jwt: string) => void, removeToken: () => void, reset: () => void }
+  user: {
+    getToken: () => string,
+    checkLocalToken: () => boolean,
+    checkToken: (jwt: string) => boolean,
+    setToken: (jwt: string) => void,
+    removeToken: () => void, reset: () => void 
+  }
   sendMessage: (request: RequestType) => Promise<void>
   trackResponse: (response: ReplyType) => void
   handleAction: (message: ReplyType) => Promise<void>
@@ -45,7 +53,38 @@ export class ListenStream {
   }
 
   async * getStreamIteration(uri: string) {
-    let response = await fetch(uri)
+    const gridUuid = this.context.gridUuid
+    let payload: RequestType = {
+      requestUuid: newUuid(), 
+      dbName: this.context.dbName, 
+      contextUuid: this.context.getContextUuid(), 
+      requestInitiatedOn: (new Date).toISOString(),
+      from: 'clairgrid api', 
+      url: uri.toString(), 
+      command: metadata.ActionInitialization, 
+      commandText: 'Initialization'  
+    }
+    if(gridUuid) {
+      payload = {
+        requestUuid: newUuid(), 
+        dbName: this.context.dbName, 
+        jwt: this.context.user.getToken(),
+        contextUuid: this.context.getContextUuid(), 
+        requestInitiatedOn: (new Date).toISOString(),
+        from: 'clairgrid api', 
+        url: uri.toString(), 
+        command: metadata.ActionLoad, 
+        commandText: 'Load grid',
+        gridUuid: gridUuid
+      }
+    }
+    let response = await fetch(uri, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/event-stream'
+      },
+      body: JSON.stringify(payload)
+    })
     if(!response.ok || !response.body) {
       console.error(`Failed to fetch stream from ${uri}`)
       return
@@ -56,7 +95,6 @@ export class ListenStream {
     let chunk = chunkUint8 ? utf8Decoder.decode(chunkUint8, { stream: true }) : ""
     let re = /\r\n|\n|\r/gm
     let startIndex = 0
-
     for(;;) {
       const chunkString =  chunk !== undefined ? chunk.toString() : ""
       if(chunkString.endsWith(metadata.StopString)) {
@@ -93,7 +131,6 @@ export class ListenStream {
           }
         }
       }
-
       let result = re.exec(chunk)
       if(!result) {
         if(readerDone) break

@@ -152,6 +152,7 @@ class DatabaseManager(ConfigurationMixin):
                 result = cur.fetchone()
             except psycopg.Error as e:
                 print(f"Error selecting from database: {e}")
+                raise e
 
         return result
 

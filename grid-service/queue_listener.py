@@ -5,16 +5,15 @@
     This file contains the Queue Listener for the clairgrid Grid Service.
 '''
 
-import jwt
 import json
 import os
 import time
-from datetime import datetime, timezone
 import pika
 import metadata
 from configuration_mixin import ConfigurationMixin
 from decorators import echo
 from authentication_manager import AuthenticationManager
+from grid_manager import GridManager
 
 class QueueListener(ConfigurationMixin):
     """
@@ -23,6 +22,7 @@ class QueueListener(ConfigurationMixin):
     def __init__(self, db_manager):
         self.db_manager = db_manager
         self.authentication_manager = AuthenticationManager(db_manager)
+        self.grid_manager = GridManager(db_manager)
         self.queue_name = f'grid_service_{self.db_manager.db_name.lower()}'
         self.load_configuration()
         self._init_command_handlers()
@@ -36,49 +36,21 @@ class QueueListener(ConfigurationMixin):
         self.rabbitmq_user = os.getenv("RABBITMQ_USER", "guest")
         self.rabbitmq_password_file = os.getenv("RABBITMQ_PASSWORD_FILE")
         self.rabbitmq_password = self._read_password_file(self.rabbitmq_password_file, "RABBITMQ_PASSWORD_FILE")
-        self.jwt_secret_file = os.getenv("JWT_SECRET_FILE")
-        self.jwt_secret = self._read_password_file(self.jwt_secret_file, "JWT_SECRET_FILE")
 
     def _init_command_handlers(self):
         self.command_handlers = {
             metadata.ActionInitialization: self._handle_nothing,
             metadata.ActionHeartbeat: self._handle_nothing,
             metadata.ActionAuthentication: self.authentication_manager.handle_authentication,
-            metadata.ActionLoad: self._handle_load,
-            metadata.ActionChangeGrid: self._handle_change_grid,
-            metadata.ActionLocateGrid: self._handle_locate_grid,
-            metadata.ActionPrompt: self._handle_prompt,
+            metadata.ActionLoad: self.grid_manager.handle_load,
+            metadata.ActionChangeGrid: self.grid_manager.handle_change_grid,
+            metadata.ActionLocateGrid: self.grid_manager.handle_locate_grid,
+            metadata.ActionPrompt: self.grid_manager.handle_prompt,
         }
 
     @echo
     def _handle_nothing(self, request):
         return { "status": metadata.SuccessStatus }
-
-    @echo
-    def _handle_load(self, request):
-        token = request.get('jwt')
-        if not token:
-            return { "status": metadata.FailedStatus, "message": "No JWT provided" }
-        try:
-            decoded_token = jwt.decode(token, self.jwt_secret, algorithms=["HS512"])
-            expires = datetime.fromisoformat(decoded_token.get('expires'))
-            if expires < datetime.now(timezone.utc):
-                return { "status": metadata.FailedStatus, "message": "Token expired" }
-        except Exception as e:
-            return { "status": metadata.FailedStatus, "message": "Invalid JWT: " + str(e) }
-        return { "status": metadata.FailedStatus, "message": "Not implemented" }
-
-    @echo
-    def _handle_change_grid(self, request):
-        return { "status": metadata.FailedStatus, "message": "Not implemented" }
-
-    @echo
-    def _handle_locate_grid(self, request):
-        return { "status": metadata.FailedStatus, "message": "Not implemented" }
-
-    @echo
-    def _handle_prompt(self, request):
-        return { "status": metadata.FailedStatus, "message": "Not implemented" }
 
     @echo
     def process_request(self, request):
@@ -109,7 +81,6 @@ class QueueListener(ConfigurationMixin):
             }
             if request.get('commandText'): reply['commandText'] = request['commandText']
             if request.get('url'): reply['url'] = request['url']
-            if request.get('userUuid'): reply['userUuid'] = request['userUuid']
             try:
                 print(f"<request {request}", flush=True)
                 reply = reply | self.process_request(request)

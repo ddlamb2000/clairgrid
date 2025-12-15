@@ -39,7 +39,8 @@ export class Context extends ContextBase {
     this.sendMessage({
       command: metadata.ActionLoad,
       commandText: "Load " + (this.uuid !== "" ? "row" : "grid"),
-      rowUuid: this.uuid
+      gridUuid: this.gridUuid,
+      rowUuid: this.uuid !== "" ? this.uuid : undefined
     })
   }
 
@@ -434,9 +435,7 @@ export class Context extends ContextBase {
     this.purge()
   } 
 
-  mount = async () => {
-    if(this.gridUuid !== "") this.load()
-  }
+  mount = async () => { }
 
   handleAction = async (message: ReplyType) => {
     if(message.command == metadata.ActionAuthentication) {
@@ -444,7 +443,6 @@ export class Context extends ContextBase {
         if(message.jwt && this.user.checkToken(message.jwt)) {
           console.log(`Logged in: ${this.user.getUser()}`)
           this.user.setToken(message.jwt)
-          this.mount()
         } else {
           console.error(`Token is missing or invalid for user ${this.user.getUser()}`)
         }
