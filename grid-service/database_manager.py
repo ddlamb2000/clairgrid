@@ -141,20 +141,30 @@ class DatabaseManager(ConfigurationMixin):
         return latestMigrationSequence
 
     @echo
-    def select(self, statement, params=None):
-        result = None
+    def select_one(self, statement, params=None):
         if self.conn is None or self.conn.closed:
              raise Exception("Database connection not established. Call connect() first.")
 
         with self.conn.cursor() as cur:
             try:
                 cur.execute(statement, params)
-                result = cur.fetchone()
+                return cur.fetchone()
             except psycopg.Error as e:
                 print(f"Error selecting from database: {e}")
                 raise e
 
-        return result
+    @echo
+    def select_all(self, statement, params=None):
+        if self.conn is None or self.conn.closed:
+             raise Exception("Database connection not established. Call connect() first.")
+
+        with self.conn.cursor() as cur:
+            try:
+                cur.execute(statement, params)
+                for row in cur: yield row
+            except psycopg.Error as e:
+                print(f"Error selecting from database: {e}")
+                raise e
 
     def _execute_migration_step(self, sequence, statement):
         """
