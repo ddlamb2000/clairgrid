@@ -7,7 +7,7 @@
 </script>
 
 <div class="relative flex items-center">
-  <img src="favicon.svg" width="32" height="32" alt="clairgrid logo" />
+  <img src="/favicon.svg" width="32" height="32" alt="clairgrid logo" />
   <span class="h-10 ms-2 text-xl font-extrabold flex items-center">
     <a data-sveltekit-reload href={"/" + context.dbName}>{appName}</a>
   </span>
