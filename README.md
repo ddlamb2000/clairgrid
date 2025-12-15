@@ -45,6 +45,8 @@ SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8));
 
 1. Create a file `adminConfiguration/.rabbitmq-password` with the password used for accessing the RabbitMQ instance
 
+1. Create a file `adminConfiguration/.jwt-secret` with the secret key used to generate JWT tokens. Use the same approach as for `adminConfiguration/.root_password` file.
+
 ## History
 
 2007 - Project factory (https://sourceforge.net/projects/projectfactory/). As an open source project for project management, Factory lets you organize actors in teams, define projects, create version-based plans, generate forecast calendars and track statuses. Small and stand alone, it runs on every system with Java.

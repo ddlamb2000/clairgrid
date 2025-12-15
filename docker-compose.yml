@@ -73,6 +73,8 @@ services:
       TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
       ROOT_USER_NAME: root # user name for the user created with administrator privileges
       ROOT_PASSWORD_FILE: /run/secrets/root-password
+      JWT_SECRET_FILE: /run/secrets/jwt-secret
+      JWT_EXPIRATION: 120 # expiration (in minutes) of the JWT token
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
@@ -81,6 +83,7 @@ services:
       - db-password
       - root-password
       - rabbitmq-password
+      - jwt-secret
     restart: unless-stopped
     networks:
       - clairgrid
@@ -102,6 +105,8 @@ services:
       TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
       ROOT_USER_NAME: root # user name for the user created with administrator privileges
       ROOT_PASSWORD_FILE: /run/secrets/root-password
+      JWT_SECRET_FILE: /run/secrets/jwt-secret
+      JWT_EXPIRATION: 120 # expiration (in minutes) of the JWT token
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
@@ -110,6 +115,7 @@ services:
       - db-password
       - root-password
       - rabbitmq-password
+      - jwt-secret
     restart: unless-stopped
     networks:
       - clairgrid
@@ -132,6 +138,8 @@ services:
       TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
       ROOT_USER_NAME: root # user name for the user created with administrator privileges
       ROOT_PASSWORD_FILE: /run/secrets/root-password
+      JWT_SECRET_FILE: /run/secrets/jwt-secret
+      JWT_EXPIRATION: 120 # expiration (in minutes) of the JWT token
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
@@ -140,6 +148,7 @@ services:
       - db-password
       - root-password
       - rabbitmq-password
+      - jwt-secret
     restart: unless-stopped
     networks:
       - clairgrid
@@ -244,6 +253,8 @@ secrets:
     file: ./adminConfiguration/.root_password
   rabbitmq-password:
     file: ./adminConfiguration/.rabbitmq-password
+  jwt-secret:
+    file: ./adminConfiguration/.jwt-secret
 volumes:
   db:
     driver: local

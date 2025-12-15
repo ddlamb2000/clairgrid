@@ -42,9 +42,8 @@ export interface ReplyType {
   dbName?: string
   loginId?: string
   userUuid?: string
-  user?: string
-	firstName?: string
-	lastName?: string
+  firstName?: string
+  lastName?: string
 	jwt?: string
   requestInitiatedOn?: string
   gridUuid?: string

@@ -44,10 +44,10 @@ export class User {
         if(nowDate < tokenExpirationDate) {
           this.#token = token
           this.#loggedIn = true
+          this.#user = tokenPayload.loginId
           this.#userUuid = tokenPayload.userUuid
-          this.#user = tokenPayload.user
-          this.#userFirstName = tokenPayload.userFirstName
-          this.#userLastName = tokenPayload.userLastName
+          this.#userFirstName = tokenPayload.firstName
+          this.#userLastName = tokenPayload.lastName
           return true
         }
       } catch (error) {

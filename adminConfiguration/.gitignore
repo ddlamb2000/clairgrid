@@ -2,3 +2,4 @@
 .db_password
 .root_password
 .rabbitmq-password
+.jwt-secret

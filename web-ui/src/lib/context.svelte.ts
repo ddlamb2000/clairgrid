@@ -442,7 +442,7 @@ export class Context extends ContextBase {
     if(message.command == metadata.ActionAuthentication) {
       if(message.status == metadata.SuccessStatus) {
         if(message.jwt && this.user.checkToken(message.jwt)) {
-          console.log(`Logged in: ${message.user}`)
+          console.log(`Logged in: ${message.loginId}`)
           this.user.setToken(message.jwt)
           this.mount()
         } else {
