@@ -56,12 +56,12 @@ services:
     networks:
       - clairgrid
   
-  grid-service-development:
+  grid-service-master:
     build:
       context: ./grid-service
       dockerfile: Dockerfile.development
-    container_name: clairgrid-grid-service-development
-    image: clairgrid-grid-service-development
+    container_name: clairgrid-grid-service-master
+    image: clairgrid-grid-service-master
     volumes:
       - .:/usr/src/clairgrid/
     environment:
@@ -92,8 +92,11 @@ services:
       - rabbitmq
 
   grid-service-test:
+    build:
+      context: ./grid-service
+      dockerfile: Dockerfile.development
     container_name: clairgrid-grid-service-test
-    image: clairgrid-grid-service-development
+    image: clairgrid-grid-service-test
     volumes:
       - .:/usr/src/clairgrid/
     environment:
@@ -106,7 +109,7 @@ services:
       ROOT_USER_NAME: root # user name for the user created with administrator privileges
       ROOT_PASSWORD_FILE: /run/secrets/root-password
       JWT_SECRET_FILE: /run/secrets/jwt-secret
-      JWT_EXPIRATION: 120 # expiration (in minutes) of the JWT token
+      JWT_EXPIRATION: 2 # expiration (in minutes) of the JWT token
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid

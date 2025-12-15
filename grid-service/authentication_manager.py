@@ -53,14 +53,19 @@ class AuthenticationManager(ConfigurationMixin):
             (metadata.UuidUsers, login_id, password)
         )
         if result:
-            jwt_token = self._generate_jwt_token(login_id, result[0], result[1], result[2])
+            try:
+                token = self._generate_jwt_token(login_id, result[0], result[1], result[2])
+            except Exception as e:
+                return { 
+                    "status": metadata.FailedStatus,
+                    "message": "Error generating JWT token: " + str(e)
+                }
             return { 
                 "status": metadata.SuccessStatus, 
                 "message": "User authenticated", 
-                "jwt": jwt_token
+                "jwt": token
             }
         else:
             return { 
                 "status": metadata.FailedStatus,
-                "loginId": login_id,
                 "message": "Invalid username or passphrase" }

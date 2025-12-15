@@ -50,6 +50,9 @@ export class User {
           this.#userLastName = tokenPayload.lastName
           return true
         }
+        else {
+          console.error(`Token expired: ${tokenPayload.expires}`)
+        }
       } catch (error) {
         console.error(`Error checking token:`, error)
       }

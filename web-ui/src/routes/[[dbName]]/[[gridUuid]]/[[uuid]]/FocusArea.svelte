@@ -18,6 +18,6 @@
       <Badge color="dark" rounded class="px-2.5">Updated on <DateTime dateTime={context.focus.getUpdateDate()} /></Badge>
     {/if}
   {:else}
-    <ResponseMessage reply={context.getGridLastResponse()} />
+    <ResponseMessage reply={context.getNonGridLastFailResponse()} />
   {/if}
 {/if}

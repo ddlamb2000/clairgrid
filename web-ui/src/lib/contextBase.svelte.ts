@@ -39,11 +39,7 @@ export class ContextBase {
     request.requestInitiatedOn = (new Date).toISOString()
     request.from = 'clairgrid frontend'
     request.url = this.url
-    if(this.user.getIsLoggedIn()) {
-      request.userUuid = this.user.getUserUuid()
-      request.user = this.user.getUser()
-      request.jwt = this.user.getToken()
-    }
+    if(this.user.getIsLoggedIn()) request.jwt = this.user.getToken()
     if(request.command !== metadata.ActionAuthentication && request.command !== metadata.ActionHeartbeat) {
       if(!this.user.checkLocalToken()) {
         this.messageStatus = "Not authorized "

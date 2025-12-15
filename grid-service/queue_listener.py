@@ -5,9 +5,11 @@
     This file contains the Queue Listener for the clairgrid Grid Service.
 '''
 
+import jwt
 import json
 import os
 import time
+from datetime import datetime, timezone
 import pika
 import metadata
 from configuration_mixin import ConfigurationMixin
@@ -34,6 +36,8 @@ class QueueListener(ConfigurationMixin):
         self.rabbitmq_user = os.getenv("RABBITMQ_USER", "guest")
         self.rabbitmq_password_file = os.getenv("RABBITMQ_PASSWORD_FILE")
         self.rabbitmq_password = self._read_password_file(self.rabbitmq_password_file, "RABBITMQ_PASSWORD_FILE")
+        self.jwt_secret_file = os.getenv("JWT_SECRET_FILE")
+        self.jwt_secret = self._read_password_file(self.jwt_secret_file, "JWT_SECRET_FILE")
 
     def _init_command_handlers(self):
         self.command_handlers = {
@@ -52,6 +56,16 @@ class QueueListener(ConfigurationMixin):
 
     @echo
     def _handle_load(self, request):
+        token = request.get('jwt')
+        if not token:
+            return { "status": metadata.FailedStatus, "message": "No JWT provided" }
+        try:
+            decoded_token = jwt.decode(token, self.jwt_secret, algorithms=["HS512"])
+            expires = datetime.fromisoformat(decoded_token.get('expires'))
+            if expires < datetime.now(timezone.utc):
+                return { "status": metadata.FailedStatus, "message": "Token expired" }
+        except Exception as e:
+            return { "status": metadata.FailedStatus, "message": "Invalid JWT: " + str(e) }
         return { "status": metadata.FailedStatus, "message": "Not implemented" }
 
     @echo
@@ -72,8 +86,7 @@ class QueueListener(ConfigurationMixin):
         Processes the parsed request using a dictionary of command handlers.
         """
         command = request.get('command')
-        handler = self.command_handlers.get(command)
-        
+        handler = self.command_handlers.get(command)        
         if handler:
             return handler(request)
         else:
@@ -97,8 +110,6 @@ class QueueListener(ConfigurationMixin):
             if request.get('commandText'): reply['commandText'] = request['commandText']
             if request.get('url'): reply['url'] = request['url']
             if request.get('userUuid'): reply['userUuid'] = request['userUuid']
-            if request.get('user'): reply['user'] = request['user']
-            if request.get('jwt'): reply['jwt'] = request['jwt']
             try:
                 print(f"<request {request}", flush=True)
                 reply = reply | self.process_request(request)
