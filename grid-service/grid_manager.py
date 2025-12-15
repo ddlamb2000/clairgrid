@@ -21,6 +21,7 @@ class GridManager(ConfigurationMixin):
     def __init__(self, db_manager):
         self.db_manager = db_manager
         self.all_grids = {} # dictionary of grids by uuid
+        self.all_rows = {} # dictionary of rows by grid_uuid and row_uuid
         self.jwt_secret_file = os.getenv("JWT_SECRET_FILE")
         self.jwt_secret = self._read_password_file(self.jwt_secret_file, "JWT_SECRET_FILE")
 
@@ -56,9 +57,10 @@ class GridManager(ConfigurationMixin):
                 if not grid:
                     return {
                         "status": metadata.FailedStatus,
-                        "message": "Grid not found"
+                        "message": "Grid not found",
                     }
                 self.all_grids[grid_uuid] = grid
+                self._load_rows(grid)
             else:
                 print(f"Grid already in memory: {grid_uuid} {grid.name}")
         except Exception as e:
@@ -67,35 +69,14 @@ class GridManager(ConfigurationMixin):
                 "message": "Error loading grid: " + str(e)
             }
 
-        if grid:
-            reply = {
-                "dataSet": {
-                    "grid": grid.to_json(),
-                    "rows": []
-                }
+        return {
+            "status": metadata.SuccessStatus,
+            "dataSet": {
+                "grid": grid.to_json(),
+                "countRows": len(self.all_rows[grid.uuid]),
+                "rows": [row.to_json() for row in self.all_rows[grid.uuid].values()]
             }
-            error = self._load_rows(grid, reply)
-            if error:
-                return {
-                    "status": metadata.FailedStatus,
-                    "message": "Error loading rows: " + str(error)
-                }
-            reply['status'] = metadata.SuccessStatus
-            return reply
-
-    def _load_rows(self, grid, reply):
-        try:
-            result = self.db_manager.select_all('''
-                SELECT rows.uuid, rows.created, rows.createdByUuid, rows.updated, rows.updatedByuuid
-                FROM rows
-                WHERE rows.gridUuid = %s
-                AND rows.enabled = true
-            ''', (grid.uuid,)
-            )
-            for row in result:
-                reply['dataSet']['rows'].append(Row(row[0]).to_json())
-        except Exception as e:
-            return e
+        }
 
     @echo
     def _load_grid(self, grid_uuid):
@@ -122,6 +103,22 @@ class GridManager(ConfigurationMixin):
         except Exception as e:
             raise e
         
+    def _load_rows(self, grid):
+        self.all_rows[grid.uuid] = { } # dictionary of rows by uuid
+        try:
+            result = self.db_manager.select_all('''
+                SELECT rows.uuid, rows.created, rows.createdByUuid, rows.updated, rows.updatedByuuid
+                FROM rows
+                WHERE rows.gridUuid = %s
+                AND rows.enabled = true
+            ''', (grid.uuid,)
+            )
+            for item in result:
+                row = Row(item[0])
+                self.all_rows[grid.uuid][row.uuid] = row
+        except Exception as e:
+            raise e
+
     @echo
     @validate_jwt
     def handle_change_grid(self, request):
