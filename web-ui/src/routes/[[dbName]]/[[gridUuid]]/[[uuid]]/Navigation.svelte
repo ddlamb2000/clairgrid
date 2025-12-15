@@ -8,7 +8,7 @@
 
 <div class="relative flex items-center">
   <img src="favicon.svg" width="32" height="32" alt="clairgrid logo" />
-  <span class="ms-2 text-xl font-extrabold">
+  <span class="h-10 ms-2 text-xl font-extrabold flex items-center">
     <a data-sveltekit-reload href={"/" + context.dbName}>{appName}</a>
   </span>
   {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
@@ -18,7 +18,7 @@
           <span class="text-green-500"><Icon.WandMagicSparklesOutline /></span>
         </Toggle>
       </span>      
-      <Search bind:value={prompt} size="md" class="py-1 ms-2 me-2 w-96" placeholder={`Prompt ${appName}`}
+      <Search bind:value={prompt} size="md" class="py-1 ms-2 me-2 w-96" placeholder={`Search or ask a question`}
               onclick={(e) => {e.stopPropagation()}}
               onkeyup={(e) => {
                 if(e.code === 'Enter') {
@@ -26,7 +26,7 @@
                   prompt = ""
                   context.userPreferences.showPrompt = true
                 }
-      }} />
+        }} />
     </span>
   {/if}
   <span class="lg:flex ml-auto">

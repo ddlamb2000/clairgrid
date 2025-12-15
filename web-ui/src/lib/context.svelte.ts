@@ -442,11 +442,11 @@ export class Context extends ContextBase {
     if(message.command == metadata.ActionAuthentication) {
       if(message.status == metadata.SuccessStatus) {
         if(message.jwt && this.user.checkToken(message.jwt)) {
-          console.log(`Logged in: ${message.loginId}`)
+          console.log(`Logged in: ${this.user.getUser()}`)
           this.user.setToken(message.jwt)
           this.mount()
         } else {
-          console.error(`Token is missing or invalid for user ${message.loginId}`)
+          console.error(`Token is missing or invalid for user ${this.user.getUser()}`)
         }
       } else {
         this.user.removeToken()
@@ -456,7 +456,7 @@ export class Context extends ContextBase {
       if(message.status == metadata.SuccessStatus) {
         if(message.command == metadata.ActionLoad) {
           if(message.dataSet && message.dataSet.grid) {
-            if(message.uuid) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+            if(message.rowUuid) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
             else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
             const setIndex = this.getSetIndex(message.dataSet)
             if(setIndex < 0) {
@@ -467,7 +467,7 @@ export class Context extends ContextBase {
               this.dataSet[setIndex] = message.dataSet
               console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1} is reloaded`)
             }
-            if(message.uuid && message.dataSet.grid) {
+            if(message.rowUuid && message.dataSet.grid) {
               if(message.dataSet.grid.columns) {
                 for(const column of message.dataSet.grid.columns) {
                   if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional && message.dataSet) {
@@ -478,7 +478,7 @@ export class Context extends ContextBase {
                       filterColumnOwned: false,
                       filterColumnName: column.name,
                       filterColumnGridUuid: message.gridUuid,
-                      filterColumnValue: message.uuid
+                      filterColumnValue: message.rowUuid
                     })
                   }
                 }
@@ -493,7 +493,7 @@ export class Context extends ContextBase {
                       filterColumnOwned: true,
                       filterColumnName: usage.name,
                       filterColumnGridUuid: usage.gridUuid,
-                      filterColumnValue: message.uuid
+                      filterColumnValue: message.rowUuid
                     })
                   }
                 }
@@ -504,7 +504,7 @@ export class Context extends ContextBase {
             }
           }
         } else if(message.command == metadata.ActionLocateGrid) {
-          this.locateGrid(message.gridUuid, message.columnUuid, message.uuid)
+          this.locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
         }
       }
     }    

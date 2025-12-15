@@ -41,7 +41,6 @@ class AuthenticationManager(ConfigurationMixin):
     def handle_authentication(self, request):
         login_id = request.get('loginId')
         password = request.get('passwordHash')
-
         result = self.db_manager.select(
             "SELECT rows.uuid, texts.text1, texts.text2"
             " FROM rows, texts"
@@ -58,10 +57,6 @@ class AuthenticationManager(ConfigurationMixin):
             return { 
                 "status": metadata.SuccessStatus, 
                 "message": "User authenticated", 
-                "loginId": login_id,
-                "userUuid": str(result[0]),
-                "firstName": result[1],
-                "lastName": result[2],
                 "jwt": jwt_token
             }
         else:

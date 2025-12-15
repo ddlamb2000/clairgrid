@@ -40,16 +40,11 @@ export interface ReplyType {
   from?: string
   url?: string
   dbName?: string
-  loginId?: string
-  userUuid?: string
-  firstName?: string
-  lastName?: string
 	jwt?: string
   requestInitiatedOn?: string
   gridUuid?: string
   rowUuid?: string
   columnUuid?: string
-  uuid?: string
   answered?: boolean
   timeOut?: boolean
   elapsedMs?: number
@@ -63,23 +58,6 @@ export interface TransactionType {
   reply?: ReplyType
 }
 
-
-export interface MessageHeader {
-  key: string
-  value: string
-}
-
-export interface MessageRequest {
-  correlationId?: string
-  reply_to?: string
-  message: string
-  headers: MessageHeader[]
-}
-
-export interface MessageResponse {
-  message: string
-  error?: string
-}
 
 export interface GridType extends RowType {
   columns?: ColumnType[]
@@ -151,36 +129,6 @@ export interface GridReferencePost {
 	toGridUuid: string
 	uuid: string
 	owned: boolean
-}
-
-export interface RequestContent {
-  command: string
-  commandText?: string
-  gridUuid?: string
-  columnUuid?: string
-  uuid?: string
-  userid?: string
-  password?: string
-  filterColumnOwned?: boolean
-  filterColumnName?: string
-  filterColumnGridUuid?: string
-  filterColumnValue?: string
-  dataSet?: GridPost
-}
-
-export interface ResponseContent {
-  command: string
-  commandText?: string
-  responseNumber?: number
-  status: string
-  gridUuid?: string
-  columnUuid?: string
-  uuid?: string
-	textMessage?: string
-	firstName?: string
-	lastName?: string
-	jwt?: string
-  dataSet?: GridResponse
 }
 
 export interface GridResponse {

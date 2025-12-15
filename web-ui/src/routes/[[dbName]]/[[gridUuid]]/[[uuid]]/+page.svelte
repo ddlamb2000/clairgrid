@@ -27,7 +27,7 @@
 
 <svelte:head><title>{context.dbName} | {data.appName}</title></svelte:head>
 <main class="global-container grid h-full [grid-template-rows:auto_1fr]">
-  <nav class="p-2 global header bg-gray-900 text-gray-100">
+  <nav class="p-1 global header bg-gray-900 text-gray-100">
     <Navigation {context} appName={data.appName}/>
   </nav>
   <section class={"main-container grid "}>
