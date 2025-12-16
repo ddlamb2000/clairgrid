@@ -5,8 +5,12 @@
     This file contains the Database Manager for the clairgrid Grid Service.
 '''
 
+import json
 import os
 import psycopg
+import datetime
+from decimal import Decimal
+from uuid import UUID
 from migration_steps import get_migration_steps, get_deletion_steps
 from configuration_mixin import ConfigurationMixin
 from decorators import echo
@@ -226,3 +230,110 @@ class DatabaseManager(ConfigurationMixin):
                     cur.execute(statement)
                 except psycopg.Error as e:
                     print(f"Error executing deletion sequence {sequence}: {e}", flush=True)
+
+    def export_database(self, file_name):
+        """
+        Exports the database to a JSON file.
+
+        Args:
+            file_name (str): The name of the file to export to.
+        """
+        print(f"Exporting database {self.db_name} to {file_name}...", flush=True)
+        
+        tables = ["rows", "texts", "ints", "relationships"]
+        export_data = {}
+
+        def json_serial(obj):
+            """JSON serializer for objects not serializable by default json code"""
+            if isinstance(obj, (datetime.datetime, datetime.date)):
+                return obj.isoformat()
+            if isinstance(obj, UUID):
+                return str(obj)
+            if isinstance(obj, Decimal):
+                return float(obj)
+            raise TypeError(f"Type {type(obj)} not serializable")
+
+        try:
+            with self.conn.cursor() as cur:
+                for table in tables:
+                    query = f"SELECT * FROM {table}" 
+                    cur.execute(query)                    
+                    columns = [desc[0] for desc in cur.description]                    
+                    rows = []
+                    for row in cur.fetchall():
+                        row_dict = dict(zip(columns, row))
+                        clean_row_dict = {k: v for k, v in row_dict.items() if v is not None}
+                        rows.append(clean_row_dict)
+                    
+                    export_data[table] = rows
+
+            with open(file_name, 'w') as f:
+                json.dump(export_data, f, default=json_serial, indent=4)
+                
+            print(f"Database {self.db_name} exported successfully to {file_name}.", flush=True)
+
+        except Exception as e:
+            print(f"Error exporting database: {e}", flush=True)
+            raise e
+
+    def import_database(self, file_name):
+        """
+        Imports the database from a JSON file.
+
+        Args:
+            file_name (str): The name of the file to import from.
+        """
+        print(f"Importing database {self.db_name} from {file_name}...", flush=True)
+
+        try:
+            with open(file_name, 'r') as f:
+                import_data = json.load(f)
+
+            tables = ["rows", "texts", "ints", "relationships"]
+            pk_map = {
+                "rows": ["uuid"],
+                "texts": ["uuid", "partition"],
+                "ints": ["uuid", "partition"],
+                "relationships": ["uuid", "partition"]
+            }
+
+            with self.conn.cursor() as cur:
+                with self.conn.transaction():
+                    for table in tables:
+                        if table in import_data:
+                            rows = import_data[table]
+                            print(f"Importing {len(rows)} rows into {table}...", flush=True)
+                            
+                            for row in rows:
+                                columns = list(row.keys())
+                                values = [row[col] for col in columns]
+                                
+                                cols_str = ', '.join(columns)
+                                placeholders = ', '.join(['%s'] * len(columns))
+                                
+                                # Determine Conflict Target and Update Clause
+                                pk_cols = pk_map.get(table, [])
+                                conflict_target = ", ".join(pk_cols)
+                                update_cols = [c for c in columns if c not in pk_cols]
+
+                                if update_cols:
+                                    update_clause = ", ".join([f"{c} = EXCLUDED.{c}" for c in update_cols])
+                                    query = f"""
+                                        INSERT INTO {table} ({cols_str}) VALUES ({placeholders})
+                                        ON CONFLICT ({conflict_target})
+                                        DO UPDATE SET {update_clause}
+                                    """
+                                else:
+                                    query = f"""
+                                        INSERT INTO {table} ({cols_str}) VALUES ({placeholders})
+                                        ON CONFLICT ({conflict_target})
+                                        DO NOTHING
+                                    """
+                                
+                                cur.execute(query, values)
+            
+            print(f"Database {self.db_name} imported successfully from {file_name}.", flush=True)
+
+        except Exception as e:
+            print(f"Error importing database: {e}", flush=True)
+            raise e
