@@ -113,22 +113,31 @@ class QueueListener(ConfigurationMixin):
             credentials=credentials
         )
 
-        connection = None
-        while connection is None:
+        self.connection = None
+        while self.connection is None:
             try:
-                connection = pika.BlockingConnection(parameters)
+                self.connection = pika.BlockingConnection(parameters)
             except pika.exceptions.AMQPConnectionError:
                 print("Queue not ready, retrying in 5 seconds...", flush=True)
                 time.sleep(5)
 
-        channel = connection.channel()
-        channel.queue_declare(queue=self.queue_name)
-        channel.basic_qos(prefetch_count=1)
-        channel.basic_consume(queue=self.queue_name, on_message_callback=self.on_request)
+        self.channel = self.connection.channel()
+        self.channel.queue_declare(queue=self.queue_name)
+        self.channel.basic_qos(prefetch_count=1)
+        self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.on_request)
 
         print(f"Awaiting requests on queue {self.queue_name}", flush=True)
         try:
-            channel.start_consuming()
+            self.channel.start_consuming()
         except KeyboardInterrupt:
-            channel.stop_consuming()
-            connection.close()
+            self.stop()
+        finally:
+            if self.connection and self.connection.is_open:
+                self.connection.close()
+
+    def stop(self):
+        """
+        Stops the RabbitMQ consumer.
+        """
+        if hasattr(self, 'connection') and self.connection and self.connection.is_open:
+            self.connection.add_callback_threadsafe(self.channel.stop_consuming)
