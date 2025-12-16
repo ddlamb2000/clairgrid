@@ -16,7 +16,7 @@ class DatabaseManager(ConfigurationMixin):
     Manages database connection and migrations for the Grid Service.
     """
 
-    def __init__(self, purge_database=False):
+    def __init__(self, db_name, purge_database=False):
         """
         Initializes the DatabaseManager by loading configuration from environment variables.
         Establishes database connection and runs migrations.
@@ -25,6 +25,7 @@ class DatabaseManager(ConfigurationMixin):
             purge_database (bool): If True, purges the database before running migrations.
         """
         self.conn = None
+        self.db_name = db_name
         self.purge_database = purge_database
         self.load_configuration()        
         self.connect()
@@ -35,16 +36,15 @@ class DatabaseManager(ConfigurationMixin):
         """
         Loads configuration from environment variables.
         """
-        self.db_host = os.getenv("DB_HOST", "db")
-        self.db_port = os.getenv("DB_PORT", "5432")
-        self.db_name = os.getenv("DB_NAME", "clairgrid_master")
-        self.db_user_name = os.getenv("DB_USER_NAME", "clairgrid")
-        self.db_password_file = os.getenv("DB_PASSWORD_FILE")
-        self.db_password = self._read_password_file(self.db_password_file, "DB_PASSWORD_FILE")
-        self.timeout_threshold_milliseconds = os.getenv("TIMEOUT_THRESHOLD_MILLISECONDS", "5000")
-        self.root_user_name = os.getenv("ROOT_USER_NAME", "root")
-        self.root_password_file = os.getenv("ROOT_PASSWORD_FILE")
-        self.root_password = self._read_password_file(self.root_password_file, "ROOT_PASSWORD_FILE")
+        self.db_host = os.getenv(f"DB_HOST_{self.db_name}", "db")
+        self.db_port = os.getenv(f"DB_PORT_{self.db_name}", "5432")
+        self.db_user_name = os.getenv(f"DB_USER_NAME_{self.db_name}", "clairgrid")
+        self.db_password_file = os.getenv(f"DB_PASSWORD_FILE_{self.db_name}", "/run/secrets/db-password")
+        self.db_password = self._read_password_file(self.db_password_file)
+        self.timeout_threshold_milliseconds = os.getenv(f"TIMEOUT_THRESHOLD_MILLISECONDS_{self.db_name}", "5000")
+        self.root_user_name = os.getenv(f"ROOT_USER_NAME_{self.db_name}", "root")
+        self.root_password_file = os.getenv(f"ROOT_PASSWORD_FILE_{self.db_name}", "/run/secrets/root-password")
+        self.root_password = self._read_password_file(self.root_password_file)
 
     def get_connection_string(self):
         """

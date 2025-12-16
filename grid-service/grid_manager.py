@@ -22,8 +22,8 @@ class GridManager(ConfigurationMixin):
         self.db_manager = db_manager
         self.all_grids = {} # dictionary of grids by uuid
         self.all_rows = {} # dictionary of rows by grid_uuid and row_uuid
-        self.jwt_secret_file = os.getenv("JWT_SECRET_FILE")
-        self.jwt_secret = self._read_password_file(self.jwt_secret_file, "JWT_SECRET_FILE")
+        self.jwt_secret_file = os.getenv(f"JWT_SECRET_FILE_{self.db_manager.db_name}", "/run/secrets/jwt-secret")
+        self.jwt_secret = self._read_password_file(self.jwt_secret_file)
 
     @echo
     def _handle_jwt_validation(self, request):

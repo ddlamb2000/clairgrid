@@ -4,6 +4,7 @@
 
     This file contains the Grid Service for the clairgrid application.
 '''
+import os
 
 from queue_listener import QueueListener
 from database_manager import DatabaseManager
@@ -16,15 +17,14 @@ def main():
     and enters a keep-alive loop.
     """
     print("\nStarting Grid Service...", flush=True)
-    try:
-        db_manager = DatabaseManager()        
+    databases = os.getenv("DATABASES").split(",")
+    for database in databases:
+        db_manager = DatabaseManager(database)
         try:
             listener = QueueListener(db_manager)
             listener.start()
         finally:
-            db_manager.close()            
-    except Exception as e:
-        print(f"Service failed: {e}")
+            db_manager.close()
     print("Grid Service stopped.", flush=True)
     
 if __name__ == "__main__":

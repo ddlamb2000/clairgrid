@@ -56,25 +56,34 @@ services:
     networks:
       - clairgrid
   
-  grid-service-master:
+  grid-service-development:
     build:
       context: ./grid-service
       dockerfile: Dockerfile.development
-    container_name: clairgrid-grid-service-master
-    image: clairgrid-grid-service-master
+    container_name: clairgrid-grid-service-development
+    image: clairgrid-grid-service-development
     volumes:
       - .:/usr/src/clairgrid/
     environment:
-      DB_HOST: db # name of the database host
-      DB_PORT: 5432 # TCP port number of the database host
-      DB_NAME: clairgrid_master # name of the PostgreSQL database
-      DB_USER_NAME: clairgrid # login role set as owner of the database
-      DB_PASSWORD_FILE: /run/secrets/db-password
-      TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
-      ROOT_USER_NAME: root # user name for the user created with administrator privileges
-      ROOT_PASSWORD_FILE: /run/secrets/root-password
-      JWT_SECRET_FILE: /run/secrets/jwt-secret
-      JWT_EXPIRATION: 120 # expiration (in minutes) of the JWT token
+      DATABASES: "clairgrid_master,clairgrid_test"
+      DB_HOST_clairgrid_master: db # name of the database host
+      DB_PORT_clairgrid_master: 5432 # TCP port number of the database host
+      DB_USER_NAME_clairgrid_master: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE_clairgrid_master: /run/secrets/db-password
+      DB_HOST_clairgrid_test: db # name of the database host
+      DB_PORT_clairgrid_test: 5432 # TCP port number of the database host
+      DB_USER_NAME_clairgrid_test: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE_clairgrid_test: /run/secrets/db-password
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_master: 5000 # timeout threshold (in milliseconds) for database requests
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_test: 5000 # timeout threshold (in milliseconds) for database requests
+      ROOT_USER_NAME_clairgrid_master: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE_clairgrid_master: /run/secrets/root-password
+      ROOT_USER_NAME_clairgrid_test: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE_clairgrid_test: /run/secrets/root-password
+      JWT_SECRET_FILE_clairgrid_master: /run/secrets/jwt-secret
+      JWT_SECRET_FILE_clairgrid_test: /run/secrets/jwt-secret
+      JWT_EXPIRATION_clairgrid_master: 20 # expiration (in minutes) of the JWT token
+      JWT_EXPIRATION_clairgrid_test: 20 # expiration (in minutes) of the JWT token
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
@@ -89,43 +98,66 @@ services:
       - clairgrid
     depends_on:
       - db
+      - rabbitmq  
+
+  grid-service-test-automation:
+    build:
+      context: ./grid-service
+      dockerfile: Dockerfile.tests
+    container_name: clairgrid-grid-service-test-automation
+    image: clairgrid-grid-service-test-automation
+    volumes:
+      - .:/usr/src/clairgrid/
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: clairgrid_test
+      DB_USER_NAME: clairgrid
+      DB_PASSWORD_FILE: /run/secrets/db-password
+      TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
+      ROOT_USER_NAME: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE: /run/secrets/root-password
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: clairgrid
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
+      KEEP_ALIVE_AFTER_SECONDS: 6000
+    secrets:
+      - db-password
+      - root-password
+      - rabbitmq-password
+    networks:
+      - clairgrid
+    depends_on:
+      - grid-service-development
+    command: sh -c "./run_all_tests.sh"
+  
+  web-ui-development:
+    build:
+      context: ./web-ui
+      dockerfile: Dockerfile.development
+    container_name: clairgrid-web-ui-development
+    image: clairgrid-web-ui-development
+    restart: unless-stopped
+    volumes:
+      - .:/usr/src/clairgrid/
+    ports:
+      - "5173:5173"
+    environment:
+      APPNAME: "clairgrid (development)"
+      DATABASES: "clairgrid_master,clairgrid_test"
+      DEFAULTDB: "clairgrid_test"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: clairgrid
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
+    secrets:
+      - rabbitmq-password
+    networks:
+      - clairgrid
+    depends_on:
       - rabbitmq
 
-  grid-service-test:
-    build:
-      context: ./grid-service
-      dockerfile: Dockerfile.development
-    container_name: clairgrid-grid-service-test
-    image: clairgrid-grid-service-test
-    volumes:
-      - .:/usr/src/clairgrid/
-    environment:
-      DB_HOST: db # name of the database host
-      DB_PORT: 5432 # TCP port number of the database host
-      DB_NAME: clairgrid_test # name of the PostgreSQL database
-      DB_USER_NAME: clairgrid # login role set as owner of the database
-      DB_PASSWORD_FILE: /run/secrets/db-password
-      TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
-      ROOT_USER_NAME: root # user name for the user created with administrator privileges
-      ROOT_PASSWORD_FILE: /run/secrets/root-password
-      JWT_SECRET_FILE: /run/secrets/jwt-secret
-      JWT_EXPIRATION: 20 # expiration (in minutes) of the JWT token
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: clairgrid
-      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
-    secrets:
-      - db-password
-      - root-password
-      - rabbitmq-password
-      - jwt-secret
-    restart: unless-stopped
-    networks:
-      - clairgrid
-    depends_on:
-      - db
-      - rabbitmq
-  
   grid-service-sandbox:
     build:
       context: ./grid-service
@@ -157,64 +189,6 @@ services:
       - clairgrid
     depends_on:
       - db
-      - rabbitmq
-
-  grid-service-test-automation:
-    build:
-      context: ./grid-service
-      dockerfile: Dockerfile.tests
-    container_name: clairgrid-grid-service-test-automation
-    image: clairgrid-grid-service-test-automation
-    volumes:
-      - .:/usr/src/clairgrid/
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: clairgrid_test
-      DB_USER_NAME: clairgrid
-      DB_PASSWORD_FILE: /run/secrets/db-password
-      TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
-      ROOT_USER_NAME: root # user name for the user created with administrator privileges
-      ROOT_PASSWORD_FILE: /run/secrets/root-password
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: clairgrid
-      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
-      KEEP_ALIVE_AFTER_SECONDS: 6000
-    secrets:
-      - db-password
-      - root-password
-      - rabbitmq-password
-    networks:
-      - clairgrid
-    depends_on:
-      - grid-service-test
-    command: sh -c "./run_all_tests.sh"
-  
-  web-ui-development:
-    build:
-      context: ./web-ui
-      dockerfile: Dockerfile.development
-    container_name: clairgrid-web-ui-development
-    image: clairgrid-web-ui-development
-    restart: unless-stopped
-    volumes:
-      - .:/usr/src/clairgrid/
-    ports:
-      - "5173:5173"
-    environment:
-      APPNAME: "clairgrid (development)"
-      DATABASES: "clairgrid_master,clairgrid_test,clairgrid_sandbox"
-      DEFAULTDB: "clairgrid_test"
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
-      RABBITMQ_USER: clairgrid
-      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
-    secrets:
-      - rabbitmq-password
-    networks:
-      - clairgrid
-    depends_on:
       - rabbitmq
 
   web-ui-sandbox:

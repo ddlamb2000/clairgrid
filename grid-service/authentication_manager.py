@@ -18,9 +18,9 @@ class AuthenticationManager(ConfigurationMixin):
     """
     def __init__(self, db_manager):
         self.db_manager = db_manager
-        self.jwt_secret_file = os.getenv("JWT_SECRET_FILE")
-        self.jwt_secret = self._read_password_file(self.jwt_secret_file, "JWT_SECRET_FILE")
-        self.jwt_expiration = os.getenv("JWT_EXPIRATION", "120")
+        self.jwt_secret_file = os.getenv(f"JWT_SECRET_FILE_{self.db_manager.db_name}", "/run/secrets/jwt-secret")
+        self.jwt_secret = self._read_password_file(self.jwt_secret_file)
+        self.jwt_expiration = os.getenv(f"JWT_EXPIRATION_{self.db_manager.db_name}", "120")
 
     def _generate_jwt_token(self, login_id, user_uuid, first_name, last_name):
         """

@@ -35,7 +35,7 @@ class QueueListener(ConfigurationMixin):
         self.rabbitmq_port = int(os.getenv("RABBITMQ_PORT", "5672"))
         self.rabbitmq_user = os.getenv("RABBITMQ_USER", "guest")
         self.rabbitmq_password_file = os.getenv("RABBITMQ_PASSWORD_FILE")
-        self.rabbitmq_password = self._read_password_file(self.rabbitmq_password_file, "RABBITMQ_PASSWORD_FILE")
+        self.rabbitmq_password = self._read_password_file(self.rabbitmq_password_file)
 
     def _init_command_handlers(self):
         self.command_handlers = {
