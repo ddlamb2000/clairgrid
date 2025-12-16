@@ -46,11 +46,11 @@ class DatabaseManager(ConfigurationMixin):
         self.db_port = os.getenv(f"DB_PORT_{self.db_name}", "5432")
         self.db_user_name = os.getenv(f"DB_USER_NAME_{self.db_name}", "clairgrid")
         self.db_password_file = os.getenv(f"DB_PASSWORD_FILE_{self.db_name}", "/run/secrets/db-password")
-        self.db_password = self._read_password_file(self.db_password_file)
+        self.db_password = self._read_password_file(self.db_password_file, f"DB_PASSWORD_{self.db_name}")
         self.timeout_threshold_milliseconds = os.getenv(f"TIMEOUT_THRESHOLD_MILLISECONDS_{self.db_name}", "5000")
         self.root_user_name = os.getenv(f"ROOT_USER_NAME_{self.db_name}", "root")
         self.root_password_file = os.getenv(f"ROOT_PASSWORD_FILE_{self.db_name}", "/run/secrets/root-password")
-        self.root_password = self._read_password_file(self.root_password_file)
+        self.root_password = self._read_password_file(self.root_password_file, f"ROOT_PASSWORD_{self.db_name}")
         self.seed_data_file = os.getenv(f"SEED_DATA_FILE_{self.db_name}", "seed_data.yml")
 
     def get_connection_string(self):

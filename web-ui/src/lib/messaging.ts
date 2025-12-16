@@ -4,6 +4,7 @@
 import { env } from "$env/dynamic/private"
 import { connect } from 'amqplib'
 import * as metadata from '$lib/metadata.svelte'
+import fs from 'fs'
 
 let connection: any = null
 
@@ -77,7 +78,11 @@ export const initMessaging = async (dbName: string, contextUuid: string) => {
       hostname: env.RABBITMQ_HOST,
       port: parseInt(env.RABBITMQ_PORT),
       username: env.RABBITMQ_USER,
-      password: env.RABBITMQ_PASSWORD,
+      password: env.RABBITMQ_PASSWORD 
+        ? env.RABBITMQ_PASSWORD
+        : (env.RABBITMQ_PASSWORD_FILE 
+          ? fs.readFileSync(env.RABBITMQ_PASSWORD_FILE, 'utf-8').trim() 
+          : undefined),
     })
   }
   

@@ -180,8 +180,8 @@ services:
     build:
       context: ./web-ui
       dockerfile: Dockerfile.production
-    container_name: web-ui-sandbox
-    image: web-ui-sandbox
+    container_name: clairgrid-web-ui-sandbox
+    image: clairgrid-web-ui-production
     restart: unless-stopped
     ports:
       - "5174:3000"

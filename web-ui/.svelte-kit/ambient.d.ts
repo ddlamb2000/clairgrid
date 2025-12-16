@@ -39,7 +39,6 @@ declare module '$env/static/private' {
 	export const npm_config_userconfig: string;
 	export const npm_config_local_prefix: string;
 	export const COLOR: string;
-	export const RABBITMQ_PASSWORD: string;
 	export const npm_config_prefix: string;
 	export const npm_config_npm_version: string;
 	export const RABBITMQ_HOST: string;
@@ -107,7 +106,6 @@ declare module '$env/dynamic/private' {
 		npm_config_userconfig: string;
 		npm_config_local_prefix: string;
 		COLOR: string;
-		RABBITMQ_PASSWORD: string;
 		npm_config_prefix: string;
 		npm_config_npm_version: string;
 		RABBITMQ_HOST: string;
