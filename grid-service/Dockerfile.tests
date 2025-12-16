@@ -1,8 +1,9 @@
 # clairgrid : data structuration, presentation and navigation.
 # Copyright David Lambert 2025
 
-FROM python:3.14.2
+FROM pypy:3.10
 WORKDIR /usr/src/clairgrid/grid-service
+RUN apt-get update && apt-get install -y libpq5 && rm -rf /var/lib/apt/lists/*
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 CMD ["tail", "-f", "/dev/null"]

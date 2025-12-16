@@ -14,7 +14,7 @@ def main():
     print("Starting Purge Test Database Script...", flush=True)
     try:
         # Initialize DatabaseManager. This loads config, connects, and runs migrations.
-        db_manager = DatabaseManager(purge_database=True)
+        db_manager = DatabaseManager("clairgrid_test", purge_database=True)
         db_manager.close()
         
     except Exception as e:

@@ -109,14 +109,16 @@ services:
     volumes:
       - .:/usr/src/clairgrid/
     environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: clairgrid_test
-      DB_USER_NAME: clairgrid
-      DB_PASSWORD_FILE: /run/secrets/db-password
-      TIMEOUT_THRESHOLD_MILLISECONDS: 5000 # timeout threshold (in milliseconds) for database requests
-      ROOT_USER_NAME: root # user name for the user created with administrator privileges
-      ROOT_PASSWORD_FILE: /run/secrets/root-password
+      DATABASES: "clairgrid_test"
+      DB_HOST_clairgrid_test: db # name of the database host
+      DB_PORT_clairgrid_test: 5432 # TCP port number of the database host
+      DB_USER_NAME_clairgrid_test: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE_clairgrid_test: /run/secrets/db-password
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_test: 5000 # timeout threshold (in milliseconds) for database requests
+      ROOT_USER_NAME_clairgrid_test: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE_clairgrid_test: /run/secrets/root-password
+      JWT_SECRET_FILE_clairgrid_test: /run/secrets/jwt-secret
+      JWT_EXPIRATION_clairgrid_test: 20 # expiration (in minutes) of the JWT token
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
