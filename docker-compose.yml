@@ -74,6 +74,7 @@ services:
       DB_PORT_clairgrid_test: 5432 # TCP port number of the database host
       DB_USER_NAME_clairgrid_test: clairgrid # login role set as owner of the database
       DB_PASSWORD_FILE_clairgrid_test: /run/secrets/db-password
+      SEED_DATA_FILE: seed_data.yml
       TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_master: 5000 # timeout threshold (in milliseconds) for database requests
       TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_test: 5000 # timeout threshold (in milliseconds) for database requests
       ROOT_USER_NAME_clairgrid_master: root # user name for the user created with administrator privileges
@@ -110,19 +111,10 @@ services:
       - .:/usr/src/clairgrid/
     environment:
       DATABASES: "clairgrid_test"
-      DB_HOST_clairgrid_test: db # name of the database host
-      DB_PORT_clairgrid_test: 5432 # TCP port number of the database host
       DB_USER_NAME_clairgrid_test: clairgrid # login role set as owner of the database
-      DB_PASSWORD_FILE_clairgrid_test: /run/secrets/db-password
       TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_test: 5000 # timeout threshold (in milliseconds) for database requests
-      ROOT_USER_NAME_clairgrid_test: root # user name for the user created with administrator privileges
-      ROOT_PASSWORD_FILE_clairgrid_test: /run/secrets/root-password
-      JWT_SECRET_FILE_clairgrid_test: /run/secrets/jwt-secret
       JWT_EXPIRATION_clairgrid_test: 20 # expiration (in minutes) of the JWT token
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
-      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
       KEEP_ALIVE_AFTER_SECONDS: 6000
     secrets:
       - db-password
@@ -169,19 +161,9 @@ services:
     image: clairgrid-grid-service-production
     environment:
       DATABASES: "clairgrid_sandbox"
-      DB_HOST_clairgrid_sandbox: db # name of the database host
-      DB_PORT_clairgrid_sandbox: 5432 # TCP port number of the database host
-      DB_USER_NAME_clairgrid_sandbox: clairgrid # login role set as owner of the database
-      DB_PASSWORD_FILE_clairgrid_sandbox: /run/secrets/db-password
       TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_sandbox: 2000 # timeout threshold (in milliseconds) for database requests
-      ROOT_USER_NAME_clairgrid_sandbox: root # user name for the user created with administrator privileges
-      ROOT_PASSWORD_FILE_clairgrid_sandbox: /run/secrets/root-password
-      JWT_SECRET_FILE_clairgrid_sandbox: /run/secrets/jwt-secret
       JWT_EXPIRATION_clairgrid_sandbox: 120 # expiration (in minutes) of the JWT token
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_PORT: 5672
       RABBITMQ_USER: clairgrid
-      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
     secrets:
       - db-password
       - root-password

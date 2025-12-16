@@ -14,6 +14,7 @@ from uuid import UUID
 from migration_steps import get_migration_steps, get_deletion_steps
 from configuration_mixin import ConfigurationMixin
 from decorators import echo
+import metadata
 
 class DatabaseManager(ConfigurationMixin):
     """
@@ -35,6 +36,7 @@ class DatabaseManager(ConfigurationMixin):
         self.connect()
         if self.purge_database and self.db_name == "clairgrid_test": self.run_deletions() # purge the test database
         self.run_migrations()
+        self.import_database(self.seed_data_file)
 
     def load_configuration(self):
         """
@@ -49,6 +51,7 @@ class DatabaseManager(ConfigurationMixin):
         self.root_user_name = os.getenv(f"ROOT_USER_NAME_{self.db_name}", "root")
         self.root_password_file = os.getenv(f"ROOT_PASSWORD_FILE_{self.db_name}", "/run/secrets/root-password")
         self.root_password = self._read_password_file(self.root_password_file)
+        self.seed_data_file = os.getenv(f"SEED_DATA_FILE_{self.db_name}", "seed_data.yml")
 
     def get_connection_string(self):
         """
@@ -256,7 +259,7 @@ class DatabaseManager(ConfigurationMixin):
         try:
             with self.conn.cursor() as cur:
                 for table in tables:
-                    query = f"SELECT * FROM {table}" 
+                    query = f"SELECT * FROM {table} WHERE uuid != '{metadata.UuidRootUser}'" 
                     cur.execute(query)                    
                     columns = [desc[0] for desc in cur.description]                    
                     rows = []

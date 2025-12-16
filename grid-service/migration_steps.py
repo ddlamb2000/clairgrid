@@ -80,69 +80,6 @@ def get_migration_steps(root_user_name, root_password):
                 "PRIMARY KEY (uuid, partition)"
             ")",
 
-        80: "INSERT INTO rows "
-                "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
-                "VALUES ("
-                f"'{metadata.UuidGrids}',"
-                f"'{metadata.UuidGrids}',"
-                "true,"
-                "1,"
-                "now(),"
-                f"'{metadata.UuidRootUser}',"
-                "now(),"
-                f"'{metadata.UuidRootUser}'"
-            ")",
-
-        90: "INSERT INTO texts "
-                "(uuid, partition, text0) "
-                "VALUES ("
-                f"'{metadata.UuidGrids}',"
-                "0,"
-                "'Grids'"
-            ")",
-
-        100: "INSERT INTO rows "
-                "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
-                "VALUES ("
-                f"'{metadata.UuidColumns}',"
-                f"'{metadata.UuidGrids}',"
-                "true,"
-                "1,"
-                "now(),"
-                f"'{metadata.UuidRootUser}',"
-                "now(),"
-                f"'{metadata.UuidRootUser}'"
-            ")",
-
-        110: "INSERT INTO texts "
-                "(uuid, partition, text0) "
-                "VALUES ("
-                f"'{metadata.UuidColumns}',"
-                "0,"
-                "'Columns'"
-            ")",
-
-        120: "INSERT INTO rows "
-                "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
-                "VALUES ("
-                f"'{metadata.UuidUsers}',"
-                f"'{metadata.UuidGrids}',"
-                "true,"
-                "1,"
-                "now(),"
-                f"'{metadata.UuidRootUser}',"
-                "now(),"
-                f"'{metadata.UuidRootUser}'"
-            ")",
-
-        130: "INSERT INTO texts "
-                "(uuid, partition, text0) "
-                "VALUES ("
-                f"'{metadata.UuidUsers}',"
-                "0,"
-                "'Users'"
-            ")",
-
         140: "INSERT INTO rows "
                 "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
                 "VALUES ("

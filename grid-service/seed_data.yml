@@ -1,0 +1,68 @@
+{
+    "rows": [
+        {
+            "uuid": "f35ef7de-66e7-4e51-9a09-6ff8667da8f7",
+            "griduuid": "f35ef7de-66e7-4e51-9a09-6ff8667da8f7",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-12-16T10:26:57.147500+00:00",
+            "createdbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d",
+            "updated": "2025-12-16T10:26:57.147500+00:00",
+            "updatedbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d"
+        },
+        {
+            "uuid": "533b6862-add3-4fef-8f93-20a17aaaaf5a",
+            "griduuid": "f35ef7de-66e7-4e51-9a09-6ff8667da8f7",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-12-16T10:26:57.155656+00:00",
+            "createdbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d",
+            "updated": "2025-12-16T10:26:57.155656+00:00",
+            "updatedbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d"
+        },
+        {
+            "uuid": "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2",
+            "griduuid": "f35ef7de-66e7-4e51-9a09-6ff8667da8f7",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-12-16T10:26:57.163366+00:00",
+            "createdbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d",
+            "updated": "2025-12-16T10:26:57.163366+00:00",
+            "updatedbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d"
+        },
+        {
+            "uuid": "e9e4a415-c31e-4383-ae70-18949d6ec692",
+            "griduuid": "533b6862-add3-4fef-8f93-20a17aaaaf5a",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-12-16T10:26:57.169362+00:00",
+            "createdbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d",
+            "updated": "2025-12-16T10:26:57.169362+00:00",
+            "updatedbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d"
+        }
+    ],
+    "texts": [
+        {
+            "uuid": "f35ef7de-66e7-4e51-9a09-6ff8667da8f7",
+            "partition": 0,
+            "text0": "Grids"
+        },
+        {
+            "uuid": "533b6862-add3-4fef-8f93-20a17aaaaf5a",
+            "partition": 0,
+            "text0": "Columns"
+        },
+        {
+            "uuid": "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2",
+            "partition": 0,
+            "text0": "Users"
+        },
+        {
+            "uuid": "e9e4a415-c31e-4383-ae70-18949d6ec692",
+            "partition": 0,
+            "text0": "Name"
+        }
+    ],
+    "ints": [],
+    "relationships": []
+}
