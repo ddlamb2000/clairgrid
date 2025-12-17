@@ -1,4 +1,9 @@
-export const newUuid = () => crypto.randomUUID()
+// clairgrid : data structuration, presentation and navigation.
+// Copyright David Lambert 2025
+
+import { v4 as uuidv4 } from 'uuid'
+
+export const newUuid = () => uuidv4()
 
 export const numberToLetters = (num: number) => {
   let letters = ''

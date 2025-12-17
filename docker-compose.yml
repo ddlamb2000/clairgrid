@@ -7,7 +7,7 @@ name: "clairgrid"
 services:
 
   db:
-    container_name: clairgrid-database
+    container_name: clairgrid-database-development
     image: pgvector/pgvector:pg17
     restart: unless-stopped
     ports:
@@ -43,7 +43,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
   
   rabbitmq:
-    container_name: clairgrid-rabbitmq
+    container_name: clairgrid-rabbitmq-development
     image: rabbitmq:4.2.1-management
     configs:
       - source: queue-configuration
@@ -53,6 +53,7 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    restart: unless-stopped
     networks:
       - clairgrid
   
@@ -210,9 +211,9 @@ networks:
     driver: bridge
 secrets:
   db-password:
-    file: ./adminConfiguration/.db_password
+    file: ./adminConfiguration/.db-password
   root-password:
-    file: ./adminConfiguration/.root_password
+    file: ./adminConfiguration/.root-password
   rabbitmq-password:
     file: ./adminConfiguration/.rabbitmq-password
   jwt-secret:

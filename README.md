@@ -30,8 +30,8 @@ pgvector for Postgreql: https://github.com/pgvector/pgvector
 
 # Installation
 
-1. Create a file `adminConfiguration/.db_password` with the password used for accessing the Postgresql instance
-1. Create a file `adminConfiguration/.root_password` with the password set for the user created with administrator privileges
+1. Create a file `adminConfiguration/.db-password` with the password used for accessing the Postgresql instance
+1. Create a file `adminConfiguration/.root-password` with the password set for the user created with administrator privileges
 
 ```sql
 -- initial password set for the user created with administrator privileges
@@ -45,7 +45,7 @@ SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8));
 
 1. Create a file `adminConfiguration/.rabbitmq-password` with the password used for accessing the RabbitMQ instance
 
-1. Create a file `adminConfiguration/.jwt-secret` with the secret key used to generate JWT tokens. Use the same approach as for `adminConfiguration/.root_password` file.
+1. Create a file `adminConfiguration/.jwt-secret` with the secret key used to generate JWT tokens. Use the same approach as for `adminConfiguration/.root-password` file.
 
 ## History
 

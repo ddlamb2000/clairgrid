@@ -1,5 +1,5 @@
 !.gitignore
-.db_password
-.root_password
+.db-password
+.root-password
 .rabbitmq-password
 .jwt-secret
