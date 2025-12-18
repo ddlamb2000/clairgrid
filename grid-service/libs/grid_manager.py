@@ -12,8 +12,8 @@ from datetime import datetime, timezone
 from .configuration_mixin import ConfigurationMixin
 from .decorators import echo
 from .jwt_decorator import validate_jwt
-from .grid import Grid
-from .row import Row
+from .model.grid import Grid
+from .model.row import Row
 
 class GridManager(ConfigurationMixin):
     """
