@@ -9,8 +9,8 @@ from . import metadata
 import os
 import jwt
 import datetime
-from .configuration_mixin import ConfigurationMixin
-from .decorators import echo
+from .utils.configuration_mixin import ConfigurationMixin
+from .utils.decorators import echo
 
 class AuthenticationManager(ConfigurationMixin):
     """

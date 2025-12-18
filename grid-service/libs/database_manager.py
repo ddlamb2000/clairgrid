@@ -12,8 +12,8 @@ import datetime
 from decimal import Decimal
 from uuid import UUID
 from .metadata.migration_steps import get_migration_steps, get_deletion_steps
-from .configuration_mixin import ConfigurationMixin
-from .decorators import echo
+from .utils.configuration_mixin import ConfigurationMixin
+from .utils.decorators import echo
 from . import metadata
 
 class DatabaseManager(ConfigurationMixin):
