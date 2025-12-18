@@ -12,7 +12,7 @@ import pika
 from . import metadata
 from .utils.configuration_mixin import ConfigurationMixin
 from .utils.decorators import echo
-from .authentication_manager import AuthenticationManager
+from .authentication.authentication_manager import AuthenticationManager
 from .grid_manager import GridManager
 
 class QueueListener(ConfigurationMixin):

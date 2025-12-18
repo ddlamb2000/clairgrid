@@ -11,7 +11,7 @@ import jwt
 from datetime import datetime, timezone
 from .utils.configuration_mixin import ConfigurationMixin
 from .utils.decorators import echo
-from .jwt_decorator import validate_jwt
+from .authentication.jwt_decorator import validate_jwt
 from .model.grid import Grid
 from .model.row import Row
 

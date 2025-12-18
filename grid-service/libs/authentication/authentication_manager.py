@@ -5,12 +5,12 @@
     This file contains the Authentication Manager for the clairgrid Grid Service.
 '''
 
-from . import metadata
+from ..metadata import metadata
 import os
 import jwt
 import datetime
-from .utils.configuration_mixin import ConfigurationMixin
-from .utils.decorators import echo
+from ..utils.configuration_mixin import ConfigurationMixin
+from ..utils.decorators import echo
 
 class AuthenticationManager(ConfigurationMixin):
     """
@@ -64,7 +64,8 @@ class AuthenticationManager(ConfigurationMixin):
                 return { 
                     "status": metadata.SuccessStatus, 
                     "message": "User authenticated", 
-                    "jwt": token
+                    "jwt": token,
+                    "userUuid": str(result[0])
                 }
             else:
                 return { 

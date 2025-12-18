@@ -6,9 +6,11 @@ from libs.queue_listener import QueueListener
 
 class TestQueueListener(unittest.TestCase):
 
-    @patch("queue_listener.os.getenv")
-    @patch("queue_listener.QueueListener._read_password_file")
-    def setUp(self, mock_read_pwd, mock_getenv):
+    @patch("libs.queue_listener.GridManager")
+    @patch("libs.queue_listener.AuthenticationManager")
+    @patch("libs.queue_listener.os.getenv")
+    @patch("libs.queue_listener.QueueListener._read_password_file")
+    def setUp(self, mock_read_pwd, mock_getenv, mock_auth_manager, mock_grid_manager):
         mock_getenv.side_effect = lambda key, default=None: {
             "RABBITMQ_HOST": "localhost",
             "RABBITMQ_PORT": "5672",
@@ -90,8 +92,8 @@ class TestQueueListener(unittest.TestCase):
         # Verify ack
         mock_ch.basic_ack.assert_called_once_with(delivery_tag=mock_method.delivery_tag)
 
-    @patch("queue_listener.pika.BlockingConnection")
-    @patch("queue_listener.time.sleep")
+    @patch("libs.queue_listener.pika.BlockingConnection")
+    @patch("libs.queue_listener.time.sleep")
     def test_start_connection_retry(self, mock_sleep, mock_blocking_conn):
         """Test that start retries connection on failure."""
         # First attempt raises error, second succeeds
@@ -113,7 +115,7 @@ class TestQueueListener(unittest.TestCase):
         self.assertEqual(mock_blocking_conn.call_count, 2)
         mock_sleep.assert_called_once_with(5)
         
-    @patch("queue_listener.pika.BlockingConnection")
+    @patch("libs.queue_listener.pika.BlockingConnection")
     def test_start_setup(self, mock_blocking_conn):
         """Test successful start setup."""
         mock_connection = MagicMock()

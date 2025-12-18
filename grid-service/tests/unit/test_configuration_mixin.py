@@ -23,7 +23,7 @@ class TestConfigurationMixin(unittest.TestCase):
         """Test that ValueError is raised if file path is None/empty."""
         with self.assertRaises(ValueError) as cm:
             self.mixin._read_password_file(None, "MY_VAR")
-        self.assertIn("MY_VAR environment variable is not set", str(cm.exception))
+        self.assertIn("Password file path is not set", str(cm.exception))
 
     def test_read_password_file_not_found(self):
         """Test that ValueError is raised if file does not exist."""

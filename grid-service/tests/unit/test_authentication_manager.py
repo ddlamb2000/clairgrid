@@ -2,20 +2,20 @@ import unittest
 from unittest.mock import MagicMock, patch
 import uuid
 import json
-import metadata
+import libs.metadata as metadata
 import jwt
-from libs.authentication_manager import AuthenticationManager
+from libs.authentication.authentication_manager import AuthenticationManager
 
 class TestAuthenticationManager(unittest.TestCase):
     def setUp(self):
-        self.env_patcher = patch('authentication_manager.os.getenv')
+        self.env_patcher = patch('libs.authentication.authentication_manager.os.getenv')
         self.mock_getenv = self.env_patcher.start()
         self.mock_getenv.side_effect = lambda k, d=None: {
             "JWT_SECRET_FILE": "/tmp/secret",
             "JWT_EXPIRATION": "60"
         }.get(k, d)
 
-        self.pwd_patcher = patch('authentication_manager.AuthenticationManager._read_password_file')
+        self.pwd_patcher = patch('libs.authentication.authentication_manager.AuthenticationManager._read_password_file')
         self.mock_read_pwd = self.pwd_patcher.start()
         self.mock_read_pwd.return_value = "supersecretkey"
 
@@ -29,7 +29,7 @@ class TestAuthenticationManager(unittest.TestCase):
     def test_handle_authentication_success_json_serialization(self):
         # Setup mock to return a UUID object
         user_uuid = uuid.uuid4()
-        self.mock_db_manager.select.return_value = (user_uuid, "John", "Doe")
+        self.mock_db_manager.select_one.return_value = (user_uuid, "John", "Doe")
 
         request = {
             "loginId": "testuser",
@@ -45,7 +45,7 @@ class TestAuthenticationManager(unittest.TestCase):
         
         # Verify JWT
         self.assertIn('jwt', response)
-        decoded = jwt.decode(response['jwt'], "supersecretkey", algorithms=["HS256"])
+        decoded = jwt.decode(response['jwt'], "supersecretkey", algorithms=["HS512"])
         self.assertEqual(decoded['userUuid'], str(user_uuid))
         self.assertEqual(decoded['firstName'], "John")
         self.assertEqual(decoded['lastName'], "Doe")
@@ -57,7 +57,7 @@ class TestAuthenticationManager(unittest.TestCase):
             self.fail("Response is not JSON serializable")
 
     def test_handle_authentication_failure(self):
-        self.mock_db_manager.select.return_value = None
+        self.mock_db_manager.select_one.return_value = None
 
         request = {
             "loginId": "testuser",

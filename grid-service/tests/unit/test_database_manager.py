@@ -5,26 +5,26 @@ from libs.database_manager import DatabaseManager
 
 class TestDatabaseManager(unittest.TestCase):
 
-    @patch("database_manager.os.getenv")
-    @patch("database_manager.DatabaseManager._read_password_file")
-    @patch("database_manager.psycopg.connect")
-    @patch("database_manager.DatabaseManager.run_migrations")
+    @patch("libs.database_manager.os.getenv")
+    @patch("libs.database_manager.DatabaseManager._read_password_file")
+    @patch("libs.database_manager.psycopg.connect")
+    @patch("libs.database_manager.DatabaseManager.run_migrations")
     def setUp(self, mock_run_migrations, mock_connect, mock_read_pwd, mock_getenv):
         # Setup default mock behaviors for configuration
         mock_getenv.side_effect = lambda key, default=None: {
-            "DB_HOST": "localhost",
-            "DB_PORT": "5432",
-            "DB_NAME": "test_db",
-            "DB_USER_NAME": "test_user",
-            "DB_PASSWORD_FILE": "/run/secrets/db_pass",
-            "TIMEOUT_THRESHOLD_MILLISECONDS": "5000",
-            "ROOT_USER_NAME": "root",
-            "ROOT_PASSWORD_FILE": "/run/secrets/root_pass"
+            "DB_HOST_test_db": "localhost",
+            "DB_PORT_test_db": "5432",
+            "DB_NAME_test_db": "test_db",
+            "DB_USER_NAME_test_db": "test_user",
+            "DB_PASSWORD_FILE_test_db": "/run/secrets/db_pass",
+            "TIMEOUT_THRESHOLD_MILLISECONDS_test_db": "5000",
+            "ROOT_USER_NAME_test_db": "root",
+            "ROOT_PASSWORD_FILE_test_db": "/run/secrets/root_pass"
         }.get(key, default)
         
         mock_read_pwd.return_value = "secret"
         
-        self.db_manager = DatabaseManager()
+        self.db_manager = DatabaseManager("test_db")
         self.mock_connect = mock_connect
         self.mock_run_migrations = mock_run_migrations
 
@@ -39,7 +39,7 @@ class TestDatabaseManager(unittest.TestCase):
         expected = "host=localhost port=5432 dbname=test_db user=test_user password=secret sslmode=disable connect_timeout=5"
         self.assertEqual(self.db_manager.get_connection_string(), expected)
 
-    @patch("database_manager.psycopg.connect")
+    @patch("libs.database_manager.psycopg.connect")
     def test_connect_success(self, mock_psycopg_connect):
         """Test successful connection."""
         # Reset connection from setUp
@@ -59,7 +59,7 @@ class TestDatabaseManager(unittest.TestCase):
         self.db_manager.conn.closed = False
         
         # Patch psycopg.connect to ensure it's NOT called
-        with patch("database_manager.psycopg.connect") as mock_psycopg_connect:
+        with patch("libs.database_manager.psycopg.connect") as mock_psycopg_connect:
             conn = self.db_manager.connect()
             self.assertEqual(conn, self.db_manager.conn)
             mock_psycopg_connect.assert_not_called()
@@ -103,7 +103,7 @@ class TestDatabaseManager(unittest.TestCase):
         seq = self.db_manager._get_latest_migration_sequence()
         self.assertEqual(seq, 0)
 
-    @patch("database_manager.get_migration_steps")
+    @patch("libs.database_manager.get_migration_steps")
     def test_run_migrations_integration(self, mock_get_steps):
         # Setup connection mock
         self.db_manager.conn = MagicMock()
