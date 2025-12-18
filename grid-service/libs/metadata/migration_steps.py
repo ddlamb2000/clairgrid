@@ -5,7 +5,7 @@
     This file contains the migration steps for the clairgrid database.
 '''
 
-from . import metadata
+from .metadata import UuidRootUser, UuidUsers
 
 def get_migration_steps(root_user_name, root_password):
     return {
@@ -83,21 +83,21 @@ def get_migration_steps(root_user_name, root_password):
         140: "INSERT INTO rows "
                 "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
                 "VALUES ("
-                f"'{metadata.UuidRootUser}',"
-                f"'{metadata.UuidUsers}',"
+                f"'{UuidRootUser}',"
+                f"'{UuidUsers}',"
                 "true,"
                 "1,"
                 "now(),"
-                f"'{metadata.UuidRootUser}',"
+                f"'{UuidRootUser}',"
                 "now(),"
-                f"'{metadata.UuidRootUser}'"
+                f"'{UuidRootUser}'"
             ")",
 
 
         150: "INSERT INTO texts "
                 "(uuid, partition, text0, text1, text2, text3) "
                 "VALUES ("
-                f"'{metadata.UuidRootUser}',"
+                f"'{UuidRootUser}',"
                 "0,"
                 f"'{root_user_name}',"
                 f"'{root_user_name}',"
