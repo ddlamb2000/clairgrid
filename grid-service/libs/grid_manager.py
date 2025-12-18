@@ -10,7 +10,8 @@ import os
 import jwt
 from datetime import datetime, timezone
 from .configuration_mixin import ConfigurationMixin
-from .decorators import echo, validate_jwt
+from .decorators import echo
+from .jwt_decorator import validate_jwt
 from .grid import Grid
 from .row import Row
 
