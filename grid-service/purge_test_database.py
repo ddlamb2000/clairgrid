@@ -5,7 +5,7 @@
     This file contains the script to purge the test database.
 '''
 
-from database_manager import DatabaseManager
+from libs.database_manager import DatabaseManager
 
 def main():
     """

@@ -7,8 +7,8 @@
 import os
 import threading
 
-from queue_listener import QueueListener
-from database_manager import DatabaseManager
+from libs.queue_listener import QueueListener
+from libs.database_manager import DatabaseManager
 
 def main():
     """

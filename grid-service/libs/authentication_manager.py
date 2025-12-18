@@ -5,12 +5,12 @@
     This file contains the Authentication Manager for the clairgrid Grid Service.
 '''
 
-import metadata
+from . import metadata
 import os
 import jwt
 import datetime
-from configuration_mixin import ConfigurationMixin
-from decorators import echo
+from .configuration_mixin import ConfigurationMixin
+from .decorators import echo
 
 class AuthenticationManager(ConfigurationMixin):
     """

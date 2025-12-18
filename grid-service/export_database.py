@@ -6,7 +6,7 @@
 '''
 
 import argparse
-from database_manager import DatabaseManager
+from libs.database_manager import DatabaseManager
 
 def main(db_name, file_name):
     print(f"Starting export database {db_name}...")

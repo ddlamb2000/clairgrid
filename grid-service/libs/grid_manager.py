@@ -5,14 +5,14 @@
     This file contains the Grid Manager for the clairgrid Grid Service.
 '''
 
-import metadata
+from . import metadata
 import os
 import jwt
 from datetime import datetime, timezone
-from configuration_mixin import ConfigurationMixin
-from decorators import echo, validate_jwt
-from grid import Grid
-from row import Row
+from .configuration_mixin import ConfigurationMixin
+from .decorators import echo, validate_jwt
+from .grid import Grid
+from .row import Row
 
 class GridManager(ConfigurationMixin):
     """

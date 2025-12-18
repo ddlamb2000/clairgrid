@@ -4,7 +4,7 @@ import uuid
 import json
 import metadata
 import jwt
-from authentication_manager import AuthenticationManager
+from libs.authentication_manager import AuthenticationManager
 
 class TestAuthenticationManager(unittest.TestCase):
     def setUp(self):

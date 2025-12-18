@@ -2,7 +2,7 @@ import unittest
 import json
 from unittest.mock import MagicMock, patch, ANY
 import pika
-from queue_listener import QueueListener
+from libs.queue_listener import QueueListener
 
 class TestQueueListener(unittest.TestCase):
 

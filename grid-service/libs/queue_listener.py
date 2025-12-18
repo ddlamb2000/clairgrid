@@ -9,11 +9,11 @@ import json
 import os
 import time
 import pika
-import metadata
-from configuration_mixin import ConfigurationMixin
-from decorators import echo
-from authentication_manager import AuthenticationManager
-from grid_manager import GridManager
+from . import metadata
+from .configuration_mixin import ConfigurationMixin
+from .decorators import echo
+from .authentication_manager import AuthenticationManager
+from .grid_manager import GridManager
 
 class QueueListener(ConfigurationMixin):
     """

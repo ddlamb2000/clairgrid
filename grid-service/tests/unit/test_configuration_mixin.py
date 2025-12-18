@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, mock_open
-from configuration_mixin import ConfigurationMixin
+from libs.configuration_mixin import ConfigurationMixin
 
 class TestConfigurationMixin(unittest.TestCase):
 

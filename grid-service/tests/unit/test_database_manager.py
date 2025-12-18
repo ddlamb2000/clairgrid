@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import MagicMock, patch, call
 import psycopg
-from database_manager import DatabaseManager
+from libs.database_manager import DatabaseManager
 
 class TestDatabaseManager(unittest.TestCase):
 

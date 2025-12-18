@@ -5,7 +5,7 @@
     This file contains the migration steps for the clairgrid database.
 '''
 
-import metadata
+from . import metadata
 
 def get_migration_steps(root_user_name, root_password):
     return {
