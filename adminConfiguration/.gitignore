@@ -1,5 +1,7 @@
 !.gitignore
-.db-password
-.root-password
-.rabbitmq-password
-.jwt-secret
+*-password
+*-secret
+*.pem
+*.key
+*.crt
+*.csr

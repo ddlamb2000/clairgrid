@@ -154,6 +154,23 @@ services:
     depends_on:
       - rabbitmq
 
+  load-balancer-development:
+    image: nginx:latest
+    container_name: clairgrid-load-balancer
+    configs:
+      - source: nginx-configuration
+        target: /etc/nginx/conf.d/default.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    secrets:
+      - fullchain.pem
+      - privkey.pem
+    networks:
+      - clairgrid
+    depends_on:
+      - web-ui-development
+
   grid-service-sandbox:
     build:
       context: ./grid-service
@@ -206,6 +223,8 @@ configs:
     file: ./adminConfiguration/initdb.sql
   queue-configuration:
     file: ./adminConfiguration/rabbitmq.conf
+  nginx-configuration:
+    file: ./adminConfiguration/nginx.conf
 networks:
   clairgrid:
     driver: bridge
@@ -218,6 +237,10 @@ secrets:
     file: ./adminConfiguration/.rabbitmq-password
   jwt-secret:
     file: ./adminConfiguration/.jwt-secret
+  fullchain.pem:
+    file: ./adminConfiguration/.fullchain.pem
+  privkey.pem:
+    file: ./adminConfiguration/.privkey.pem
 volumes:
   db:
     driver: local
