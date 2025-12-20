@@ -20,13 +20,14 @@ Copyright David Lambert 2025
 
 1. Docker: https://www.docker.com/
 1. Postgresql: https://www.postgresql.org/
-pgvector for Postgreql: https://github.com/pgvector/pgvector
-
+1. pgvector for Postgreql: https://github.com/pgvector/pgvector
 1. Svelte: https://svelte.dev/
+1. Vite: https://vite.dev
 1. Flowbite Svelte: https://flowbite-svelte.com/
 1. Tailwindcss: https://tailwindcss.com/
-1. Python
-1. RabbitMQ
+1. Python: https://www.python.org
+1. RabbitMQ: https://www.rabbitmq.com
+1. Ngninx: https://nginx.org
 
 # Installation
 
@@ -46,11 +47,6 @@ SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8));
 1. Create a file `adminConfiguration/.rabbitmq-password` with the password used for accessing the RabbitMQ instance
 
 1. Create a file `adminConfiguration/.jwt-secret` with the secret key used to generate JWT tokens. Use the same approach as for `adminConfiguration/.root-password` file.
-
-1. Create a file `adminConfiguration/.fullchain.pem`...
-
-1. Create a file `./adminConfiguration/.privkey.pem`...
-
 
 ## History
 

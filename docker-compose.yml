@@ -231,10 +231,6 @@ secrets:
     file: ./adminConfiguration/.rabbitmq-password
   jwt-secret:
     file: ./adminConfiguration/.jwt-secret
-  fullchain.pem:
-    file: ./adminConfiguration/.fullchain.pem
-  privkey.pem:
-    file: ./adminConfiguration/.privkey.pem
 volumes:
   db:
     driver: local
