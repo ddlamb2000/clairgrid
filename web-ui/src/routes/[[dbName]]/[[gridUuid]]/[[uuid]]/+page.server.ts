@@ -8,7 +8,7 @@ export const load: PageServerLoad = async ({ url, params }) => {
     console.log(`Database "${dbName} isn't available`, url, params)
     return {
       ok: false,
-      errorMessage: "Not found",
+      errorMessage: `${dbName} isn't available`,
       appName: env.APPNAME,
       dbName: "",
       gridUuid: "",
