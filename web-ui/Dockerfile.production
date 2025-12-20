@@ -11,5 +11,5 @@ COPY svelte.config.js svelte.config.js
 COPY tailwind.config.ts tailwind.config.ts
 COPY tsconfig.json tsconfig.json
 COPY vite.config.ts vite.config.ts
-RUN npm install -g npm@11.6.1 && npm i -D @sveltejs/adapter-node && npm run build
+RUN npm install -g npm@11.7.0 && npm i -D @sveltejs/adapter-node && npm run build
 CMD ["sh", "-c", "node build"]

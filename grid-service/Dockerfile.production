@@ -5,6 +5,7 @@ FROM pypy:3.11-7
 WORKDIR /usr/src/clairgrid/grid-service
 RUN apt-get update && apt-get install -y libpq5 && rm -rf /var/lib/apt/lists/*
 COPY *.py .
+COPY libs libs
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY seed_data.yml .
