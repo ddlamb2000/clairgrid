@@ -16,7 +16,7 @@ class Grid():
         self.columns = []
 
     def __repr__(self):
-        return f"Grid(uuid={self.uuid}, name={self.name}, columns={self.columns})"
+        return f"Grid({self.uuid=}, {self.name=})"
 
     def to_json(self):
         result = { 'uuid': self.uuid }

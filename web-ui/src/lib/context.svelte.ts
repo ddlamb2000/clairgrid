@@ -455,7 +455,7 @@ export class Context extends ContextBase {
         if(message.command == metadata.ActionLoad) {
           if(message.dataSet && message.dataSet.grid) {
             if(message.rowUuid) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
-            else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+            else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.name}`)
             const setIndex = this.getSetIndex(message.dataSet)
             if(setIndex < 0) {
               this.dataSet.push(message.dataSet)
@@ -463,7 +463,7 @@ export class Context extends ContextBase {
               if(message.dataSet.grid && message.dataSet.countRows) this.rowsInMemory += message.dataSet.countRows
             } else {
               this.dataSet[setIndex] = message.dataSet
-              console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1} is reloaded`)
+              console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.name} is reloaded`)
             }
             if(message.rowUuid && message.dataSet.grid) {
               if(message.dataSet.grid.columns) {

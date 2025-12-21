@@ -117,7 +117,7 @@ class GridManager(ConfigurationMixin):
     def _load_columns(self, grid):
         try:
             result = self.db_manager.select_all('''
-                SELECT rows.uuid, texts.text0
+                SELECT rows.uuid, texts.text0, texts.text1
                 FROM relationships
                 LEFT OUTER JOIN rows
                 ON rows.gridUuid = %s
@@ -131,7 +131,7 @@ class GridManager(ConfigurationMixin):
             ''', (metadata.SystemIds.Columns, grid.uuid)
             )
             for item in result:
-                column = Column(item[0], name = item[1])
+                column = Column(item[0], order = item[1], name = item[2])
                 print(f"New column: {column}")
                 grid.columns.append(column)
         except Exception as e:

@@ -15,7 +15,8 @@
   const colorFocus = "bg-yellow-100/20"
 
   const matchesProps = (set: GridResponse): boolean => {
-    return set.gridUuid === gridUuid
+    return set.grid 
+            && set.grid.uuid === gridUuid
             && !set.uuid
             && ((!set.filterColumnOwned && !filterColumnOwned) || (set.filterColumnOwned === filterColumnOwned))
             && set.filterColumnName === filterColumnName
@@ -32,7 +33,7 @@
 {#if !context.gotData(matchesProps)}
   <Spinner size={4} />
 {:else}
-  {#each context.dataSet as set, setIndex}
+  {#each context.dataSet as set, setIndex}  
     {#if matchesProps(set)}
       {#key set.grid.uuid}
         {#if !embedded}
@@ -73,10 +74,10 @@
                 <th class="sticky -top-0.5 p-0.5 py-1 bg-gray-100 border border-slate-200">
                   <span class="flex">
                     {#if column.bidirectional && !column.owned && column.grid}
-                      {column.grid.displayString} <span class="text-xs">({column.label})</span>
+                      {column.grid.displayString} <span class="text-xs">({column.name})</span>
                     {:else}
                       <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
-                        bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].label}></span>
+                        bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].name}></span>
                     {/if}
                     <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>

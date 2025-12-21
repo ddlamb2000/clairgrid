@@ -13,7 +13,7 @@ class Row():
         self.updated_by = updated_by
 
     def __repr__(self):
-        return f"Row(uuid={self.uuid})"
+        return f"Row({self.uuid=})"
 
     def to_json(self):
         result = { 'uuid': self.uuid }

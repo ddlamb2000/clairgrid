@@ -282,7 +282,7 @@ class DatabaseManager(ConfigurationMixin):
                     export_data[table] = rows
 
             with open(file_name, 'w') as f:
-                json.dump(export_data, f, default=json_serial, indent=2)
+                json.dump(export_data, f, default=json_serial, indent=4)
                 
             print(f"Database {self.db_name} exported successfully to {file_name}.", flush=True)
 

@@ -60,16 +60,18 @@ export interface TransactionType {
 
 
 export interface GridType extends RowType {
+  name: string
+  description: string
   columns?: ColumnType[]
   columnsUsage?: ColumnType[]
 }
 
 export interface ColumnType {
   uuid: string
+  name: string
   orderNumber?: number
   owned?: boolean
   label?: string
-  name: string
   type: string
   typeUuid: string
   gridUuid: string
