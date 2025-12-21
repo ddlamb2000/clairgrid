@@ -11,7 +11,7 @@
     <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
       <form class="space-y-4 md:space-y-6" action="#">
         <h1 class="text-center mb-2 text-4xl font-extrabold text-gray-900 dark:text-white">
-          clairgrid: {context.dbName}
+          {context.dbName}
         </h1>
         <div>
           <label for="login" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>

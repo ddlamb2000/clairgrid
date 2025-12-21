@@ -21,11 +21,11 @@
             disabled={set.filterColumnName}
             color={!context.userPreferences.showPrompt && context.gridUuid === set.gridUuid && context.uuid === (set.uuid ?? "") ? "dark" : "light"}
             onclick={() => context.navigateToGrid(set.grid.uuid, set.uuid)}>
-      <DynIcon iconName={set.grid.text3}/>
+      <DynIcon iconName={set.grid.icon}/>
       {#if set.uuid && set.rows && set.rows.length > 0}
-        {set.rows[0].displayString}
+        {set.rows[0].name}
       {:else}
-        {@html set.grid.displayString}
+        {@html set.grid.name}
       {/if}
       <span class="sr-only">Notifications</span>
       {#if set.filterColumnName}
@@ -35,4 +35,9 @@
       {/if}
     </Button>
   {/if}
+  {#if context.rowsInMemory > 0 || context.gridsInMemory > 0}
+    <span class="text-xs ms-2 me-2 py-0 text-gray-600">
+      {context.gridsInMemory} grids, {context.rowsInMemory} rows
+    </span>
+  {/if}    
 {/each}

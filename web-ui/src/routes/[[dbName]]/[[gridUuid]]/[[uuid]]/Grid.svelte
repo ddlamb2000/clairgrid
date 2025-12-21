@@ -40,10 +40,10 @@
           <span class="flex">
             <span contenteditable class="text-2xl font-extrabold"
                   oninput={() => context.changeGrid(set.grid)}
-                  bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
+                  bind:innerHTML={context.dataSet[setIndex].grid.name}></span>
             <span contenteditable class="ms-2 text-sm font-light"
                   oninput={() => context.changeGrid(set.grid)}
-                  bind:innerHTML={context.dataSet[setIndex].grid.text2}></span>
+                  bind:innerHTML={context.dataSet[setIndex].grid.description}></span>
             {#if set.grid.uuid !== metadata.UuidGrids}
               <a class="ms-2 text-sm font-light text-gray-500 underline"
                   href={"/" + context.dbName + "/" + metadata.UuidGrids + "/" + set.grid.uuid}

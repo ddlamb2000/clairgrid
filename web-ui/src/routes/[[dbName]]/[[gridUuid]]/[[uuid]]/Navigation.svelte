@@ -30,11 +30,6 @@
     </span>
   {/if}
   <span class="lg:flex ml-auto">
-    {#if context.rowsInMemory > 0 || context.gridsInMemory > 0}
-      <span class="text-xs mt-1 ms-2 me-2 py-0 text-gray-600">
-        {context.rowsInMemory} rows in {context.gridsInMemory} grids
-      </span>
-    {/if}    
     {#if context.isStreaming}
       {#if context.isSending}
         <span transition:fade class="inline-flex items-center me-4">
@@ -48,7 +43,7 @@
         {/if}
       {/if}
       <span transition:fade class="inline-flex items-center me-4">
-        <Indicator size="sm" color="teal" class="me-1" />Connected to {context.dbName}
+        <Indicator size="sm" color="teal" class="me-1" />{context.dbName}
       </span>
     {:else}
       <span transition:fade class="inline-flex items-center me-4">
