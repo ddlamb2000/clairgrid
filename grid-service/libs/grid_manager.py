@@ -128,6 +128,7 @@ class GridManager(ConfigurationMixin):
                 AND texts.partition = 0
                 WHERE relationships.fromUuid = %s
                 AND relationships.partition = 0
+                ORDER BY texts.text0
             ''', (metadata.SystemIds.Columns, grid.uuid)
             )
             for item in result:

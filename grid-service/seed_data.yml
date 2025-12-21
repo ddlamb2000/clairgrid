@@ -21,6 +21,16 @@
             "updatedbyuuid_metadata": "RootUser"
         },
         {
+            "uuid_metadata": "ColumnTypes",
+            "griduuid_metadata": "Grids",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-12-16T10:26:57.163366+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-12-16T10:26:57.163366+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
             "uuid_metadata": "Users",
             "griduuid_metadata": "Grids",
             "enabled": true,
@@ -51,6 +61,16 @@
             "updatedbyuuid_metadata": "RootUser"
         },
         {
+            "uuid_metadata": "ColumnColumnColumnType",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "griduuid_metadata": "Columns",
             "enabled": true,
@@ -73,6 +93,126 @@
         {
             "uuid_metadata": "GridColumnColumns",
             "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "ColumnTypeColumnName",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "ColumnTypeColumnDesc",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "UserColumnId",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "UserColumnFirstName",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "UserColumnLastName",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "UserColumnPassword",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "TextColumnType",
+            "griduuid_metadata": "ColumnTypes",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "IntColumnType",
+            "griduuid_metadata": "ColumnTypes",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "ReferenceColumnType",
+            "griduuid_metadata": "ColumnTypes",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "PasswordColumnType",
+            "griduuid_metadata": "ColumnTypes",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "BooleanColumnType",
+            "griduuid_metadata": "ColumnTypes",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "UuidColumnType",
+            "griduuid_metadata": "ColumnTypes",
             "enabled": true,
             "revision": 1,
             "created": "2025-01-01T01:00:00+00:00",
@@ -95,6 +235,12 @@
             "text1": "Column of data grids"
         },
         {
+            "uuid_metadata": "ColumnTypes",
+            "partition": 0,
+            "text0": "Column Types",
+            "text1": "Type of grids columns"
+        },
+        {
             "uuid_metadata": "Users",
             "partition": 0,
             "text0": "Users",
@@ -113,6 +259,12 @@
             "text1": "Name"
         },
         {
+            "uuid_metadata": "ColumnColumnColumnType",
+            "partition": 0,
+            "text0": "c",
+            "text1": "Type"
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "partition": 0,
             "text0": "a",
@@ -129,6 +281,84 @@
             "partition": 0,
             "text0": "c",
             "text1": "Columns"
+        },
+        {
+            "uuid_metadata": "ColumnTypeColumnName",
+            "partition": 0,
+            "text0": "a",
+            "text1": "Name"
+        },
+        {
+            "uuid_metadata": "ColumnTypeColumnDesc",
+            "partition": 0,
+            "text0": "a",
+            "text1": "Description"
+        },
+        {
+            "uuid_metadata": "TextColumnType",
+            "partition": 0,
+            "text0": "Text",
+            "text1": "Text or string"
+        },
+        {
+            "uuid_metadata": "IntColumnType",
+            "partition": 0,
+            "text0": "Integer",
+            "text1": "Integer number"
+        },
+        {
+            "uuid_metadata": "ReferenceColumnType",
+            "partition": 0,
+            "text0": "Reference",
+            "text1": "Reference to another data grid row"
+        },
+        {
+            "uuid_metadata": "PasswordColumnType",
+            "partition": 0,
+            "text0": "Password",
+            "text1": "Password or passphrase"
+        },
+        {
+            "uuid_metadata": "BooleanColumnType",
+            "partition": 0,
+            "text0": "Boolean",
+            "text1": "True or false"
+        },
+        {
+            "uuid_metadata": "UuidColumnType",
+            "partition": 0,
+            "text0": "UUID",
+            "text1": "UUID"
+        },
+        {
+            "uuid_metadata": "DateColumnType",
+            "partition": 0,
+            "text0": "Date",
+            "text1": "Date and time"
+        },
+        {
+            "uuid_metadata": "UserColumnId",
+            "partition": 0,
+            "text0": "a",
+            "text1": "User name"
+        },
+        {
+            "uuid_metadata": "UserColumnFirstName",
+            "partition": 0,
+            "text0": "b",
+            "text1": "First name"
+        },
+        {
+            "uuid_metadata": "UserColumnLastName",
+            "partition": 0,
+            "text0": "c",
+            "text1": "Last name"
+        },
+        {
+            "uuid_metadata": "UserColumnPassword",
+            "partition": 0,
+            "text0": "d",
+            "text1": "Passphrase"
         }
     ],
     "ints": [],
@@ -144,6 +374,12 @@
             "partition": 0,
             "fromuuid_metadata": "Columns",
             "touuid0_metadata": "ColumnColumnName"
+        },
+        {
+            "uuid": "2355c8e5-996e-4ac7-a92d-d70425dc6d5c",
+            "partition": 0,
+            "fromuuid_metadata": "Columns",
+            "touuid0_metadata": "ColumnColumnColumnType"
         },
         {
             "uuid": "c1bc176c-406a-414f-8b21-b043d2d3189a",
@@ -162,6 +398,42 @@
             "partition": 0,
             "fromuuid_metadata": "Grids",
             "touuid0_metadata": "GridColumnColumns"
+        },
+        {
+            "uuid": "0e62fcc8-0134-4ad1-8e95-a391b9ccca80",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnTypes",
+            "touuid0_metadata": "ColumnTypeColumnName"
+        },
+        {
+            "uuid": "d0ab74b6-b16f-4977-85c0-45a78654e271",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnTypes",
+            "touuid0_metadata": "ColumnTypeColumnDesc"
+        },
+        {
+            "uuid": "0be4456d-6c0d-4c84-859e-715325c6927c",
+            "partition": 0,
+            "fromuuid_metadata": "Users",
+            "touuid0_metadata": "UserColumnId"
+        },
+        {
+            "uuid": "8d910205-1579-4599-9ef3-76bf8a86b755",
+            "partition": 0,
+            "fromuuid_metadata": "Users",
+            "touuid0_metadata": "UserColumnFirstName"
+        },
+        {
+            "uuid": "b68e2808-179c-4323-a186-58efc7dc09a7",
+            "partition": 0,
+            "fromuuid_metadata": "Users",
+            "touuid0_metadata": "UserColumnLastName"
+        },
+        {
+            "uuid": "f5eb635f-1561-4ab4-a4ee-3e7c7566af20",
+            "partition": 0,
+            "fromuuid_metadata": "Users",
+            "touuid0_metadata": "UserColumnPassword"
         }
     ]
 }
