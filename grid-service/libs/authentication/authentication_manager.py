@@ -51,7 +51,7 @@ class AuthenticationManager(ConfigurationMixin):
                         AND texts.partition = 0
                         AND texts.text0 = %s
                         AND texts.text3 = crypt(%s, texts.text3)
-                ''', (metadata.UuidUsers, login_id, password)
+                ''', (metadata.SystemIds.Users, login_id, password)
             )
             if result:
                 try:

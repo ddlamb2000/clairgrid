@@ -4,8 +4,6 @@
 
 '''
 
-import json
-
 class Row():
     def __init__(self, uuid, created = None, created_by = None, updated = None, updated_by = None):
         self.uuid = str(uuid)

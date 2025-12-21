@@ -4,8 +4,6 @@
 
 '''
 
-import json
-
 class Grid():
     def __init__(self, uuid, name = None, description = None, created = None, created_by = None, updated = None, updated_by = None):
         self.uuid = str(uuid)

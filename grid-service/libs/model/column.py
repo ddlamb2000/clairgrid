@@ -4,8 +4,6 @@
 
 '''
 
-import json
-
 class Column():
     def __init__(self, uuid, name = None, description = None):
         self.uuid = str(uuid)

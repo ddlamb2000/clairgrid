@@ -259,19 +259,30 @@ class DatabaseManager(ConfigurationMixin):
         try:
             with self.conn.cursor() as cur:
                 for table in tables:
-                    query = f"SELECT * FROM {table} WHERE uuid != '{metadata.UuidRootUser}'" 
+                    query = f"SELECT * FROM {table} WHERE uuid != '{metadata.SystemIds.RootUser}'" 
                     cur.execute(query)                    
                     columns = [desc[0] for desc in cur.description]                    
                     rows = []
                     for row in cur.fetchall():
                         row_dict = dict(zip(columns, row))
-                        clean_row_dict = {k: v for k, v in row_dict.items() if v is not None}
+                        clean_row_dict = {}
+                        for k, v in row_dict.items():
+                            if v is None:
+                                continue
+                            if 'uuid' in k.lower():
+                                system_name = metadata.SystemIds.get_name(str(v))
+                                if system_name:
+                                    clean_row_dict[f"{k}_metadata"] = system_name
+                                else:
+                                    clean_row_dict[k] = v
+                            else:
+                                clean_row_dict[k] = v
                         rows.append(clean_row_dict)
                     
                     export_data[table] = rows
 
             with open(file_name, 'w') as f:
-                json.dump(export_data, f, default=json_serial, indent=4)
+                json.dump(export_data, f, default=json_serial, indent=2)
                 
             print(f"Database {self.db_name} exported successfully to {file_name}.", flush=True)
 
@@ -308,6 +319,12 @@ class DatabaseManager(ConfigurationMixin):
                             print(f"Importing database {self.db_name} with {len(rows)} rows into {table}...", flush=True)
                             
                             for row in rows:
+                                for key in list(row.keys()):
+                                    if key.endswith('_metadata'):
+                                        system_name = row.pop(key)
+                                        original_key = key[:-9]  # Remove '_metadata' suffix
+                                        row[original_key] = getattr(metadata.SystemIds, system_name)
+                                    
                                 columns = list(row.keys())
                                 values = [row[col] for col in columns]
                                 

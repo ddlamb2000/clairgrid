@@ -97,7 +97,7 @@ class GridManager(ConfigurationMixin):
                 WHERE rows.gridUuid = %s
                 AND rows.uuid = %s
                 AND rows.enabled = true
-            ''', (metadata.UuidGrids, grid_uuid)
+            ''', (metadata.SystemIds.Grids, grid_uuid)
             )
             if result:
                 grid = self.all_grids.get(grid_uuid)
@@ -128,7 +128,7 @@ class GridManager(ConfigurationMixin):
                 AND texts.partition = 0
                 WHERE relationships.fromUuid = %s
                 AND relationships.partition = 0
-            ''', (metadata.UuidColumns, grid.uuid)
+            ''', (metadata.SystemIds.Columns, grid.uuid)
             )
             for item in result:
                 column = Column(item[0], name = item[1])
