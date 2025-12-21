@@ -121,12 +121,12 @@ class GridManager(ConfigurationMixin):
                 FROM relationships
                 LEFT OUTER JOIN rows
                 ON rows.gridUuid = %s
-                AND relationships.rel0 = rows.uuid
+                AND relationships.toUuid0 = rows.uuid
                 AND rows.enabled = true
                 LEFT OUTER JOIN texts
                 ON rows.uuid = texts.uuid
                 AND texts.partition = 0
-                WHERE relationships.uuid = %s
+                WHERE relationships.fromUuid = %s
                 AND relationships.partition = 0
             ''', (metadata.UuidColumns, grid.uuid)
             )

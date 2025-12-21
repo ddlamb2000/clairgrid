@@ -305,7 +305,7 @@ class DatabaseManager(ConfigurationMixin):
                     for table in tables:
                         if table in import_data:
                             rows = import_data[table]
-                            print(f"Importing {len(rows)} rows into {table}...", flush=True)
+                            print(f"Importing database {self.db_name} with {len(rows)} rows into {table}...", flush=True)
                             
                             for row in rows:
                                 columns = list(row.keys())
@@ -338,5 +338,5 @@ class DatabaseManager(ConfigurationMixin):
             print(f"Database {self.db_name} imported successfully from {file_name}.", flush=True)
 
         except Exception as e:
-            print(f"Error importing database: {e}", flush=True)
+            print(f"Error importing database {self.db_name} from {file_name}: {e}", flush=True)
             raise e

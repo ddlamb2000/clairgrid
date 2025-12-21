@@ -6,13 +6,18 @@
 '''
 
 UuidGrids = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
+UuidGridColumnName = "e9e4a415-c31e-4383-ae70-18949d6ec692"
+UuidGridColumnDesc = "bc1c489d-40c3-441c-9257-c8717be290cd"
+
 UuidUsers = "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2"
 
 UuidColumns = "533b6862-add3-4fef-8f93-20a17aaaaf5a"
 UuidColumnColumnName = "a5194e16-415e-45fd-a603-b5db45d13d7d"
 
 UuidMigrations = "18414786-31cb-47fd-bd18-fa474099bd94"
+
 UuidColumnTypes = "2114a6ae-013c-4bb1-be6e-3ee875ae517f"
+
 UuidRootUser = "3a33485c-7683-4482-aa5d-0aa51e58d79d"
 
 ActionInitialization = "init"
@@ -22,5 +27,6 @@ ActionLoad = "load"
 ActionChangeGrid = "change"
 ActionLocateGrid = "locate"
 ActionPrompt = "prompt"
+
 SuccessStatus = "success"
 FailedStatus = "failed"
