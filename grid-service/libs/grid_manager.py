@@ -14,6 +14,7 @@ from .utils.decorators import echo
 from .authentication.jwt_decorator import validate_jwt
 from .model.grid import Grid
 from .model.row import Row
+from .model.column import Column
 
 class GridManager(ConfigurationMixin):
     """
@@ -83,7 +84,12 @@ class GridManager(ConfigurationMixin):
     def _load_grid(self, grid_uuid):
         try:
             result = self.db_manager.select_one('''
-                SELECT texts.text0, rows.created, rows.createdByUuid, rows.updated, rows.updatedByuuid
+                SELECT texts.text0,
+                    texts.text1,
+                    rows.created,
+                    rows.createdByUuid,
+                    rows.updated,
+                    rows.updatedByuuid
                 FROM rows
                 LEFT OUTER JOIN texts
                 ON rows.uuid = texts.uuid
@@ -96,14 +102,42 @@ class GridManager(ConfigurationMixin):
             if result:
                 grid = self.all_grids.get(grid_uuid)
                 if not grid:
-                    grid = Grid(grid_uuid, name = result[0])
+                    grid = Grid(grid_uuid,
+                                name = result[0],
+                                description = result[1])
+                    print(f"New grid: {grid}")
                     self.all_grids[grid_uuid] = grid
                 else:
                     print(f"Grid already in memory: {grid_uuid} {result[0]}")
+                self._load_columns(grid)
                 return grid
         except Exception as e:
             raise e
         
+    def _load_columns(self, grid):
+        try:
+            result = self.db_manager.select_all('''
+                SELECT rows.uuid, texts.text0
+                FROM relationships
+                LEFT OUTER JOIN rows
+                ON rows.gridUuid = %s
+                AND relationships.rel0 = rows.uuid
+                AND rows.enabled = true
+                LEFT OUTER JOIN texts
+                ON rows.uuid = texts.uuid
+                AND texts.partition = 0
+                WHERE relationships.uuid = %s
+                AND relationships.partition = 0
+            ''', (metadata.UuidColumns, grid.uuid)
+            )
+            for item in result:
+                column = Column(item[0], name = item[1])
+                print(f"New column: {column}")
+                grid.columns.append(column)
+        except Exception as e:
+            print(f"Error loading columns for grid {grid.uuid}: {e}")
+            raise e
+
     def _load_rows(self, grid):
         self.all_rows[grid.uuid] = { } # dictionary of rows by uuid
         try:
@@ -116,6 +150,7 @@ class GridManager(ConfigurationMixin):
             )
             for item in result:
                 row = Row(item[0])
+                print(f"New row: {row}")
                 self.all_rows[grid.uuid][row.uuid] = row
         except Exception as e:
             raise e

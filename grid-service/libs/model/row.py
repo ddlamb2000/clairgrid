@@ -14,12 +14,13 @@ class Row():
         self.updated = updated
         self.updated_by = updated_by
 
+    def __repr__(self):
+        return f"Row(uuid={self.uuid})"
+
     def to_json(self):
-        result = {
-            'uuid': self.uuid,
-        }
+        result = { 'uuid': self.uuid }
         if self.created: result['created'] = self.created
         if self.created_by: result['created_by'] = self.created_by
         if self.updated: result['updated'] = self.updated
         if self.updated_by: result['updated_by'] = self.updated_by
-        return json.dumps(result)
+        return result

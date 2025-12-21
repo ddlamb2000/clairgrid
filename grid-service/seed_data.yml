@@ -31,7 +31,7 @@
             "updatedbyuuid": "3a33485c-7683-4482-aa5d-0aa51e58d79d"
         },
         {
-            "uuid": "e9e4a415-c31e-4383-ae70-18949d6ec692",
+            "uuid": "a5194e16-415e-45fd-a603-b5db45d13d7d",
             "griduuid": "533b6862-add3-4fef-8f93-20a17aaaaf5a",
             "enabled": true,
             "revision": 1,
@@ -58,11 +58,17 @@
             "text0": "Users"
         },
         {
-            "uuid": "e9e4a415-c31e-4383-ae70-18949d6ec692",
+            "uuid": "a5194e16-415e-45fd-a603-b5db45d13d7d",
             "partition": 0,
             "text0": "Name"
         }
     ],
     "ints": [],
-    "relationships": []
+    "relationships": [
+        {
+            "uuid": "533b6862-add3-4fef-8f93-20a17aaaaf5a",
+            "partition": 0,
+            "rel0": "a5194e16-415e-45fd-a603-b5db45d13d7d"
+        }
+    ]
 }

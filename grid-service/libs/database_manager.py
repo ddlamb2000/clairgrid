@@ -157,7 +157,7 @@ class DatabaseManager(ConfigurationMixin):
                 cur.execute(statement, params)
                 return cur.fetchone()
             except psycopg.Error as e:
-                print(f"Error selecting from database: {e}")
+                print(f"Error selecting from database {self.db_name} with statement {statement} and params {params}: {e}")
                 raise e
 
     @echo
@@ -170,7 +170,7 @@ class DatabaseManager(ConfigurationMixin):
                 cur.execute(statement, params)
                 for row in cur: yield row
             except psycopg.Error as e:
-                print(f"Error selecting from database: {e}")
+                print(f"Error selecting from database {self.db_name} with statement {statement} and params {params}: {e}")
                 raise e
 
     def _execute_migration_step(self, sequence, statement):

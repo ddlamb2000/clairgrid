@@ -15,15 +15,18 @@ class Grid():
         self.created_by = created_by
         self.updated = updated
         self.updated_by = updated_by
+        self.columns = []
+
+    def __repr__(self):
+        return f"Grid(uuid={self.uuid}, name={self.name}, columns={self.columns})"
 
     def to_json(self):
-        result = {
-            'uuid': self.uuid,
-        }
+        result = { 'uuid': self.uuid }
         if self.name: result['name'] = self.name
-        if self.description: result['description'] = self.description
+        if self.description: result['description'] = self.description   
         if self.created: result['created'] = self.created
         if self.created_by: result['created_by'] = self.created_by
         if self.updated: result['updated'] = self.updated
         if self.updated_by: result['updated_by'] = self.updated_by
-        return json.dumps(result)
+        if self.columns: result['columns'] = [column.to_json() for column in self.columns]
+        return result
