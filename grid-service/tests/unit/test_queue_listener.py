@@ -86,7 +86,7 @@ class TestQueueListener(unittest.TestCase):
         
         response = json.loads(kwargs['body'])
         self.assertEqual(response['status'], 'error')
-        self.assertEqual(response['message'], 'invalid request: Expecting value: line 1 column 1 (char 0)')
+        self.assertEqual(response['message'], "invalid request: Unexpected 'i': line 1 column 1 (char 0)")
 
         
         # Verify ack

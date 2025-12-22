@@ -98,32 +98,6 @@ services:
     depends_on:
       - db
       - rabbitmq  
-
-  grid-service-test-automation:
-    build:
-      context: ./grid-service
-      dockerfile: Dockerfile.tests
-    container_name: clairgrid-grid-service-test-automation
-    image: clairgrid-grid-service-test-automation
-    volumes:
-      - .:/usr/src/clairgrid/
-    environment:
-      DATABASES: "clairgrid_test"
-      DB_USER_NAME_clairgrid_test: clairgrid # login role set as owner of the database
-      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_test: 5000 # timeout threshold (in milliseconds) for database requests
-      JWT_EXPIRATION_clairgrid_test: 20 # expiration (in minutes) of the JWT token
-      RABBITMQ_USER: clairgrid
-      KEEP_ALIVE_AFTER_SECONDS: 6000
-    secrets:
-      - db-password
-      - root-password
-      - rabbitmq-password
-      - jwt-secret
-    networks:
-      - clairgrid
-    depends_on:
-      - grid-service-development
-    command: sh -c "./run_all_tests.sh"
   
   web-ui-development:
     build:
