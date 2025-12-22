@@ -57,15 +57,18 @@ class GridManager(ConfigurationMixin):
             if not grid:
                 grid = self._load_grid(grid_uuid)
                 if not grid:
+                    print(f"Grid not found: {grid_uuid}")
                     return {
                         "status": metadata.FailedStatus,
                         "message": "Grid not found",
                     }
                 self.all_grids[grid_uuid] = grid
+                print(f"Grid added to memory: {grid_uuid} {grid.name}")
                 self._load_rows(grid)
             else:
                 print(f"Grid already in memory: {grid_uuid} {grid.name}")
         except Exception as e:
+            print(f"Error loading grid {grid_uuid}: {e}")
             return {
                 "status": metadata.FailedStatus,
                 "message": "Error loading grid: " + str(e)
@@ -84,8 +87,8 @@ class GridManager(ConfigurationMixin):
     def _load_grid(self, grid_uuid):
         try:
             result = self.db_manager.select_one('''
-                SELECT texts.text0,
-                    texts.text1,
+                SELECT texts.text0 as name,
+                    texts.text1 as description,
                     rows.created,
                     rows.createdByUuid,
                     rows.updated,
@@ -104,14 +107,20 @@ class GridManager(ConfigurationMixin):
                 if not grid:
                     grid = Grid(grid_uuid,
                                 name = result[0],
-                                description = result[1])
+                                description = result[1],
+                                created = result[2],
+                                created_by = result[3],
+                                updated = result[4],
+                                updated_by = result[5])
                     print(f"New grid: {grid}")
                     self.all_grids[grid_uuid] = grid
                 else:
                     print(f"Grid already in memory: {grid_uuid} {result[0]}")
                 self._load_columns(grid)
+                print(f"Grid loaded: {grid}")
                 return grid
         except Exception as e:
+            print(f"Error loading grid {grid_uuid}: {e}")
             raise e
         
     def _load_columns(self, grid):
@@ -120,7 +129,7 @@ class GridManager(ConfigurationMixin):
                 SELECT rows.uuid,
                         texts.text0 as order, 
                         texts.text1 as name,
-						rel2.toUuid0
+						rel2.toUuid0 as typeUuid
                 FROM relationships rel1
                 LEFT OUTER JOIN rows
                 ON rows.gridUuid = %s
@@ -146,6 +155,7 @@ class GridManager(ConfigurationMixin):
             raise e
 
     def _load_rows(self, grid):
+        print(f"Loading rows for grid {grid.uuid}")
         self.all_rows[grid.uuid] = { } # dictionary of rows by uuid
         try:
             result = self.db_manager.select_all('''
@@ -156,10 +166,13 @@ class GridManager(ConfigurationMixin):
             ''', (grid.uuid,)
             )
             for item in result:
-                row = Row(item[0])
+                print(f"Loading row: {item[0]}")
+                row = Row(item[0], created = item[1], created_by = item[2], updated = item[3], updated_by = item[4])
                 print(f"New row: {row}")
                 self.all_rows[grid.uuid][row.uuid] = row
+            print(f"Rows loaded: {len(self.all_rows[grid.uuid])}")
         except Exception as e:
+            print(f"Error loading rows for grid {grid.uuid}: {e}")
             raise e
 
     @echo
