@@ -129,7 +129,9 @@ class GridManager(ConfigurationMixin):
                 SELECT rows.uuid,
                         texts.text0 as order, 
                         texts.text1 as name,
-						rel2.toUuid0 as typeUuid
+						rel2.toUuid0 as typeUuid,
+                        texts.text2 as dbName,
+                        ints.int0 as partition
                 FROM relationships rel1
                 LEFT OUTER JOIN rows
                 ON rows.gridUuid = %s
@@ -141,13 +143,16 @@ class GridManager(ConfigurationMixin):
 				LEFT OUTER JOIN relationships rel2
 				ON rel2.fromUuid = rows.uuid
 				AND rel2.partition = 0
+                LEFT OUTER JOIN ints
+                ON ints.uuid = rows.uuid
+                AND ints.partition = 0
                 WHERE rel1.fromUuid = %s
                 AND rel1.partition = 0
                 ORDER BY texts.text0
             ''', (metadata.SystemIds.Columns, grid.uuid)
             )
             for item in result: 
-                column = Column(item[0], order = item[1], name = item[2], typeUuid = item[3])
+                column = Column(item[0], order = item[1], name = item[2], typeUuid = item[3], dbName = item[4], partition = item[5])
                 print(f"New column: {column}")
                 grid.columns.append(column)
         except Exception as e:

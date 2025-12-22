@@ -22,6 +22,6 @@ class Grid(BaseModel):
         print(f"Grid.to_json result: {result}")
         if self.name: result['name'] = self.name
         if self.description: result['description'] = self.description   
-        if self.columns: result['columns'] = [column.to_json() for column in self.columns]
+        result['columns'] = [column.to_json() for column in self.columns]
         print(f"Grid.to_json result: {result}")
         return result

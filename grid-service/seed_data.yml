@@ -71,6 +71,26 @@
             "updatedbyuuid_metadata": "RootUser"
         },
         {
+            "uuid_metadata": "ColumnColumnDbName",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
+            "uuid_metadata": "ColumnColumnPartition",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "griduuid_metadata": "Columns",
             "enabled": true,
@@ -250,49 +270,71 @@
             "uuid_metadata": "ColumnColumnOrder",
             "partition": 0,
             "text0": "a",
-            "text1": "Order"
+            "text1": "Order",
+            "text2": "text0"
         },
         {
             "uuid_metadata": "ColumnColumnName",
             "partition": 0,
             "text0": "b",
-            "text1": "Name"
+            "text1": "Name",
+            "text2": "text1"
         },
         {
             "uuid_metadata": "ColumnColumnColumnType",
             "partition": 0,
             "text0": "c",
-            "text1": "Type"
+            "text1": "Type",
+            "text2": "toUuid0"
+        },
+        {
+            "uuid_metadata": "ColumnColumnDbName",
+            "partition": 0,
+            "text0": "d",
+            "text1": "Database name",
+            "text2": "text2"
+        },
+        {
+            "uuid_metadata": "ColumnColumnPartition",
+            "partition": 0,
+            "text0": "e",
+            "text1": "Partition",
+            "text2": "int0"
         },
         {
             "uuid_metadata": "GridColumnName",
             "partition": 0,
             "text0": "a",
-            "text1": "Name"
+            "text1": "Name",
+            "text2": "text0"
         },
         {
             "uuid_metadata": "GridColumnDesc",
             "partition": 0,
             "text0": "b",
-            "text1": "Description"
+            "text1": "Description",
+            "text2": "text1"
         },
         {
             "uuid_metadata": "GridColumnColumns",
             "partition": 0,
             "text0": "c",
-            "text1": "Columns"
+            "text1": "Columns",
+            "text2": "toUuid0"
         },
         {
             "uuid_metadata": "ColumnTypeColumnName",
             "partition": 0,
             "text0": "a",
-            "text1": "Name"
+            "text1": "Name",
+            "text2": "text0"
         },
         {
             "uuid_metadata": "ColumnTypeColumnDesc",
             "partition": 0,
             "text0": "a",
-            "text1": "Description"
+            "text1": "Description",
+            "text2": "text1"
         },
         {
             "uuid_metadata": "TextColumnType",
@@ -361,7 +403,78 @@
             "text1": "Passphrase"
         }
     ],
-    "ints": [],
+    "ints": [
+        {
+            "uuid_metadata": "ColumnColumnOrder",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "ColumnColumnName",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "ColumnColumnColumnType",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "ColumnColumnDbName",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "ColumnColumnPartition",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "GridColumnName",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "GridColumnDesc",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "GridColumnColumns",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "ColumnTypeColumnName",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "ColumnTypeColumnDesc",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "UserColumnId",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "UserColumnFirstName",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "UserColumnLastName",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "UserColumnPassword",
+            "partition": 0,
+            "int0": 0
+        }
+    ],
     "relationships": [
         {
             "uuid": "f686333a-fa92-4c05-8c7a-0e55b5d9af37",
@@ -380,6 +493,18 @@
             "partition": 0,
             "fromuuid_metadata": "Columns",
             "touuid0_metadata": "ColumnColumnColumnType"
+        },
+        {
+            "uuid": "c992b60c-9adb-4e43-9604-26006ebe5253",
+            "partition": 0,
+            "fromuuid_metadata": "Columns",
+            "touuid0_metadata": "ColumnColumnDbName"
+        },
+        {
+            "uuid": "4f72cc5b-5469-4498-9733-9082da09b040",
+            "partition": 0,
+            "fromuuid_metadata": "Columns",
+            "touuid0_metadata": "ColumnColumnPartition"
         },
         {
             "uuid": "c1bc176c-406a-414f-8b21-b043d2d3189a",
@@ -452,6 +577,18 @@
             "partition": 0,
             "fromuuid_metadata": "ColumnColumnColumnType",
             "touuid0_metadata": "ReferenceColumnType"
+        },
+        {
+            "uuid": "94faeec9-6a69-46c0-bf12-a8eb89901508",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnColumnDbName",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "0d64d653-9c65-43f7-9ec0-9aa0d08ed0b4",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnColumnPartition",
+            "touuid0_metadata": "IntColumnType"
         },
         {
             "uuid": "76f9fa86-fe3b-4f9d-a767-0566baeb9a25",
