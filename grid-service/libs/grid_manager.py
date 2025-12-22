@@ -117,22 +117,28 @@ class GridManager(ConfigurationMixin):
     def _load_columns(self, grid):
         try:
             result = self.db_manager.select_all('''
-                SELECT rows.uuid, texts.text0, texts.text1
-                FROM relationships
+                SELECT rows.uuid,
+                        texts.text0 as order, 
+                        texts.text1 as name,
+						rel2.toUuid0
+                FROM relationships rel1
                 LEFT OUTER JOIN rows
                 ON rows.gridUuid = %s
-                AND relationships.toUuid0 = rows.uuid
+                AND rel1.toUuid0 = rows.uuid
                 AND rows.enabled = true
                 LEFT OUTER JOIN texts
                 ON rows.uuid = texts.uuid
                 AND texts.partition = 0
-                WHERE relationships.fromUuid = %s
-                AND relationships.partition = 0
+				LEFT OUTER JOIN relationships rel2
+				ON rel2.fromUuid = rows.uuid
+				AND rel2.partition = 0
+                WHERE rel1.fromUuid = %s
+                AND rel1.partition = 0
                 ORDER BY texts.text0
             ''', (metadata.SystemIds.Columns, grid.uuid)
             )
-            for item in result:
-                column = Column(item[0], order = item[1], name = item[2])
+            for item in result: 
+                column = Column(item[0], order = item[1], name = item[2], typeUuid = item[3])
                 print(f"New column: {column}")
                 grid.columns.append(column)
         except Exception as e:

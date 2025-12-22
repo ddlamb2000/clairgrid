@@ -434,6 +434,78 @@
             "partition": 0,
             "fromuuid_metadata": "Users",
             "touuid0_metadata": "UserColumnPassword"
+        },
+        {
+            "uuid": "96369b65-c661-41b1-9f9c-9d5753d2d4ad",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnColumnOrder",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "2688fec3-bcb8-4808-a6fc-3f1ab907e2c0",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnColumnName",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "bb261e07-fd56-400a-8086-cd4d0fb3b99f",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnColumnColumnType",
+            "touuid0_metadata": "ReferenceColumnType"
+        },
+        {
+            "uuid": "76f9fa86-fe3b-4f9d-a767-0566baeb9a25",
+            "partition": 0,
+            "fromuuid_metadata": "GridColumnName",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "88eedfbe-f5ba-4020-866c-c30f0e58b5be",
+            "partition": 0,
+            "fromuuid_metadata": "GridColumnDesc",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "51bd1bc8-0b4b-442a-a782-70b677a7d181",
+            "partition": 0,
+            "fromuuid_metadata": "GridColumnColumns",
+            "touuid0_metadata": "ReferenceColumnType"
+        },
+        {
+            "uuid": "1b17bd43-ba99-4b6d-a458-79cee1916c29",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnTypeColumnName",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "a8c3427c-5d0e-4d66-accc-999e89b115ba",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnTypeColumnDesc",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "7890a5a7-03a4-445a-83c0-a12376803f4b",
+            "partition": 0,
+            "fromuuid_metadata": "UserColumnId",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "f399751c-6941-4715-b3f4-438b45fcb1b9",
+            "partition": 0,
+            "fromuuid_metadata": "UserColumnLastName",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "a51a383a-941a-4d67-9b4e-979468d35f5b",
+            "partition": 0,
+            "fromuuid_metadata": "UserColumnFirstName",
+            "touuid0_metadata": "TextColumnType"
+        },
+        {
+            "uuid": "c1894077-c7bb-4a32-b6df-93b203b6622c",
+            "partition": 0,
+            "fromuuid_metadata": "UserColumnPassword",
+            "touuid0_metadata": "PasswordColumnType"
         }
     ]
 }
