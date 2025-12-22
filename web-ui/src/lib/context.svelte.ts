@@ -2,7 +2,7 @@
 // Copyright David Lambert 2025
 
 import { ContextBase } from '$lib/contextBase.svelte.ts'
-import type { GridResponse, RowType, ColumnType, GridType, ReferenceType, ReplyType } from '$lib/apiTypes'
+import type { DataSetType, RowType, ColumnType, GridType, ReferenceType, ReplyType } from '$lib/apiTypes'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { replaceState } from "$app/navigation"
 import { Focus } from '$lib/focus.svelte.ts'
@@ -13,7 +13,7 @@ export class Context extends ContextBase {
   listenStream: ListenStream
   get isStreaming() { return this.listenStream.isStreaming }
 
-  dataSet: GridResponse[] = $state([])
+  dataSet: DataSetType[] = $state([])
   gridsInMemory: number = $state(0)
   rowsInMemory: number = $state(0)
   focus = new Focus
@@ -75,7 +75,7 @@ export class Context extends ContextBase {
 	}
 
   changeCell = debounce(
-    async (set: GridResponse, row: RowType) => {
+    async (set: DataSetType, row: RowType) => {
       row.updated = new Date
       const rowClone = Object.assign({}, row)
       if(set.grid.columns) {
@@ -113,7 +113,7 @@ export class Context extends ContextBase {
     return ""
   }
 
-  getColumnName = (set: GridResponse, rowPrompt: RowType): string => {
+  getColumnName = (set: DataSetType, rowPrompt: RowType): string => {
     if(set.grid && rowPrompt.uuid) {
       const prefixColumnName = this.getPrefixFromColumknType(rowPrompt.uuid)
       const columnsSamePrefix = set.grid.columns !== undefined ? set.grid.columns.filter((c) => this.getPrefixFromColumknType(c.typeUuid) === prefixColumnName) : undefined
@@ -126,7 +126,7 @@ export class Context extends ContextBase {
     return ""
   }
 
-  addColumn = async (set: GridResponse, rowPrompt: RowType, rowReference: RowType | undefined = undefined) => {
+  addColumn = async (set: DataSetType, rowPrompt: RowType, rowReference: RowType | undefined = undefined) => {
     const uuidColumn = newUuid()
     const nbColumns = set.grid.columns ? set.grid.columns.length : 0
     const newLabel = numberToLetters(nbColumns)
@@ -183,7 +183,7 @@ export class Context extends ContextBase {
     }
   }
   
-  addRow = async (set: GridResponse, filterColumnOwned: boolean, filterColumnName: string, filterColumnGridUuid: string, filterColumnValue: string) => {
+  addRow = async (set: DataSetType, filterColumnOwned: boolean, filterColumnName: string, filterColumnGridUuid: string, filterColumnValue: string) => {
     const uuid = newUuid()
     const row: RowType = { gridUuid: set.grid.uuid, uuid: uuid, created: new Date, updated: new Date }
     if(!set.rows) set.rows = []
@@ -201,7 +201,7 @@ export class Context extends ContextBase {
     })
   }
 
-  removeRow = async (set: GridResponse, row: RowType) => {
+  removeRow = async (set: DataSetType, row: RowType) => {
     const rowIndex = set.rows.findIndex((r) => r.uuid === row.uuid)
     if(rowIndex >= 0) {
       const deletedRow: RowType = { gridUuid: set.grid.uuid, uuid: row.uuid }
@@ -216,7 +216,7 @@ export class Context extends ContextBase {
     }
   }
 
-  removeColumn = async (set: GridResponse, column: ColumnType) => {
+  removeColumn = async (set: DataSetType, column: ColumnType) => {
     if(set.grid.columns && set.grid.columns !== undefined && column !== undefined && column.uuid !== undefined) {
       const columnIndex = set.grid.columns.findIndex((c) => c.uuid === column.uuid)
       set.grid.columns.splice(columnIndex, 1)
@@ -268,7 +268,7 @@ export class Context extends ContextBase {
     this.navigateToGrid(gridUuid, "")
   }
 
-  addReferencedValue = async (set: GridResponse, column: ColumnType, row: RowType, rowPrompt: RowType) => {
+  addReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
     const reference = row.references !== undefined ? 
                         row.references.find((reference) => reference.owned && reference.name === column.name) :
                         undefined
@@ -302,7 +302,7 @@ export class Context extends ContextBase {
     })    
   }
 
-  removeReferencedValue = async (set: GridResponse, column: ColumnType, row: RowType, rowPrompt: RowType) => {
+  removeReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
     if(row.references !== undefined) {
       const reference = row.references.find((reference) => reference.owned && reference.name === column.name)
       if(reference !== undefined) {
@@ -415,9 +415,9 @@ export class Context extends ContextBase {
 
   hasDataSet = () => this.dataSet.length > 0
 
-  gotData = (matchesProps: Function) => this.dataSet.find((set: GridResponse) => matchesProps(set))
+  gotData = (matchesProps: Function) => this.dataSet.find((set: DataSetType) => matchesProps(set))
 
-  getSetIndex = (set: GridResponse) => {
+  getSetIndex = (set: DataSetType) => {
     return this.dataSet.findIndex((s) => s.gridUuid === set.gridUuid
                                           && s.uuid === set.uuid
                                           && s.filterColumnOwned === set.filterColumnOwned
@@ -426,7 +426,7 @@ export class Context extends ContextBase {
                                           && s.filterColumnValue === set.filterColumnValue)
   }
 
-  isFocused = (set: GridResponse, column: ColumnType, row: RowType): boolean | undefined => {
+  isFocused = (set: DataSetType, column: ColumnType, row: RowType): boolean | undefined => {
     return this.focus && this.focus.isFocused(set.grid, column, row)
   }
       

@@ -50,7 +50,7 @@ export interface ReplyType {
   elapsedMs?: number
   dateTime?: string
   sameContext?: boolean
-  dataSet?: GridResponse
+  dataSet?: DataSetType
 }
 
 export interface TransactionType {
@@ -133,7 +133,7 @@ export interface GridReferencePost {
 	owned: boolean
 }
 
-export interface GridResponse {
+export interface DataSetType {
   grid: GridType
   countRows: number
   rows: RowType[]

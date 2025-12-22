@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GridResponse, RowType, ColumnType } from '$lib/apiTypes'
+  import type { DataSetType, RowType, ColumnType } from '$lib/apiTypes'
 	import { Dropdown, Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import PromptColumnType from './PromptColumnType.svelte'
@@ -14,7 +14,7 @@
         embedded = false } = $props()
   const colorFocus = "bg-yellow-100/20"
 
-  const matchesProps = (set: GridResponse): boolean => {
+  const matchesProps = (set: DataSetType): boolean => {
     return set.grid 
             && set.grid.uuid === gridUuid
             && !set.uuid
@@ -24,7 +24,7 @@
             && set.filterColumnValue === filterColumnValue
   }
 
-  const toggleBoolean = (set: GridResponse, column: ColumnType, row: RowType) => {
+  const toggleBoolean = (set: DataSetType, column: ColumnType, row: RowType) => {
     row[column.name] = row[column.name] === "true" ? "false" : "true"
     context.changeCell(set, row)
   }

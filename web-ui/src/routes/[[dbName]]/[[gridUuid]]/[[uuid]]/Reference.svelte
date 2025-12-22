@@ -1,12 +1,12 @@
 <script lang="ts">
-  import type { GridResponse } from '$lib/apiTypes'
+  import type { DataSetType } from '$lib/apiTypes'
 	import { Badge } from 'flowbite-svelte'
   import Prompt from './Prompt.svelte'
   import * as metadata from "$lib/metadata.svelte"
   import * as Icon from 'flowbite-svelte-icons'
   let { context, set, column, row } = $props()
 
-  const matchesProps = (set: GridResponse): boolean => {
+  const matchesProps = (set: DataSetType): boolean => {
     return set.gridUuid === column.gridPromptUuid
             && !set.uuid
             && !set.filterColumnOwned
