@@ -131,7 +131,7 @@ class QueueListener(ConfigurationMixin):
         self.channel.basic_qos(prefetch_count=1)
         self.channel.basic_consume(queue=self.queue_name, on_message_callback=self.on_request)
 
-        print(f"✅ Awaiting requests on queue {self.queue_name}", flush=True)
+        print(f"🔄 Awaiting requests on queue {self.queue_name}", flush=True)
         try:
             self.channel.start_consuming()
         except KeyboardInterrupt:

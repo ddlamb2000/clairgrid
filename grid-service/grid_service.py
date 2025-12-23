@@ -47,7 +47,7 @@ def main():
         for t in threads:
             t.join()
 
-    print("Grid Service stopped.", flush=True)
+    print("✅ Grid Service stopped.", flush=True)
     
 if __name__ == "__main__":
     main()
