@@ -86,18 +86,23 @@ class QueueListener(ConfigurationMixin):
                 reply = reply | self.process_request(request)
                 print(f">reply {reply}", flush=True)
             except Exception as e:
+                print(f"❌ Error processing request: {e}", flush=True)
                 reply = reply | {"status": "error", "can't process request, message": str(e)}
         except Exception as e:
+            print(f"❌ Error processing request: {e}", flush=True)
             reply = {"status": "error", "message": f"invalid request: {str(e)}"}
             print(f">reply {reply}", flush=True)
 
         if props.reply_to and reply:
             reply["correlationId"] = props.correlation_id
-            ch.basic_publish(exchange='',
-                             routing_key=props.reply_to,
-                             properties=pika.BasicProperties(correlation_id=props.correlation_id),
-                             body=json.dumps(reply))
-            ch.basic_ack(delivery_tag=method.delivery_tag)
+            try:
+                ch.basic_publish(exchange='',
+                                    routing_key=props.reply_to,
+                                    properties=pika.BasicProperties(correlation_id=props.correlation_id),
+                                    body=json.dumps(reply))
+                ch.basic_ack(delivery_tag=method.delivery_tag)
+            except Exception as e:
+                print(f"❌ Error publishing reply: {e}", flush=True)
 
     @echo
     def start(self):
@@ -118,7 +123,7 @@ class QueueListener(ConfigurationMixin):
             try:
                 self.connection = pika.BlockingConnection(parameters)
             except pika.exceptions.AMQPConnectionError:
-                print("❌ Queue not ready, retrying in 5 seconds...", flush=True)
+                print("⚠️ Queue not ready, retrying in 5 seconds...", flush=True)
                 time.sleep(5)
 
         self.channel = self.connection.channel()

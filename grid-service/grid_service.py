@@ -41,7 +41,7 @@ def main():
         for t in threads:
             t.join()
     except KeyboardInterrupt:
-        print("\nStopping Grid Service...", flush=True)
+        print("\n⚠️ Stopping Grid Service...", flush=True)
         for listener in listeners:
             listener.stop()
         for t in threads:

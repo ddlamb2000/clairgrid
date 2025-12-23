@@ -6,41 +6,21 @@
 '''
 
 from . import metadata
-import os
-import jwt
-from datetime import datetime, timezone
-from .utils.configuration_mixin import ConfigurationMixin
+from .base_manager import BaseManager
 from .utils.decorators import echo
 from .authentication.jwt_decorator import validate_jwt
 from .model.grid import Grid
 from .model.row import Row
 from .model.column import Column
 
-class GridManager(ConfigurationMixin):
+class GridManager(BaseManager):
     """
     Manages grid-related requests.
     """
     def __init__(self, db_manager):
-        self.db_manager = db_manager
+        BaseManager.__init__(self, db_manager)
         self.all_grids = {} # dictionary of grids by uuid
         self.all_rows = {} # dictionary of rows by grid_uuid and row_uuid
-        self.jwt_secret_file = os.getenv(f"JWT_SECRET_FILE_{self.db_manager.db_name}", "/run/secrets/jwt-secret")
-        self.jwt_secret = self._read_password_file(self.jwt_secret_file, f"JWT_SECRET_{self.db_manager.db_name}")
-
-    @echo
-    def _handle_jwt_validation(self, request):
-        token = request.get('jwt')
-        if not token:
-            return { "status": metadata.FailedStatus, "message": "No JWT provided" }
-        try:
-            decoded_token = jwt.decode(token, self.jwt_secret, algorithms=["HS512"])
-            expires = datetime.fromisoformat(decoded_token.get('expires'))
-            if expires < datetime.now(timezone.utc):
-                return { "status": metadata.FailedStatus, "message": "Token expired" }
-        except Exception as e:
-            print(f"❌ Error validating JWT: {e}")
-            return { "status": metadata.FailedStatus, "message": "Invalid JWT: " + str(e) }
-        return None
 
     @echo
     @validate_jwt
@@ -130,7 +110,7 @@ class GridManager(ConfigurationMixin):
                         ints.int0 as columnIndex
                 FROM relationships rel1
                 LEFT OUTER JOIN rows ON rows.gridUuid = %s AND rows.uuid = rel1.toUuid0 AND rows.enabled = true
-                LEFT OUTER JOIN texts ON rows.uuid = texts.uuid AND texts.partition = 0
+                LEFT OUTER JOIN texts ON texts.uuid = rows.uuid AND texts.partition = 0
 				LEFT OUTER JOIN relationships rel2 ON rel2.fromUuid = rows.uuid AND rel2.partition = 0
                 LEFT OUTER JOIN ints ON ints.uuid = rows.uuid AND ints.partition = 0
                 WHERE rel1.fromUuid = %s AND rel1.partition = 0
@@ -150,17 +130,25 @@ class GridManager(ConfigurationMixin):
     def _load_rows(self, grid):
         print(f"Loading rows for grid {grid.uuid}")
         self.all_rows[grid.uuid] = { } # dictionary of rows by uuid
+        db_select_clauses = [column.db_select_clause for column in grid.columns]
+        db_select_columns = (',\n' if len(db_select_clauses) > 1 else '') + ',\n'.join(db_select_clauses)
+        db_join_clauses = '\n'.join(list(dict.fromkeys([column.db_join_clause for column in grid.columns])))
         try:
             result = self.db_manager.select_all('''
-                SELECT rows.uuid, rows.created, rows.createdByUuid, rows.updated, rows.updatedByuuid
+                SELECT rows.uuid,
+                        rows.created,
+                        rows.createdByUuid,
+                        rows.updated,
+                        rows.updatedByuuid''' + db_select_columns + '''
                 FROM rows
+            ''' + db_join_clauses + '''
                 WHERE rows.gridUuid = %s
                 AND rows.enabled = true
             ''', (grid.uuid,)
             )
             for item in result:
                 print(f"Loading row: {item[0]}")
-                row = Row(item[0], created = item[1], created_by = item[2], updated = item[3], updated_by = item[4])
+                row = Row(item[0], created = item[1], created_by = item[2], updated = item[3], updated_by = item[4], values = item[5:])
                 print(f"New row: {row}")
                 self.all_rows[grid.uuid][row.uuid] = row
             print(f"Rows loaded: {len(self.all_rows[grid.uuid])}")

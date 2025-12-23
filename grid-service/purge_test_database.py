@@ -11,14 +11,14 @@ def main():
     """
     Purges the test database if configured to do so.
     """
-    print("Starting Purge Test Database Script...", flush=True)
+    print("⚠️ Starting Purge Test Database Script...", flush=True)
     try:
         # Initialize DatabaseManager. This loads config, connects, and runs migrations.
         db_manager = DatabaseManager("clairgrid_test", purge_database=True)
         db_manager.close()
         
     except Exception as e:
-        print(f"Purge script failed: {e}", flush=True)
+        print(f"❌ Purge script failed: {e}", flush=True)
 
 if __name__ == "__main__":
     main()

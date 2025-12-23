@@ -57,6 +57,7 @@ class AuthenticationManager(ConfigurationMixin):
                 try:
                     token = self._generate_jwt_token(login_id, result[0], result[1], result[2])
                 except Exception as e:
+                    print(f"❌ Error generating JWT token: {e}", flush=True)
                     return { 
                         "status": metadata.FailedStatus,
                         "message": "Error generating JWT token: " + str(e)

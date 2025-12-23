@@ -154,6 +154,7 @@ class DatabaseManager(ConfigurationMixin):
 
         with self.conn.cursor() as cur:
             try:
+                print(f"Executing statement: {statement} with params: {params}")
                 cur.execute(statement, params)
                 return cur.fetchone()
             except psycopg.Error as e:
@@ -167,6 +168,7 @@ class DatabaseManager(ConfigurationMixin):
 
         with self.conn.cursor() as cur:
             try:
+                print(f"Executing statement: {statement} with params: {params}")
                 cur.execute(statement, params)
                 for row in cur: yield row
             except psycopg.Error as e:
@@ -355,5 +357,5 @@ class DatabaseManager(ConfigurationMixin):
             print(f"Database {self.db_name} imported successfully from {file_name}.", flush=True)
 
         except Exception as e:
-            print(f"Error importing database {self.db_name} from {file_name}: {e}", flush=True)
+            print(f"❌ Error importing database {self.db_name} from {file_name}: {e}", flush=True)
             raise e
