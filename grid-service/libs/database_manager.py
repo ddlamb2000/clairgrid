@@ -80,7 +80,7 @@ class DatabaseManager(ConfigurationMixin):
         if self.conn is None or self.conn.closed:
             print(f"Connecting to database {self.db_name}...", flush=True)
             self.conn = psycopg.connect(self.get_connection_string(), autocommit=True)
-            print(f"Connected to database {self.db_name}.", flush=True)
+            print(f"✅ Connected to database {self.db_name}.", flush=True)
         return self.conn
 
     def close(self):
@@ -89,7 +89,7 @@ class DatabaseManager(ConfigurationMixin):
         """
         if self.conn and not self.conn.closed:
             self.conn.close()
-            print(f"Database connection to {self.db_name} closed.", flush=True)
+            print(f"✅ Database connection to {self.db_name} closed.", flush=True)
 
     def _get_migration_table_exists(self):
         """
@@ -116,7 +116,7 @@ class DatabaseManager(ConfigurationMixin):
                 if result and result[0] is not None:
                     migrationTableExists = result[0]
             except psycopg.Error as e:
-                print(f"Error checking if migration table exists: {e}", flush=True)
+                print(f"❌ Error checking if migration table exists: {e}", flush=True)
 
         return migrationTableExists
 
@@ -143,7 +143,7 @@ class DatabaseManager(ConfigurationMixin):
                     latestMigrationSequence = result[0]
                 print(f"Latest migration sequence is {latestMigrationSequence}.")
             except psycopg.Error as e:  
-                print(f"Error getting latest migration sequence: {e}", flush=True)
+                print(f"❌ Error getting latest migration sequence: {e}", flush=True)
 
         return latestMigrationSequence
 
@@ -157,7 +157,7 @@ class DatabaseManager(ConfigurationMixin):
                 cur.execute(statement, params)
                 return cur.fetchone()
             except psycopg.Error as e:
-                print(f"Error selecting from database {self.db_name} with statement {statement} and params {params}: {e}")
+                print(f"❌ Error selecting from database {self.db_name} with statement {statement} and params {params}: {e}")
                 raise e
 
     @echo
@@ -170,7 +170,7 @@ class DatabaseManager(ConfigurationMixin):
                 cur.execute(statement, params)
                 for row in cur: yield row
             except psycopg.Error as e:
-                print(f"Error selecting from database {self.db_name} with statement {statement} and params {params}: {e}")
+                print(f"❌ Error selecting from database {self.db_name} with statement {statement} and params {params}: {e}")
                 raise e
 
     def _execute_migration_step(self, sequence, statement):
@@ -211,7 +211,7 @@ class DatabaseManager(ConfigurationMixin):
                         print(f"Update database {self.db_name} with migration step {sequence}")
                         self._execute_migration_step(sequence, statement)
             except psycopg.Error as e:
-                print(f"Error executing migration sequence {sequence}: {e}", flush=True)
+                print(f"❌ Error executing migration sequence {sequence}: {e}", flush=True)
                 raise e
 
     def run_deletions(self):
@@ -232,7 +232,7 @@ class DatabaseManager(ConfigurationMixin):
                     print(f"Update database {self.db_name} with deletion step {sequence}", flush=True)
                     cur.execute(statement)
                 except psycopg.Error as e:
-                    print(f"Error executing deletion sequence {sequence}: {e}", flush=True)
+                    print(f"❌ Error executing deletion sequence {sequence}: {e}", flush=True)
 
     def export_database(self, file_name):
         """
@@ -287,7 +287,7 @@ class DatabaseManager(ConfigurationMixin):
             print(f"Database {self.db_name} exported successfully to {file_name}.", flush=True)
 
         except Exception as e:
-            print(f"Error exporting database: {e}", flush=True)
+            print(f"❌ Error exporting database: {e}", flush=True)
             raise e
 
     def import_database(self, file_name):

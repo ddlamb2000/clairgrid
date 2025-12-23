@@ -38,6 +38,7 @@ class GridManager(ConfigurationMixin):
             if expires < datetime.now(timezone.utc):
                 return { "status": metadata.FailedStatus, "message": "Token expired" }
         except Exception as e:
+            print(f"❌ Error validating JWT: {e}")
             return { "status": metadata.FailedStatus, "message": "Invalid JWT: " + str(e) }
         return None
 
@@ -68,7 +69,7 @@ class GridManager(ConfigurationMixin):
             else:
                 print(f"Grid already in memory: {grid_uuid} {grid.name}")
         except Exception as e:
-            print(f"Error loading grid {grid_uuid}: {e}")
+            print(f"❌ Error loading grid {grid_uuid}: {e}")
             return {
                 "status": metadata.FailedStatus,
                 "message": "Error loading grid: " + str(e)
@@ -116,7 +117,7 @@ class GridManager(ConfigurationMixin):
                 print(f"Grid loaded: {grid}")
                 return grid
         except Exception as e:
-            print(f"Error loading grid {grid_uuid}: {e}")
+            print(f"❌ Error loading grid {grid_uuid}: {e}")
             raise e
         
     def _load_columns(self, grid):
@@ -126,8 +127,7 @@ class GridManager(ConfigurationMixin):
                         texts.text0 as order, 
                         texts.text1 as name,
 						rel2.toUuid0 as typeUuid,
-                        texts.text2 as dbName,
-                        ints.int0 as partition
+                        ints.int0 as columnIndex
                 FROM relationships rel1
                 LEFT OUTER JOIN rows ON rows.gridUuid = %s AND rows.uuid = rel1.toUuid0 AND rows.enabled = true
                 LEFT OUTER JOIN texts ON rows.uuid = texts.uuid AND texts.partition = 0
@@ -139,12 +139,12 @@ class GridManager(ConfigurationMixin):
             )
             index = 0
             for item in result: 
-                column = Column(item[0], index, order = item[1], name = item[2], typeUuid = item[3], dbColumn = item[4], partition = item[5])
+                column = Column(item[0], index, order = item[1], name = item[2], typeUuid = item[3], columnIndex = item[4])
                 index += 1
                 print(f"New column: {column}")
                 grid.columns.append(column)
         except Exception as e:
-            print(f"Error loading columns for grid {grid.uuid}: {e}")
+            print(f"❌ Error loading columns for grid {grid.uuid}: {e}")
             raise e
 
     def _load_rows(self, grid):
@@ -165,7 +165,7 @@ class GridManager(ConfigurationMixin):
                 self.all_rows[grid.uuid][row.uuid] = row
             print(f"Rows loaded: {len(self.all_rows[grid.uuid])}")
         except Exception as e:
-            print(f"Error loading rows for grid {grid.uuid}: {e}")
+            print(f"❌ Error loading rows for grid {grid.uuid}: {e}")
             raise e
 
     @echo
