@@ -16,7 +16,7 @@
                                   localNow.getUTCHours(), localNow.getUTCMinutes(), localNow.getUTCSeconds())
 		const seconds = (localNowUTC - localDateUTC) / 1000
 		const MINUTE = 60, HOUR = MINUTE * 60, DAY = HOUR * 24, WEEK = DAY * 7, MONTH = DAY * 30, YEAR = DAY * 365		
-		if(seconds < MINUTE) return `${Math.round(seconds)}&nbsp;sec&nbsp;ago`
+		if(seconds < MINUTE) return ``
 		else if(seconds < HOUR) return `${Math.round(seconds / MINUTE)}&nbsp;min&nbsp;ago`
 		else if(seconds < DAY) return `${Math.round(seconds / HOUR)}&nbsp;hour&nbsp;ago`
 		else if(seconds < WEEK) return `${Math.round(seconds / DAY)}&nbsp;day&nbsp;ago`
@@ -28,7 +28,7 @@
   let timeAgo = $state(getTimeAgo(dateTime))
   let timerId: any = null
 
-  onMount(() => { timerId = setInterval(() => { timeAgo = getTimeAgo(dateTime) }, 1000) })
+  onMount(() => { timerId = setInterval(() => { timeAgo = getTimeAgo(dateTime) }, 60*1000) })
   onDestroy(() => { if(timerId) clearInterval(timerId) })
 </script>
 

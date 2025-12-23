@@ -22,8 +22,8 @@ export interface IListenStreamContext {
   updateTimeedOutRequests: (frequency: number) => void
 }
 
-const heartbeatFrequency = 60000
-const timeOutCheckFrequency = 10000
+const heartbeatFrequency = 5*60*1000
+const timeOutCheckFrequency = 10*1000
 
 export class ListenStream {
   isStreaming: boolean = $state(false)

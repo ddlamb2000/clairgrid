@@ -53,86 +53,6 @@ export interface ReplyType {
   dataSet?: DataSetType
 }
 
-export interface TransactionType {
-  request?: RequestType
-  reply?: ReplyType
-}
-
-
-export interface GridType extends RowType {
-  name: string
-  description: string
-  columns?: ColumnType[]
-  columnsUsage?: ColumnType[]
-}
-
-export interface ColumnType {
-  uuid: string
-  name: string
-  orderNumber?: number
-  owned?: boolean
-  label?: string
-  type: string
-  typeUuid: string
-  gridUuid: string
-  grid?: GridType
-  gridPromptUuid?: string
-  bidirectional?: boolean
-}
-
-export interface RowType {
-  gridUuid: string
-	uuid: string
-	text1?: string
-	text2?: string
-	text3?: string
-	text4?: string
-	text5?: string
-	text6?: string
-	text7?: string
-	text8?: string
-	text9?: string
-	text10?: string
-  int1?: number
-  int2?: number
-  int3?: number
-  int4?: number
-  int5?: number
-  int6?: number
-  int7?: number
-  int8?: number
-  int9?: number
-  int10?: number
-  displayString?: string
-  references?: ReferenceType[]
-  created?: Date
-  updated?: Date
-}
-
-export interface ReferenceType {
-	owned: boolean
-	label?: string
-	name?: string
-	gridUuid?: string
-	rows?: RowType[]
-}
-
-export interface GridPost {
-  rowsAdded?: RowType[]
-  rowsEdited?: RowType[]
-  rowsDeleted?: RowType[]
-	referencedValuesAdded?: GridReferencePost[]
-	referencedValuesRemoved?: GridReferencePost[]
-}
-
-export interface GridReferencePost {
-	columnName: string
-	fromUuid: string
-	toGridUuid: string
-	uuid: string
-	owned: boolean
-}
-
 export interface DataSetType {
   grid: GridType
   countRows: number
@@ -153,4 +73,65 @@ export interface DataSetType {
   filterColumnName?: string
   filterColumnGridUuid?: string
   filterColumnValue?: string
+}
+
+export interface GridType extends RowType {
+  name: string
+  description: string
+  columns?: ColumnType[]
+  columnsUsage?: ColumnType[]
+}
+
+export interface ColumnType {
+  uuid: string
+  index: number
+  name: string
+  order?: number
+  owned?: boolean
+  label?: string
+  type: string
+  typeUuid: string
+  gridUuid: string
+  grid?: GridType
+  gridPromptUuid?: string
+  bidirectional?: boolean
+}
+
+export interface RowType {
+  gridUuid: string
+	uuid: string
+  values: any[]
+  displayString?: string
+  references?: ReferenceType[]
+  created?: Date
+  updated?: Date
+}
+
+export interface ReferenceType {
+	owned: boolean
+	label?: string
+	name?: string
+	gridUuid?: string
+	rows?: RowType[]
+}
+
+export interface TransactionType {
+  request?: RequestType
+  reply?: ReplyType
+}
+
+export interface GridPost {
+  rowsAdded?: RowType[]
+  rowsEdited?: RowType[]
+  rowsDeleted?: RowType[]
+	referencedValuesAdded?: GridReferencePost[]
+	referencedValuesRemoved?: GridReferencePost[]
+}
+
+export interface GridReferencePost {
+	columnName: string
+	fromUuid: string
+	toGridUuid: string
+	uuid: string
+	owned: boolean
 }

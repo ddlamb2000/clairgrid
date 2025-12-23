@@ -24,8 +24,8 @@
             && set.filterColumnValue === filterColumnValue
   }
 
-  const toggleBoolean = (set: DataSetType, column: ColumnType, row: RowType) => {
-    row[column.name] = row[column.name] === "true" ? "false" : "true"
+  const toggleBoolean = (set: DataSetType, row: RowType, columnIndex: number) => {
+    row.values[columnIndex] = row.values[columnIndex] === "true" ? "false" : "true"
     context.changeCell(set, row)
   }
 </script>
@@ -126,8 +126,8 @@
                       </li>
                     </Dropdown>
                   </td>
-                  {#each set.grid.columns as column}
-                    {#if column.typeUuid === metadata.UuidTextColumnType
+                  {#each set.grid.columns as column, columnIndex}
+                  {#if column.typeUuid === metadata.UuidTextColumnType
                           || column.typeUuid === metadata.UuidUuidColumnType 
                           || column.typeUuid === metadata.UuidPasswordColumnType 
                           || column.typeUuid === metadata.UuidIntColumnType}
@@ -137,7 +137,7 @@
                           align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
-                          bind:innerHTML={context.dataSet[setIndex].rows[rowIndex][column.name]}>
+                          bind:innerHTML={context.dataSet[setIndex].rows[rowIndex].values[columnIndex]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                       <td class="border border-slate-100 {context.isFocused(set, column, row) ? colorFocus : ''}">
@@ -147,9 +147,9 @@
                       <td class="border border-slate-100 cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
-                            onclick={() => toggleBoolean(set, column, row)}>
+                            onclick={() => toggleBoolean(set, row, columnIndex)}>
                           <Icon.CheckCircleOutline
-                                color={context.dataSet[setIndex].rows[rowIndex][column.name] === "true" ? "" : "lightgray"} />
+                                color={context.dataSet[setIndex].rows[rowIndex].values[columnIndex] === "true" ? "" : "lightgray"} />
                         </a>
                       </td>
                     {:else}

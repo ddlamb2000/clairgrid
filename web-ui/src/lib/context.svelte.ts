@@ -81,8 +81,8 @@ export class Context extends ContextBase {
       if(set.grid.columns) {
         for(const column of set.grid.columns) {
           if(column.typeUuid === metadata.UuidIntColumnType) {
-            if(!row[column.name] || row[column.name] === "" || row[column.name] === "<br>") rowClone[column.name] = undefined
-            else if(typeof row[column.name] === "string") rowClone[column.name] = row[column.name].replace(/[^0-9-]/g, "") * 1
+            if(!row.values[column.index] || row.values[column.index] === "" || row.values[column.index] === "<br>") rowClone.values[column.index] = undefined
+            else if(typeof row.values[column.index] === "string") rowClone.values[column.index] = row.values[column.index].replace(/[^0-9-]/g, "") * 1
           }
         }
       }
@@ -454,7 +454,7 @@ export class Context extends ContextBase {
       if(message.status == metadata.SuccessStatus) {
         if(message.command == metadata.ActionLoad) {
           if(message.dataSet && message.dataSet.grid) {
-            if(message.rowUuid) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+            if(message.rowUuid) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.name}`)
             else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.name}`)
             const setIndex = this.getSetIndex(message.dataSet)
             if(setIndex < 0) {

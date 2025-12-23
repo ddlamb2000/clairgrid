@@ -41,11 +41,6 @@ class Column():
         result['index'] = self.index
         result['order'] = self.order
         result['name'] = self.name
-        result['dbTable'] = self.dbTable
-        result['dbColumn'] = self.dbColumn
         result['columnIndex'] = self.columnIndex
-        result['partition'] = self.partition
         if self.typeUuid: result['typeUuid'] = str(self.typeUuid)
-        result['db_select_clause'] = self.db_select_clause
-        result['db_join_clause'] = self.db_join_clause
         return result
