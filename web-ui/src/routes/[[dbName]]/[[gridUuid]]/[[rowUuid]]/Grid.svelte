@@ -15,9 +15,8 @@
   const colorFocus = "bg-yellow-100/20"
 
   const matchesProps = (set: DataSetType): boolean => {
-    return set.grid 
-            && set.grid.uuid === gridUuid
-            && !set.uuid
+    return set.gridUuid === gridUuid
+            && !set.rowUuid
             && ((!set.filterColumnOwned && !filterColumnOwned) || (set.filterColumnOwned === filterColumnOwned))
             && set.filterColumnName === filterColumnName
             && set.filterColumnGridUuid === filterColumnGridUuid
@@ -35,7 +34,7 @@
 {:else}
   {#each context.dataSet as set, setIndex}  
     {#if matchesProps(set)}
-      {#key set.grid.uuid}
+      {#key set.gridUuid}
         {#if !embedded}
           <span class="flex">
             <span contenteditable class="text-2xl font-extrabold"
@@ -44,10 +43,10 @@
             <span contenteditable class="ms-2 text-sm font-light"
                   oninput={() => context.changeGrid(set.grid)}
                   bind:innerHTML={context.dataSet[setIndex].grid.description}></span>
-            {#if set.grid.uuid !== metadata.UuidGrids}
+            {#if set.gridUuid !== metadata.UuidGrids}
               <a class="ms-2 text-sm font-light text-gray-500 underline"
-                  href={"/" + context.dbName + "/" + metadata.UuidGrids + "/" + set.grid.uuid}
-                  onclick={() => context.navigateToGrid(metadata.UuidGrids, set.grid.uuid)}>
+                  href={"/" + context.dbName + "/" + metadata.UuidGrids + "/" + set.gridUuid}
+                  onclick={() => context.navigateToGrid(metadata.UuidGrids, set.gridUuid)}>
                 <span class="flex">
                   Definition
                   <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
@@ -61,11 +60,11 @@
             <tr>
               <th class="sticky -top-0.5 py-1 ">
                 {#if !set.grid.columns || set.grid.columns.length === 0}
-                  <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.grid.uuid + " dark:text-white"} />
-                  <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.grid.uuid}>
+                  <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.gridUuid + " dark:text-white"} />
+                  <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.gridUuid}>
                     <li class="p-0.5">
                       <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
-                                        elementReference={"referenceColumnType-" + set.grid.uuid} />
+                                        elementReference={"referenceColumnType-" + set.gridUuid} />
                     </li>
                   </Dropdown>
                 {/if}
@@ -79,12 +78,12 @@
                       <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
                         bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].name}></span>
                     {/if}
-                    <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
-                    <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
+                    <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 column-menu-" + set.gridUuid + "-" + column.uuid + " dark:text-white"} />
+                    <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.gridUuid + "-" + column.uuid}>
                       {#if indexColumn === set.grid.columns.length - 1}
                         <li class="p-1">
                           <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
-                                            elementReference={"referenceColumnType-" + set.grid.uuid} />
+                                            elementReference={"referenceColumnType-" + set.gridUuid} />
                         </li>
                       {/if}
                       <li class="p-1">
@@ -106,14 +105,17 @@
               {#key row.uuid}
                 <tr class="align-top">
                   <td class="nowrap flex">
-                    <a href={"/" + context.dbName + "/" + set.grid.uuid + "/" + row.uuid}
-                        onclick={
-                          () => set.grid.uuid === metadata.UuidGrids
-                                  ? context.navigateToGrid(row.uuid)
-                                  : context.navigateToGrid(set.grid.uuid, row.uuid)
-                        }>
-                      <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
-                    </a>
+                    {#if gridUuid === metadata.UuidGrids}
+                      <a href={"/" + context.dbName + "/" + row.uuid}
+                          onclick={ () => context.navigateToGrid(row.uuid) }>
+                        <Icon.ArrowUpRightFromSquareOutline class="text-green-500 hover:text-green-900" />
+                      </a>
+                    {:else}
+                      <a href={"/" + context.dbName + "/" + gridUuid + "/" + row.uuid}
+                          onclick={ () => context.navigateToGrid(gridUuid, row.uuid) }>
+                        <Icon.ArrowUpRightFromSquareOutline class="text-blue-500 hover:text-blue-900" />
+                      </a>
+                    {/if}
                     <Icon.DotsVerticalOutline class={"text-gray-300 hover:text-gray-900 row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
                       <li class="p-1">

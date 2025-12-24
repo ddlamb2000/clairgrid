@@ -18,14 +18,14 @@
     untrack(() => data.dbName), 
     untrack(() => data.url), 
     untrack(() => data.gridUuid), 
-    untrack(() => data.uuid)
+    untrack(() => data.rowUuid)
   ))
 
   $effect(() => {
     context.dbName = data.dbName
     context.url = data.url
     context.gridUuid = data.gridUuid
-    context.uuid = data.uuid
+    context.rowUuid = data.rowUuid
   })
 
   onMount(() => {
@@ -60,8 +60,8 @@
             {#if context.userPreferences.showPrompt}
               <AIPrompt {context} />
             {:else if context.hasDataSet() && context.gridUuid && context.gridUuid !== ""}
-              {#if context.uuid && context.uuid !== ""}
-                <SingleRow bind:context={context} gridUuid={context.gridUuid} uuid={context.uuid} />
+              {#if context.rowUuid && context.rowUuid !== "" && context.rowUuid !== undefined}
+                <SingleRow bind:context={context} gridUuid={context.gridUuid} rowUuid={context.rowUuid} />
               {:else}
                 <Grid bind:context={context} gridUuid={context.gridUuid} />
               {/if}

@@ -14,8 +14,6 @@ export class Context extends ContextBase {
   get isStreaming() { return this.listenStream.isStreaming }
 
   dataSet: DataSetType[] = $state([])
-  gridsInMemory: number = $state(0)
-  rowsInMemory: number = $state(0)
   focus = new Focus
 
   constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
@@ -38,9 +36,9 @@ export class Context extends ContextBase {
   load = async () => {
     this.sendMessage({
       command: metadata.ActionLoad,
-      commandText: "Load " + (this.uuid !== "" ? "row" : "grid"),
+      commandText: "Load " + (this.rowUuid !== "" ? "row" : "grid"),
       gridUuid: this.gridUuid,
-      rowUuid: this.uuid !== "" ? this.uuid : undefined
+      rowUuid: this.rowUuid !== undefined ? this.rowUuid : undefined
     })
   }
 
@@ -59,18 +57,18 @@ export class Context extends ContextBase {
   }
 
   navigateToGrid = async (gridUuid: string,
-                          uuid?: string,
+                          rowUuid?: string,
                           filterColumnOwned?: boolean,
                           filterColumnName?: string,
                           filterColumnGridUuid?: string,
                           filterColumnValue?: string) => {
-		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, uuid=${uuid}`)
+		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, rowUuid=${rowUuid}`)
     this.userPreferences.showPrompt = false
     this.reset()
-    const url = `/${this.dbName}/${gridUuid}` + (uuid !== "" ? `/${uuid}` : "")
-    replaceState(url, { gridUuid: this.gridUuid, uuid: this.uuid })
+    const url = `/${this.dbName}/${gridUuid}` + (rowUuid !== "" ? `/${rowUuid}` : "")
+    replaceState(url, { gridUuid: this.gridUuid, rowUuid: this.rowUuid })
     this.gridUuid = gridUuid
-    this.uuid = uuid ?? ""
+    this.rowUuid = rowUuid ?? ""
     this.load()
 	}
 
@@ -419,7 +417,7 @@ export class Context extends ContextBase {
 
   getSetIndex = (set: DataSetType) => {
     return this.dataSet.findIndex((s) => s.gridUuid === set.gridUuid
-                                          && s.uuid === set.uuid
+                                          && s.rowUuid === set.rowUuid
                                           && s.filterColumnOwned === set.filterColumnOwned
                                           && s.filterColumnName === set.filterColumnName
                                           && s.filterColumnGridUuid === set.filterColumnGridUuid
@@ -459,8 +457,7 @@ export class Context extends ContextBase {
             const setIndex = this.getSetIndex(message.dataSet)
             if(setIndex < 0) {
               this.dataSet.push(message.dataSet)
-              this.gridsInMemory += 1
-              if(message.dataSet.grid && message.dataSet.countRows) this.rowsInMemory += message.dataSet.countRows
+              console.log(`dataSet`, this.dataSet)
             } else {
               this.dataSet[setIndex] = message.dataSet
               console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.name} is reloaded`)

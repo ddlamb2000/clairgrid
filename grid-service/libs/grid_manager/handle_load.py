@@ -6,6 +6,7 @@ from ..authentication.jwt_decorator import validate_jwt
 @validate_jwt
 def handle_load(self, request):
     grid_uuid = request.get('gridUuid')
+    row_uuid = request.get('rowUuid')
     if not grid_uuid:
         return {
             "status": metadata.FailedStatus,
@@ -35,12 +36,18 @@ def handle_load(self, request):
             "message": "Error loading grid: " + str(e)
         }
 
+    dataSet = {
+        "gridUuid": grid.uuid,
+        "grid": grid.to_json()
+    }
+    if row_uuid:
+        dataSet["rowUuid"] = row_uuid
+        dataSet["rows"] = [row.to_json() for row in self.all_rows[grid.uuid].values() if row.uuid == row_uuid]
+        dataSet["countRows"] = 1
+    else:
+        dataSet["rows"] = [row.to_json() for row in self.all_rows[grid.uuid].values()]
+        dataSet["countRows"] = len(dataSet["rows"])
     return {
         "status": metadata.SuccessStatus,
-        "dataSet": {
-            "grid": grid.to_json(),
-            "countRows": len(self.all_rows[grid.uuid]),
-            "rows": [row.to_json() for row in self.all_rows[grid.uuid].values()]
-        }
+        "dataSet": dataSet
     }
-

@@ -15,17 +15,17 @@ export class ContextBase {
   userPreferences: UserPreferences = new UserPreferences
   dbName: string = $state("")
   gridUuid: string = $state("")
-  uuid: string = $state("")
+  rowUuid: string = $state("")
   isSending: boolean = $state(false)
   messageStatus: string = $state("")
   messageStack: TransactionType[] = $state([{}])
   url: string = $state("")
 
-  constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
+  constructor(dbName: string | undefined, url: string, gridUuid: string, rowUuid: string) {
     this.dbName = dbName || ""
     this.user = new User(this.dbName)
     this.gridUuid = gridUuid
-    this.uuid = uuid
+    this.rowUuid = rowUuid
     this.url = url
   }
 

@@ -27,23 +27,23 @@ export {};
 
 declare module "$app/types" {
 	export interface AppTypes {
-		RouteId(): "/" | "/[[dbName]]/[contextUuid]" | "/[[dbName]]/[contextUuid]/send" | "/[[dbName]]/[contextUuid]/streaming" | "/[[dbName]]/[[gridUuid]]/[[uuid]]" | "/[[dbName]]/[[gridUuid]]" | "/[[dbName]]";
+		RouteId(): "/" | "/[[dbName]]/[contextUuid]" | "/[[dbName]]/[contextUuid]/send" | "/[[dbName]]/[contextUuid]/streaming" | "/[[dbName]]/[[gridUuid]]/[[rowUuid]]" | "/[[dbName]]/[[gridUuid]]" | "/[[dbName]]";
 		RouteParams(): {
 			"/[[dbName]]/[contextUuid]": { dbName?: string; contextUuid: string };
 			"/[[dbName]]/[contextUuid]/send": { dbName?: string; contextUuid: string };
 			"/[[dbName]]/[contextUuid]/streaming": { dbName?: string; contextUuid: string };
-			"/[[dbName]]/[[gridUuid]]/[[uuid]]": { dbName?: string; gridUuid?: string; uuid?: string };
+			"/[[dbName]]/[[gridUuid]]/[[rowUuid]]": { dbName?: string; gridUuid?: string; rowUuid?: string };
 			"/[[dbName]]/[[gridUuid]]": { dbName?: string; gridUuid?: string };
 			"/[[dbName]]": { dbName?: string }
 		};
 		LayoutParams(): {
-			"/": { dbName?: string; contextUuid?: string; gridUuid?: string; uuid?: string };
+			"/": { dbName?: string; contextUuid?: string; gridUuid?: string; rowUuid?: string };
 			"/[[dbName]]/[contextUuid]": { dbName?: string; contextUuid: string };
 			"/[[dbName]]/[contextUuid]/send": { dbName?: string; contextUuid: string };
 			"/[[dbName]]/[contextUuid]/streaming": { dbName?: string; contextUuid: string };
-			"/[[dbName]]/[[gridUuid]]/[[uuid]]": { dbName?: string; gridUuid?: string; uuid?: string };
-			"/[[dbName]]/[[gridUuid]]": { dbName?: string; gridUuid?: string; uuid?: string };
-			"/[[dbName]]": { dbName?: string; contextUuid?: string; gridUuid?: string; uuid?: string }
+			"/[[dbName]]/[[gridUuid]]/[[rowUuid]]": { dbName?: string; gridUuid?: string; rowUuid?: string };
+			"/[[dbName]]/[[gridUuid]]": { dbName?: string; gridUuid?: string; rowUuid?: string };
+			"/[[dbName]]": { dbName?: string; contextUuid?: string; gridUuid?: string; rowUuid?: string }
 		};
 		Pathname(): "/" | `${string}/${string}` & {} | `${string}/${string}/` & {} | `${string}/${string}/send` & {} | `${string}/${string}/send/` & {} | `${string}/${string}/streaming` & {} | `${string}/${string}/streaming/` & {} | `${string}${string}${string}` & {} | `${string}${string}${string}/` & {} | `${string}${string}` & {} | `${string}${string}/` & {} | `${string}` & {} | `${string}/` & {};
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;

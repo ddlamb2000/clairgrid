@@ -15,12 +15,12 @@
 </Button>
 {#each context.dataSet as set}
   {#if set.grid}
-    <Button outline pill
+    <Button outline
             href={"/" + context.dbName + "/" + set.gridUuid}
             size="xs" class="mt-1 me-1 h-8 shadow-lg relative"
             disabled={set.filterColumnName}
-            color={!context.userPreferences.showPrompt && context.gridUuid === set.gridUuid && context.uuid === (set.uuid ?? "") ? "dark" : "light"}
-            onclick={() => context.navigateToGrid(set.grid.uuid, set.uuid)}>
+            color={!context.userPreferences.showPrompt && context.gridUuid === set.gridUuid && context.rowUuid === (set.rowUuid ?? "") ? "dark" : "light"}
+            onclick={() => context.navigateToGrid(set.gridUuid, set.rowUuid)}>
       <DynIcon iconName={set.grid.icon}/>
       {#if set.uuid && set.rows && set.rows.length > 0}
         {set.rows[0].name}
@@ -35,9 +35,4 @@
       {/if}
     </Button>
   {/if}
-  {#if context.rowsInMemory > 0 || context.gridsInMemory > 0}
-    <span class="text-xs ms-2 me-2 py-0 text-gray-600">
-      {context.gridsInMemory} grids, {context.rowsInMemory} rows
-    </span>
-  {/if}    
 {/each}

@@ -6,7 +6,7 @@
 	"/[[dbName]]/[contextUuid]/streaming": [
 		"src/routes/[[dbName]]/[contextUuid]/streaming/+server.ts"
 	],
-	"/[[dbName]]/[[gridUuid]]/[[uuid]]": [
-		"src/routes/[[dbName]]/[[gridUuid]]/[[uuid]]/+page.server.ts"
+	"/[[dbName]]/[[gridUuid]]/[[rowUuid]]": [
+		"src/routes/[[dbName]]/[[gridUuid]]/[[rowUuid]]/+page.server.ts"
 	]
 }

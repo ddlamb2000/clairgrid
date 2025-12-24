@@ -61,8 +61,8 @@ export interface DataSetType {
   rowsEdited?: RowType[]
   rowsDeleted?: RowType[]
   gridUuid?: string
+  rowUuid?: string
   columnUuid?: string
-  uuid?: string
 	referencedValuesAdded?: GridReferencePost[]
 	referencedValuesRemoved?: GridReferencePost[]
   canViewRows: boolean
