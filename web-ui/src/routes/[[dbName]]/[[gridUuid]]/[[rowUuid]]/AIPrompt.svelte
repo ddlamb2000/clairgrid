@@ -69,9 +69,7 @@
             <Badge color="blue" rounded class="px-2.5 py-0.5 text-sm font-bold">
               {message.request.commandText}
             </Badge>
-            {#if message.request.answered}
-              <Icon.CheckOutline class="inline-flex" />
-            {:else if message.request.timeOut}
+            {#if message.request.timeOut}
               <Icon.ClockOutline class="inline-flex text-red-700" />
               <span class="text-xs text-red-700">No response</span>
             {:else}

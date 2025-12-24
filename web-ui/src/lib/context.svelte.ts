@@ -505,7 +505,5 @@ export class Context extends ContextBase {
     }    
   }
 
-  startStreaming = async () => {
-    return this.listenStream.startStreaming()
-  }
+  startStreaming = async () => this.listenStream.startStreaming()
 }

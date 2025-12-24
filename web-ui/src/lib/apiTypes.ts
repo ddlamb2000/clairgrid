@@ -19,7 +19,6 @@ export interface RequestType {
   rowUuid?: string
   columnUuid?: string
   uuid?: string
-  answered?: boolean
   timeOut?: boolean
   elapsedMs?: number
   dateTime?: string
@@ -45,7 +44,6 @@ export interface ReplyType {
   gridUuid?: string
   rowUuid?: string
   columnUuid?: string
-  answered?: boolean
   timeOut?: boolean
   elapsedMs?: number
   dateTime?: string

@@ -83,8 +83,6 @@ export class ContextBase {
   }
 
   trackResponse = (response: ReplyType) => {
-    const initialRequest = this.messageStack.find((r) => r.request && !r.request.answered && !r.request.timeOut && r.request.requestUuid == response.requestUuid)
-    if(initialRequest && initialRequest.request) initialRequest.request.answered = true
     const responseIndex = this.messageStack.findIndex((r) => r.reply && r.reply.requestUuid == response.requestUuid)
     if(response.command === metadata.ActionPrompt) {
       if(response.message) {
@@ -94,19 +92,23 @@ export class ContextBase {
             this.messageStack[responseIndex].reply.dateTime = response.dateTime
             this.messageStack[responseIndex].reply.elapsedMs = response.elapsedMs
           }
-        }
-        else this.messageStack.push({reply : response})
+        } else this.messageStack.push({reply : response})
       }
-    }
-    else {
-      this.messageStack.push({reply : response})
+    } else {
+      const initialRequest = this.messageStack.find((r) => r.request && !r.request.timeOut && r.request.requestUuid == response.requestUuid)
+      if(initialRequest && initialRequest.request) {
+        console.log(`trackResponse[1]`, initialRequest.request.requestUuid)
+        initialRequest.request = undefined
+        initialRequest.reply = response
+      }
+      else this.messageStack.push({reply : response})
     }
     if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 25)
   }
 
   updateTimeedOutRequests = (timeOutCheckFrequency: number) => {
     this.messageStack.find((r) => {
-      if(r.request && !r.request.answered && !r.request.timeOut && r.request.dateTime) {
+      if(r.request && !r.request.timeOut && r.request.dateTime) {
         const localDate = new Date(r.request.dateTime)
         const localDateUTC =  Date.UTC(localDate.getUTCFullYear(), localDate.getUTCMonth(), localDate.getUTCDate(),
                                       localDate.getUTCHours(), localDate.getUTCMinutes(), localDate.getUTCSeconds())
