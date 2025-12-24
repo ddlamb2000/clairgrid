@@ -31,7 +31,7 @@
                     <Spinner size={4} />
                   {/if}
                   {#if message.request && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} showDate={false}/>{/if}
-                  <span class="text-gray-400 ms-1">{message.request.requestUuid}</span>
+                  <span class="text-gray-500 ms-1">{message.request.requestUuid}</span>
                 </p>
               </div>
             </span>
@@ -50,7 +50,8 @@
                 <p class="mb-0.5">
                   {#if message.reply.status === metadata.SuccessStatus}
                     <Badge color="green" class="px-2.5 py-0.5">
-                      {#if message.reply.commandText}{message.reply.commandText}{/if}
+                      {message.reply.commandText}
+                      {#if message.reply.message}: {message.reply.message}{/if}
                     </Badge>
                   {:else}
                     <Badge color="red" class="px-2.5 py-0.5">
@@ -63,7 +64,7 @@
                     </Badge>
                   {/if}
                   {#if message.reply !== undefined && message.reply.dateTime !== undefined}<DateTime dateTime={message.reply?.dateTime} showDate={false} />{/if}
-                  <span class="text-gray-400 ms-1">{message.reply.requestUuid}</span>
+                  <span class="text-gray-300 ms-1">{message.reply.requestUuid}</span>
                 </p>
               </div>
             </span>

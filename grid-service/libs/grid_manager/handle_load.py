@@ -49,5 +49,6 @@ def handle_load(self, request):
         dataSet["countRows"] = len(dataSet["rows"])
     return {
         "status": metadata.SuccessStatus,
+        "message": f"'{grid.name}' loaded",
         "dataSet": dataSet
     }

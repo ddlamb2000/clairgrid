@@ -57,7 +57,7 @@ export class ContextBase {
       })
       const uri = `/${this.dbName}/${this.#contextUuid}/send`
       this.messageStatus = 'Sending'
-      console.log(`[>]`, request)
+      console.log(`►`, request)
       const response = await fetch(uri, {
         method: 'POST',
         headers: {

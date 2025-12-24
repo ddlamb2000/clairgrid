@@ -82,16 +82,16 @@ class QueueListener(ConfigurationMixin):
             if request.get('commandText'): reply['commandText'] = request['commandText']
             if request.get('url'): reply['url'] = request['url']
             try:
-                print(f"<request {request}", flush=True)
+                print(f"◀︎request {request}", flush=True)
                 reply = reply | self.process_request(request)
-                print(f">reply {reply}", flush=True)
+                print(f"►reply {reply}", flush=True)
             except Exception as e:
                 print(f"❌ Error processing request: {e}", flush=True)
                 reply = reply | {"status": "error", "can't process request, message": str(e)}
         except Exception as e:
             print(f"❌ Error processing request: {e}", flush=True)
             reply = {"status": "error", "message": f"invalid request: {str(e)}"}
-            print(f">reply {reply}", flush=True)
+            print(f"►reply {reply}", flush=True)
 
         if props.reply_to and reply:
             reply["correlationId"] = props.correlation_id

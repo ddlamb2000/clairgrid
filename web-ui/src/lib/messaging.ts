@@ -125,7 +125,7 @@ export const initMessaging = async (dbName: string, contextUuid: string) => {
  */
 export const sendMessage = async (request: any) => {
   const requestText = JSON.stringify(request)
-  console.log(`<api`, requestText)
+  console.log(`◀︎api`, requestText)
   const requestChannel = requestChannels.get(request.dbName)
   const requestQueueName = getRequestQueueName(request.dbName)
   if (!requestChannel) {
@@ -141,7 +141,7 @@ export const sendMessage = async (request: any) => {
     correlationId: request.requestUuid,
     replyTo: callBackQueueName
   })
-  if(sent) console.log(`>queue`, requestText)
+  if(sent) console.log(`►queue`, requestText)
   else console.error(`send: failed to send message to queue: ${requestQueueName} with callback queue ${callBackQueueName}`)
 }
 
@@ -160,9 +160,9 @@ export const initCallbackConsumer = (dbName: string, contextUuid: string, contro
     callBackChannel.consume(callBackQueue.queue, (message: any) => {
       if(message) {
         const content = message.content.toString()
-        console.log(`<queue  ${content}`)
+        console.log(`◀︎queue  ${content}`)
         controller.enqueue(content + metadata.StopString)
-        console.log(`>stream ${content}`)
+        console.log(`►stream ${content}`)
         callBackChannel.ack(message)
       }
     })

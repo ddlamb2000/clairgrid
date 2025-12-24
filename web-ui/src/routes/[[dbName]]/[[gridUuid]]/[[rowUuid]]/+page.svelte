@@ -1,7 +1,7 @@
 <script  lang="ts">
   import type { PageData } from './$types'
   import { Toggle } from 'flowbite-svelte'
-  import { onMount, onDestroy, untrack } from 'svelte'
+  import { onMount, untrack } from 'svelte'
   import { Context } from '$lib/context.svelte.ts'
   import Login from './Login.svelte'
   import Info from './Info.svelte'

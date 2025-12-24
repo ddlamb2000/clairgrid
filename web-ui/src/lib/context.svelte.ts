@@ -417,12 +417,12 @@ export class Context extends ContextBase {
 
   mount = async () => { }
 
-  handleAction = async (message: ReplyType) => {
-    if(message.command == metadata.ActionAuthentication) {
-      if(message.status == metadata.SuccessStatus) {
-        if(message.jwt && this.user.checkToken(message.jwt)) {
+  handleAction = async (reply: ReplyType) => {
+    if(reply.command == metadata.ActionAuthentication) {
+      if(reply.status == metadata.SuccessStatus) {
+        if(reply.jwt && this.user.checkToken(reply.jwt)) {
           console.log(`Logged in: ${this.user.getUser()}`)
-          this.user.setToken(message.jwt)
+          this.user.setToken(reply.jwt)
         } else {
           console.error(`Token is missing or invalid for user ${this.user.getUser()}`)
         }
@@ -431,22 +431,23 @@ export class Context extends ContextBase {
         this.purge()
       }
     } else if(this.user.checkLocalToken()) {
-      if(message.status == metadata.SuccessStatus) {
-        if(message.command == metadata.ActionLoad) {
-          if(message.dataSet && message.dataSet.grid) {
-            if(message.rowUuid) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.name}`)
-            else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.name}`)
-            const setIndex = this.getSetIndex(message.dataSet)
+      if(reply.status == metadata.SuccessStatus) {
+        if(reply.command == metadata.ActionLoad) {
+          if(reply.dataSet && reply.dataSet.grid) {
+            if(reply.rowUuid) console.log(`Load single row from ${reply.dataSet.grid.uuid} ${reply.dataSet.grid.name}`)
+            else console.log(`Load grid ${reply.dataSet.grid.uuid} ${reply.dataSet.grid.name}`)
+            const setIndex = this.getSetIndex(reply.dataSet)
             if(setIndex < 0) {
-              this.dataSets.push(message.dataSet)
+              this.dataSets.push(reply.dataSet)
             } else {
-              this.dataSets[setIndex] = message.dataSet
-              console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.name} is reloaded`)
+              this.dataSets[setIndex] = reply.dataSet
+              console.log(`Grid ${reply.dataSet.grid.uuid} ${reply.dataSet.grid.name} is reloaded`)
             }
-            if(message.rowUuid && message.dataSet.grid) {
-              if(message.dataSet.grid.columns) {
-                for(const column of message.dataSet.grid.columns) {
-                  if(column.typeUuid === metadata.UuidReferenceColumnType && message.dataSet) {
+            if(reply.rowUuid && reply.dataSet.grid) {
+              console.log(`Load associated grids for row ${reply.rowUuid}`)
+              if(reply.dataSet.grid.columns) {
+                for(const column of reply.dataSet.grid.columns) {
+                  if(column.typeUuid === metadata.UuidReferenceColumnType && reply.dataSet) {
                     this.sendMessage({
                       command: metadata.ActionLoad,
                       commandText: "Load associated grid",
@@ -455,8 +456,8 @@ export class Context extends ContextBase {
                   }
                 }
               }
-              if(message.dataSet.grid.columnsUsage) {
-                for(const usage of message.dataSet.grid.columnsUsage) {
+              if(reply.dataSet.grid.columnsUsage) {
+                for(const usage of reply.dataSet.grid.columnsUsage) {
                   if(usage.grid) {
                     this.sendMessage({
                       command: metadata.ActionLoad,
@@ -467,12 +468,12 @@ export class Context extends ContextBase {
                 }
               }
             }
-            if(this.gridUuid === message.dataSet.grid.uuid) {
-              this.focus.set(message.dataSet.grid, undefined, undefined)
+            if(this.gridUuid === reply.dataSet.grid.uuid) {
+              this.focus.set(reply.dataSet.grid, undefined, undefined)
             }
           }
-        } else if(message.command == metadata.ActionLocateGrid) {
-          this.locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
+        } else if(reply.command == metadata.ActionLocateGrid) {
+          this.locateGrid(reply.gridUuid, reply.columnUuid, reply.rowUuid)
         }
       }
     }    

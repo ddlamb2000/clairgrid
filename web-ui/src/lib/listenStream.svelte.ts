@@ -54,6 +54,8 @@ export class ListenStream {
 
   async * getStreamIteration(uri: string) {
     const gridUuid = this.context.gridUuid
+    const rowUuid = this.context.rowUuid
+    const commandText = rowUuid ? `Load row ${rowUuid}` : `Load grid ${gridUuid}`
     let payload: RequestType = {
       requestUuid: newUuid(), 
       dbName: this.context.dbName, 
@@ -75,7 +77,8 @@ export class ListenStream {
         url: uri.toString(), 
         command: metadata.ActionLoad, 
         commandText: 'Load grid',
-        gridUuid: gridUuid
+        gridUuid: gridUuid,
+        rowUuid: rowUuid
       }
     }
     let response = await fetch(uri, {
@@ -109,7 +112,7 @@ export class ListenStream {
                 const nowDate = Date.parse(now)
                 const requestInitiatedOnDate = Date.parse(json.requestInitiatedOn)
                 const elapsedMs = nowDate - requestInitiatedOnDate
-                console.log(`[<] (${elapsedMs} ms)`, json)
+                console.log(`◀︎(${elapsedMs} ms)`, json)
                 this.context.trackResponse({
                   requestUuid: json.requestUuid,
                   command: json.command,
