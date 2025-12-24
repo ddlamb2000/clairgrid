@@ -592,7 +592,7 @@
             "touuid0_metadata": "IntColumnType"
         },
         {
-            "uuid": "0d64d653-9c65-43f7-9ec0-9aa0d08ed0b4",
+            "uuid": "894d54e9-a24a-4af6-9dc9-4f5309b91ffe",
             "partition": 0,
             "fromuuid_metadata": "ColumnTypeColumnReferenceGrid",
             "touuid0_metadata": "ReferenceColumnType",

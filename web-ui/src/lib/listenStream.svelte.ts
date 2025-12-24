@@ -8,6 +8,7 @@ import { newUuid } from '$lib/utils.svelte'
 export interface IListenStreamContext {
   dbName: string
   gridUuid: string
+  rowUuid: string
   getContextUuid: () => string
   user: {
     getToken: () => string,
@@ -55,7 +56,6 @@ export class ListenStream {
   async * getStreamIteration(uri: string) {
     const gridUuid = this.context.gridUuid
     const rowUuid = this.context.rowUuid
-    const commandText = rowUuid ? `Load row ${rowUuid}` : `Load grid ${gridUuid}`
     let payload: RequestType = {
       requestUuid: newUuid(), 
       dbName: this.context.dbName, 

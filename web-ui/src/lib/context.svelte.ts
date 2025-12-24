@@ -443,7 +443,7 @@ export class Context extends ContextBase {
               this.dataSets[setIndex] = reply.dataSet
               console.log(`Grid ${reply.dataSet.grid.uuid} ${reply.dataSet.grid.name} is reloaded`)
             }
-            if(reply.rowUuid && reply.dataSet.grid) {
+            if(reply.dataSet.rowUuid && reply.dataSet.grid) {
               console.log(`Load associated grids for row ${reply.rowUuid}`)
               if(reply.dataSet.grid.columns) {
                 for(const column of reply.dataSet.grid.columns) {
