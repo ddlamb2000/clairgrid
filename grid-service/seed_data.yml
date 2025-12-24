@@ -181,6 +181,16 @@
             "updatedbyuuid_metadata": "RootUser"
         },
         {
+            "uuid_metadata": "RichTextColumnType",
+            "griduuid_metadata": "ColumnTypes",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
             "uuid_metadata": "IntColumnType",
             "griduuid_metadata": "ColumnTypes",
             "enabled": true,
@@ -315,6 +325,12 @@
             "partition": 0,
             "text0": "Text",
             "text1": "Text or string"
+        },
+        {
+            "uuid_metadata": "RichTextColumnType",
+            "partition": 0,
+            "text0": "Rich text",
+            "text1": "Rich text"
         },
         {
             "uuid_metadata": "IntColumnType",
@@ -557,7 +573,7 @@
             "uuid": "88eedfbe-f5ba-4020-866c-c30f0e58b5be",
             "partition": 0,
             "fromuuid_metadata": "GridColumnDesc",
-            "touuid0_metadata": "TextColumnType"
+            "touuid0_metadata": "RichTextColumnType"
         },
         {
             "uuid": "51bd1bc8-0b4b-442a-a782-70b677a7d181",
@@ -575,7 +591,7 @@
             "uuid": "a8c3427c-5d0e-4d66-accc-999e89b115ba",
             "partition": 0,
             "fromuuid_metadata": "ColumnTypeColumnDesc",
-            "touuid0_metadata": "TextColumnType"
+            "touuid0_metadata": "RichTextColumnType"
         },
         {
             "uuid": "7890a5a7-03a4-445a-83c0-a12376803f4b",

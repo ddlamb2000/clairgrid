@@ -21,6 +21,7 @@ class SystemIdsMapping:
             "ColumnTypeColumnName": "9da0e49f-528c-4081-bc07-3c32497857ff",
             "ColumnTypeColumnDesc": "5a9eba36-7601-4627-be8e-50cf027d9ad8",
             "TextColumnType": "65f3c258-fb1e-4f8b-96ca-f790e70d29c1",
+            "RichTextColumnType": "ebd6b135-0ecb-4611-b062-e48a6245a281",
             "IntColumnType": "8c28d527-66f4-481c-902e-ac1e65a8abb0",
             "ReferenceColumnType": "c8b16312-d4f0-40a5-aa04-c0bc1350fea7",
             "PasswordColumnType": "5f038b21-d9a4-45fc-aa3f-fc405342c287",

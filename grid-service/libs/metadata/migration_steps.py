@@ -105,6 +105,22 @@ def get_migration_steps(root_user_name, root_password):
                 f"'{root_user_name}',"
                 f"'{root_password}'"
             ")",
+
+        160: "CREATE TABLE booleans ("
+                "uuid uuid NOT NULL, "
+                "partition integer, "
+                "bool0 boolean, "
+                "bool1 boolean, "
+                "bool2 boolean, "
+                "bool3 boolean, "
+                "bool4 boolean, "
+                "bool5 boolean, "
+                "bool6 boolean, "
+                "bool7 boolean, "
+                "bool8 boolean, "
+                "bool9 boolean, "
+                "PRIMARY KEY (uuid, partition)"
+            ")",
     }
 
 def get_deletion_steps():
@@ -114,6 +130,7 @@ def get_deletion_steps():
         3: "DROP TABLE relationships",
         4: "DROP TABLE texts",
         5: "DROP TABLE ints",
-        6: "DROP TABLE rows",
-        7: "DROP TABLE migrations"
+        6: "DROP TABLE booleans",
+        7: "DROP TABLE rows",
+        8: "DROP TABLE migrations"
     }

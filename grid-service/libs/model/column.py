@@ -26,6 +26,10 @@ class Column():
             self.dbTable = "relationships"
             self.dbColumn = f"toUuid{self.columnIndex % 10}::text"
             self.dbJoinKey = "fromUuid"
+        elif self.typeUuid == SystemIds.BooleanColumnType:
+            self.dbTable = "booleans"
+            self.dbColumn = f"bool{self.columnIndex % 10}"
+            self.dbJoinKey = "uuid"
         else:
             self.dbTable = "texts"
             self.dbColumn = f"text{self.columnIndex % 10}"
