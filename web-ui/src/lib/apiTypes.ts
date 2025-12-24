@@ -18,14 +18,8 @@ export interface RequestType {
   gridUuid?: string
   rowUuid?: string
   columnUuid?: string
-  uuid?: string
   timeOut?: boolean
-  elapsedMs?: number
   dateTime?: string
-  filterColumnOwned?: boolean
-  filterColumnName?: string
-  filterColumnGridUuid?: string
-  filterColumnValue?: string
   dataSet?: GridPost
 }
 
@@ -67,10 +61,6 @@ export interface DataSetType {
   canEditRows: boolean
   canAddRows: boolean
   canEditGrid: boolean
-  filterColumnOwned?: boolean
-  filterColumnName?: string
-  filterColumnGridUuid?: string
-  filterColumnValue?: string
 }
 
 export interface GridType extends RowType {
@@ -85,14 +75,12 @@ export interface ColumnType {
   index: number
   name: string
   order?: number
-  owned?: boolean
   label?: string
   type: string
   typeUuid: string
   gridUuid: string
   grid?: GridType
-  gridPromptUuid?: string
-  bidirectional?: boolean
+  referenceGridUuid?: string
 }
 
 export interface RowType {
@@ -106,7 +94,6 @@ export interface RowType {
 }
 
 export interface ReferenceType {
-	owned: boolean
 	label?: string
 	name?: string
 	gridUuid?: string
@@ -131,5 +118,4 @@ export interface GridReferencePost {
 	fromUuid: string
 	toGridUuid: string
 	uuid: string
-	owned: boolean
 }

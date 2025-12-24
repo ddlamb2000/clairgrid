@@ -49,6 +49,8 @@ export class Context extends ContextBase {
       await this.sendMessage(
         {
           command: metadata.ActionLocateGrid,
+          commandText: "Locate",
+          gridUuid: grid.uuid,
           columnUuid: column !== undefined ? column.uuid : undefined,
           rowUuid: row !== undefined ? row.uuid : undefined
         }
@@ -57,11 +59,7 @@ export class Context extends ContextBase {
   }
 
   navigateToGrid = async (gridUuid: string,
-                          rowUuid?: string,
-                          filterColumnOwned?: boolean,
-                          filterColumnName?: string,
-                          filterColumnGridUuid?: string,
-                          filterColumnValue?: string) => {
+                          rowUuid?: string) => {
 		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, rowUuid=${rowUuid}`)
     this.userPreferences.showPrompt = false
     this.reset()
@@ -133,7 +131,6 @@ export class Context extends ContextBase {
     if(columnName !== "") {
       const column: ColumnType = { uuid: uuidColumn,
                                     orderNumber: nbColumns + 1,
-                                    owned: true,
                                     label: newLabel,
                                     name: columnName,
                                     type: rowPrompt.text1 || "?",
@@ -153,21 +150,18 @@ export class Context extends ContextBase {
           updated: new Date } 
       ]
       const referencedValuesAdded = [
-        { owned: false,
-          columnName: "relationship1",
+        { columnName: "relationship1",
           fromUuid: uuidColumn,
           toGridUuid: metadata.UuidGrids,
           uuid: set.grid.uuid },
-        { owned: true,
-          columnName: "relationship1",
+        { columnName: "relationship1",
           fromUuid: uuidColumn,
           toGridUuid: metadata.UuidColumnTypes,
           uuid: rowPrompt.uuid }
       ] 
       if(rowReference !== undefined) {
         referencedValuesAdded.push(
-          { owned: true,
-          columnName: "relationship2",
+          { columnName: "relationship2",
           fromUuid: uuidColumn,
           toGridUuid: metadata.UuidGrids,
           uuid: rowReference.uuid }  
@@ -182,7 +176,7 @@ export class Context extends ContextBase {
     }
   }
   
-  addRow = async (set: DataSetType, filterColumnOwned: boolean, filterColumnName: string, filterColumnGridUuid: string, filterColumnValue: string) => {
+  addRow = async (set: DataSetType) => {
     const uuid = newUuid()
     const row: RowType = { gridUuid: set.grid.uuid, uuid: uuid, created: new Date, updated: new Date }
     if(!set.rows) set.rows = []
@@ -192,10 +186,6 @@ export class Context extends ContextBase {
       command: metadata.ActionChangeGrid,
       commandText: 'Add row',
       gridUuid: set.grid.uuid,
-      filterColumnOwned: filterColumnOwned,
-      filterColumnName: filterColumnName,
-      filterColumnGridUuid: filterColumnGridUuid,
-      filterColumnValue: filterColumnValue,
       dataSet: { rowsAdded: [row] }
     })
   }
@@ -229,13 +219,11 @@ export class Context extends ContextBase {
               uuid: column.uuid }
           ],
           referencedValuesRemoved: [
-            { owned: false,
-              columnName: "relationship1",
+            { columnName: "relationship1",
               fromUuid: column.uuid,
               toGridUuid: metadata.UuidGrids,
               uuid: set.grid.uuid },
-            { owned: true,
-              columnName: "relationship1",
+            { columnName: "relationship1",
               fromUuid: column.uuid,
               toGridUuid: metadata.UuidColumnTypes,
               uuid: column.typeUuid }
@@ -269,14 +257,13 @@ export class Context extends ContextBase {
 
   addReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
     const reference = row.references !== undefined ? 
-                        row.references.find((reference) => reference.owned && reference.name === column.name) :
+                        row.references.find((reference) => reference.name === column.name) :
                         undefined
     if(reference !== undefined) {
       if(reference.rows !== undefined) reference.rows.push(rowPrompt)
       else reference.rows = [rowPrompt]
     } else {
       const reference: ReferenceType = {
-        owned: true,
         label: column.label,
         name: column.name,
         gridUuid: column.gridPromptUuid,
@@ -291,8 +278,7 @@ export class Context extends ContextBase {
       gridUuid: set.grid.uuid,
       dataSet: {
         referencedValuesAdded: [
-          { owned: true,
-          columnName: column.name,
+          { columnName: column.name,
           fromUuid: row.uuid,
           toGridUuid: rowPrompt.gridUuid,
           uuid: rowPrompt.uuid },
@@ -303,7 +289,7 @@ export class Context extends ContextBase {
 
   removeReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
     if(row.references !== undefined) {
-      const reference = row.references.find((reference) => reference.owned && reference.name === column.name)
+      const reference = row.references.find((reference) => reference.name === column.name)
       if(reference !== undefined) {
         if(reference.rows !== undefined) {
           const rowIndex = reference.rows.findIndex((r) => r.uuid === rowPrompt.uuid)
@@ -317,8 +303,7 @@ export class Context extends ContextBase {
       gridUuid: set.grid.uuid,
       dataSet: {
         referencedValuesRemoved: [
-          { owned: true,
-            columnName: column.name,
+          { columnName: column.name,
             fromUuid: row.uuid,
             toGridUuid: rowPrompt.gridUuid,
             uuid: rowPrompt.uuid },
@@ -418,11 +403,7 @@ export class Context extends ContextBase {
 
   getSetIndex = (set: DataSetType) => {
     return this.dataSets.findIndex((s) => s.gridUuid === set.gridUuid
-                                          && s.rowUuid === set.rowUuid
-                                          && s.filterColumnOwned === set.filterColumnOwned
-                                          && s.filterColumnName === set.filterColumnName
-                                          && s.filterColumnGridUuid === set.filterColumnGridUuid
-                                          && s.filterColumnValue === set.filterColumnValue)
+                                          && s.rowUuid === set.rowUuid)
   }
 
   isFocused = (set: DataSetType, column: ColumnType, row: RowType): boolean | undefined => {
@@ -465,15 +446,11 @@ export class Context extends ContextBase {
             if(message.rowUuid && message.dataSet.grid) {
               if(message.dataSet.grid.columns) {
                 for(const column of message.dataSet.grid.columns) {
-                  if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional && message.dataSet) {
+                  if(column.typeUuid === metadata.UuidReferenceColumnType && message.dataSet) {
                     this.sendMessage({
                       command: metadata.ActionLoad,
                       commandText: "Load associated grid",
-                      gridUuid: column.gridPromptUuid,
-                      filterColumnOwned: false,
-                      filterColumnName: column.name,
-                      filterColumnGridUuid: message.gridUuid,
-                      filterColumnValue: message.rowUuid
+                      gridUuid: column.referenceGridUuid
                     })
                   }
                 }
@@ -484,11 +461,7 @@ export class Context extends ContextBase {
                     this.sendMessage({
                       command: metadata.ActionLoad,
                       commandText: "Load usage grid",
-                      gridUuid: usage.grid.uuid,
-                      filterColumnOwned: true,
-                      filterColumnName: usage.name,
-                      filterColumnGridUuid: usage.gridUuid,
-                      filterColumnValue: message.rowUuid
+                      gridUuid: usage.grid.uuid
                     })
                   }
                 }
