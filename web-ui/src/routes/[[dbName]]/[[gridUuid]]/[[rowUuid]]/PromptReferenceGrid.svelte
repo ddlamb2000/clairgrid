@@ -34,7 +34,7 @@
       <span class="flex p-1">
         <Search size="md" class="py-1" bind:value={searchText} onclick={(e) => {e.stopPropagation()}} />
       </span>      
-      {#each context.dataSet as setPrompt}
+      {#each context.dataSets as setPrompt}
         {#if setPrompt.grid && setPrompt.grid.uuid && setPrompt.grid.uuid === gridPromptUuid}
           {#key "prompt-reference" + elementReference + gridPromptUuid}
             {#each setPrompt.rows as rowReference}

@@ -31,7 +31,7 @@
     {#if !context.gotData(matchesProps)}
       <Spinner size={4} />
     {:else}
-      {#each context.dataSet as setPrompt}
+      {#each context.dataSets as setPrompt}
         {#if matchesProps(setPrompt)}
           {#key "prompt" + elementReference + gridPromptUuid}
             {#each setPrompt.rows as rowPrompt}

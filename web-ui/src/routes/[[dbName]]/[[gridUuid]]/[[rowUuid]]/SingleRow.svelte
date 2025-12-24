@@ -27,10 +27,10 @@
 {#if !context.gotData(matchesProps)}
   <Spinner size={4} />
 {:else}
-  {#each context.dataSet as set, setIndex}
+  {#each context.dataSets as set, setIndex}
     {#if matchesProps(set)}
       {#key set.grid.uuid}
-        {#each context.dataSet[setIndex].rows as row, rowIndex}
+        {#each context.dataSets[setIndex].rows as row, rowIndex}
           {#key row.uuid}
             <span class="flex">
               <span class="text-2xl font-extrabold">{@html row.uuid}</span>
@@ -66,7 +66,7 @@
                         {column.grid.displayString} <span class="text-xs">({column.name})</span>
                       {:else}
                         <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
-                          bind:innerHTML={context.dataSet[setIndex].grid.columns[columnIndex].name}></span>
+                          bind:innerHTML={context.dataSets[setIndex].grid.columns[columnIndex].name}></span>
                       {/if}
                     </td>
                     {#if column.typeUuid === metadata.UuidTextColumnType
@@ -79,7 +79,7 @@
                                   {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
-                          bind:innerHTML={context.dataSet[setIndex].rows[rowIndex].values[columnIndex]}>
+                          bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[columnIndex]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                       <td class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}">
@@ -101,7 +101,7 @@
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, row, columnIndex)}>
                           <Icon.CheckCircleOutline
-                                color={context.dataSet[setIndex].rows[rowIndex].values[columnIndex] === "true" ? "" : "lightgray"} />
+                                color={context.dataSets[setIndex].rows[rowIndex].values[columnIndex] === "true" ? "" : "lightgray"} />
                         </a>
                       </td>
                     {:else}

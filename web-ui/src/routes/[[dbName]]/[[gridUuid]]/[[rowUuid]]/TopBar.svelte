@@ -13,7 +13,7 @@
 <Button size="xs" class="me-1 mt-1 mb-1 h-8 w-8 shadow-lg" color="blue" onclick={() => context.newGrid()}>  
   <Icon.CirclePlusOutline />
 </Button>
-{#each context.dataSet as set}
+{#each context.dataSets as set}
   {#if set.grid}
     <Button outline
             href={"/" + context.dbName + "/" + set.gridUuid + (set.rowUuid ? "/" + set.rowUuid : "")}

@@ -32,17 +32,17 @@
 {#if !context.gotData(matchesProps)}
   <Spinner size={4} />
 {:else}
-  {#each context.dataSet as set, setIndex}  
+  {#each context.dataSets as set, setIndex}  
     {#if matchesProps(set)}
       {#key set.gridUuid}
         {#if !embedded}
           <span class="flex">
             <span contenteditable class="text-2xl font-extrabold"
                   oninput={() => context.changeGrid(set.grid)}
-                  bind:innerHTML={context.dataSet[setIndex].grid.name}></span>
+                  bind:innerHTML={context.dataSets[setIndex].grid.name}></span>
             <span contenteditable class="ms-2 text-sm font-light"
                   oninput={() => context.changeGrid(set.grid)}
-                  bind:innerHTML={context.dataSet[setIndex].grid.description}></span>
+                  bind:innerHTML={context.dataSets[setIndex].grid.description}></span>
             {#if set.gridUuid !== metadata.UuidGrids}
               <a class="ms-2 text-sm font-light text-gray-500 underline"
                   href={"/" + context.dbName + "/" + metadata.UuidGrids + "/" + set.gridUuid}
@@ -76,7 +76,7 @@
                       {column.grid.displayString} <span class="text-xs">({column.name})</span>
                     {:else}
                       <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
-                        bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].name}></span>
+                        bind:innerHTML={context.dataSets[setIndex].grid.columns[indexColumn].name}></span>
                     {/if}
                     <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 column-menu-" + set.gridUuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.gridUuid + "-" + column.uuid}>
@@ -101,7 +101,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each context.dataSet[setIndex].rows as row, rowIndex}
+            {#each context.dataSets[setIndex].rows as row, rowIndex}
               {#key row.uuid}
                 <tr class="align-top">
                   <td class="nowrap flex">
@@ -140,7 +140,7 @@
                           align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
-                          bind:innerHTML={context.dataSet[setIndex].rows[rowIndex].values[columnIndex]}>
+                          bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[columnIndex]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                       <td class="border border-slate-100 {context.isFocused(set, column, row) ? colorFocus : ''}">
@@ -152,7 +152,7 @@
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, row, columnIndex)}>
                           <Icon.CheckCircleOutline
-                                color={context.dataSet[setIndex].rows[rowIndex].values[columnIndex] === "true" ? "" : "lightgray"} />
+                                color={context.dataSets[setIndex].rows[rowIndex].values[columnIndex] === "true" ? "" : "lightgray"} />
                         </a>
                       </td>
                     {:else}
@@ -169,13 +169,13 @@
             <tr>
               <th>
                 <span class="flex">
-                  <a href="#top" onclick={() => context.addRow(context.dataSet[setIndex], filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue)}><Icon.CirclePlusOutline /></a>
+                  <a href="#top" onclick={() => context.addRow(context.dataSets[setIndex], filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue)}><Icon.CirclePlusOutline /></a>
                 </span>
               </th>
               <th class="py-1 border border-slate-200 bg-gray-100" colspan="99">
-                {#if context.dataSet[setIndex].countRows}
+                {#if context.dataSets[setIndex].countRows}
                   <span class="flex ms-1">
-                    {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}
+                    {context.dataSets[setIndex].countRows} {context.dataSets[setIndex].countRows === 1 ? 'row' : 'rows'}
                   </span>
                 {/if}
               </th>

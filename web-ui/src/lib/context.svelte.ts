@@ -13,7 +13,7 @@ export class Context extends ContextBase {
   listenStream: ListenStream
   get isStreaming() { return this.listenStream.isStreaming }
 
-  dataSet: DataSetType[] = $state([])
+  dataSets: DataSetType[] = $state([])
   focus = new Focus
 
   constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
@@ -367,7 +367,7 @@ export class Context extends ContextBase {
   locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, uuid: string | undefined) => {
     console.log(`[Context.locateGrid(${gridUuid},${columnUuid},${uuid})`)
     if(gridUuid) {
-      for(const set of this.dataSet) {
+      for(const set of this.dataSets) {
         if(set && set.grid && set.gridUuid === gridUuid) {
           const grid: GridType = set.grid
           if(grid.columns) {
@@ -409,15 +409,15 @@ export class Context extends ContextBase {
   purge = () => {
     this.user.reset()
     this.reset()
-    this.dataSet = []
+    this.dataSets = []
   }
 
-  hasDataSet = () => this.dataSet.length > 0
+  hasDataSet = () => this.dataSets.length > 0
 
-  gotData = (matchesProps: Function) => this.dataSet.find((set: DataSetType) => matchesProps(set))
+  gotData = (matchesProps: Function) => this.dataSets.find((set: DataSetType) => matchesProps(set))
 
   getSetIndex = (set: DataSetType) => {
-    return this.dataSet.findIndex((s) => s.gridUuid === set.gridUuid
+    return this.dataSets.findIndex((s) => s.gridUuid === set.gridUuid
                                           && s.rowUuid === set.rowUuid
                                           && s.filterColumnOwned === set.filterColumnOwned
                                           && s.filterColumnName === set.filterColumnName
@@ -457,10 +457,9 @@ export class Context extends ContextBase {
             else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.name}`)
             const setIndex = this.getSetIndex(message.dataSet)
             if(setIndex < 0) {
-              this.dataSet.push(message.dataSet)
-              console.log(`dataSet`, this.dataSet)
+              this.dataSets.push(message.dataSet)
             } else {
-              this.dataSet[setIndex] = message.dataSet
+              this.dataSets[setIndex] = message.dataSet
               console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.name} is reloaded`)
             }
             if(message.rowUuid && message.dataSet.grid) {

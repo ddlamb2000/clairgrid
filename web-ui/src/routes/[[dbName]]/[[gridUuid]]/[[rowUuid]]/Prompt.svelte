@@ -50,7 +50,7 @@
         {/each}
       {/if}
     {/each}
-    {#each context.dataSet as setPrompt}
+    {#each context.dataSets as setPrompt}
       {#if matchesProps(setPrompt)}
         {#key "prompt" + elementReference + gridPromptUuid}
           {#each setPrompt.rows as rowPrompt}
