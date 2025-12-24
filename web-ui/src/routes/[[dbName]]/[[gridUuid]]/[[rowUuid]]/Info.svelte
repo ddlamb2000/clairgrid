@@ -19,7 +19,6 @@
               <Icon.AnnotationOutline class="w-4 h-4" />
               <div class="ps-2 text-xs font-normal">
                 <p class="mb-0.5">
-                  <span class="text-gray-400">{message.request.requestUuid}</span>
                   {#if message.request.commandText}
                     <Badge color="blue" class="px-2.5 py-0.5">
                       {message.request.commandText}
@@ -32,6 +31,7 @@
                     <Spinner size={4} />
                   {/if}
                   {#if message.request && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} showDate={false}/>{/if}
+                  <span class="text-gray-400 ms-1">{message.request.requestUuid}</span>
                 </p>
               </div>
             </span>
@@ -48,7 +48,6 @@
               {/if}
               <div class="ps-2 text-xs font-normal">
                 <p class="mb-0.5">
-                  <span class="text-gray-500">{message.reply.requestUuid}</span>
                   {#if message.reply.status === metadata.SuccessStatus}
                     <Badge color="green" class="px-2.5 py-0.5">
                       {#if message.reply.commandText}{message.reply.commandText}{/if}
@@ -64,6 +63,7 @@
                     </Badge>
                   {/if}
                   {#if message.reply !== undefined && message.reply.dateTime !== undefined}<DateTime dateTime={message.reply?.dateTime} showDate={false} />{/if}
+                  <span class="text-gray-400 ms-1">{message.reply.requestUuid}</span>
                 </p>
               </div>
             </span>
