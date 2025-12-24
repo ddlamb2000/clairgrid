@@ -8,7 +8,7 @@ def _load_rows(self, grid):
     db_join_clauses = '\n'.join(list(dict.fromkeys([column.db_join_clause for column in grid.columns])))
     try:
         result = self.db_manager.select_all('''
-            SELECT rows.uuid,
+            SELECT rows.uuid::text,
                     rows.created,
                     rows.createdByUuid,
                     rows.updated,

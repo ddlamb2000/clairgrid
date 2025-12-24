@@ -16,21 +16,21 @@
 {#each context.dataSet as set}
   {#if set.grid}
     <Button outline
-            href={"/" + context.dbName + "/" + set.gridUuid}
+            href={"/" + context.dbName + "/" + set.gridUuid + (set.rowUuid ? "/" + set.rowUuid : "")}
             size="xs" class="mt-1 me-1 h-8 shadow-lg relative"
             disabled={set.filterColumnName}
             color={!context.userPreferences.showPrompt && context.gridUuid === set.gridUuid && context.rowUuid === (set.rowUuid ?? "") ? "dark" : "light"}
             onclick={() => context.navigateToGrid(set.gridUuid, set.rowUuid)}>
       <DynIcon iconName={set.grid.icon}/>
-      {#if set.uuid && set.rows && set.rows.length > 0}
-        {set.rows[0].name}
+      {#if set.rowUuid && set.rows && set.rows.length > 0}
+        {set.rows[0].uuid}
       {:else}
         {@html set.grid.name}
       {/if}
       <span class="sr-only">Notifications</span>
       {#if set.filterColumnName}
         <Indicator color="none" border size="xs" class="font-extralight text-gray">{set.countRows}</Indicator>
-      {:else if !set.uuid}
+      {:else if !set.rowUuid}
         <Indicator color="gray" border size="xl" class="ms-1 font-extralight text-black">{set.countRows}</Indicator>
       {/if}
     </Button>

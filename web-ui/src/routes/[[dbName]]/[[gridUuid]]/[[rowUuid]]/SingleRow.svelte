@@ -24,8 +24,6 @@
   }
 </script>
 
-<p>gridUuid={gridUuid}</p>
-<p>rowUuid={rowUuid}</p>
 {#if !context.gotData(matchesProps)}
   <Spinner size={4} />
 {:else}
@@ -34,13 +32,8 @@
       {#key set.grid.uuid}
         {#each context.dataSet[setIndex].rows as row, rowIndex}
           {#key row.uuid}
-            <p>row.uuid={row.uuid}</p>
-            <p>rowIndex={rowIndex}</p>
-            <p>setIndex={setIndex}</p>
-            <p>set.grid.uuid={set.grid.uuid}</p>
-            <p>set.rowUuid={set.rowUuid}</p>
             <span class="flex">
-              <span class="text-2xl font-extrabold">{@html row.displayString}</span>
+              <span class="text-2xl font-extrabold">{@html row.uuid}</span>
               {#if set.grid.uuid === metadata.UuidGrids}
                 <a class="ms-2 text-sm font-light text-gray-500 underline"
                     href={"/" + context.dbName + "/" + row.uuid}
@@ -53,12 +46,12 @@
               {:else}
                 <span class="ms-2 text-sm font-light"
                       oninput={() => context.changeGrid(set.grid)}
-                      >{@html set.grid.text2}</span>
+                      >{@html set.grid.description}</span>
                 <a class="ms-2 text-sm font-light text-gray-500 underline"
                     href={"/" + context.dbName + "/" + set.grid.uuid}
                     onclick={() => context.navigateToGrid(set.grid.uuid, "")}>
                     <span class="flex">
-                    {@html set.grid.text1}
+                    {@html set.grid.name}
                     <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
                   </span>
                 </a>
@@ -117,7 +110,7 @@
                 {/each}
                 <tr>
                   <td class="bg-gray-100 font-bold border border-slate-200">ID</td>
-                  <td class="bg-gray-100 font-mono border border-slate-200 text-xs">{row.gridUuid}/{row.uuid}</td>              
+                  <td class="bg-gray-100 font-mono border border-slate-200 text-xs">{set.gridUuid}/{row.uuid}</td>              
                 </tr>
                 <tr>
                   <td class="bg-gray-100 font-bold border border-slate-200">Revision</td>
