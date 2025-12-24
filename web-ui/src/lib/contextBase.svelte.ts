@@ -97,7 +97,6 @@ export class ContextBase {
     } else {
       const initialRequest = this.messageStack.find((r) => r.request && !r.request.timeOut && r.request.requestUuid == response.requestUuid)
       if(initialRequest && initialRequest.request) {
-        console.log(`trackResponse[1]`, initialRequest.request.requestUuid)
         initialRequest.request = undefined
         initialRequest.reply = response
       }

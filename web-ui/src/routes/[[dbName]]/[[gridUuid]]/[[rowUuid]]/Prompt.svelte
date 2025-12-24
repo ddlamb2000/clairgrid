@@ -2,16 +2,12 @@
   import type { DataSetType, RowType } from '$lib/apiTypes'
   import { Dropdown, Spinner, Search } from 'flowbite-svelte'
   import * as Icon from 'flowbite-svelte-icons'
-  let { context, set, column, row, gridPromptUuid, elementReference } = $props()
+  let { context, set, column, row, referenceGridUuid, elementReference } = $props()
   let searchText = $state("")
 
   const matchesProps = (set: DataSetType): boolean => {
-    return set.gridUuid === gridPromptUuid
+    return set.gridUuid === referenceGridUuid
             && !set.uuid
-            && !set.filterColumnOwned
-            && !set.filterColumnName
-            && !set.filterColumnGridUuid
-            && !set.filterColumnValue
   }
 
   const IsReferenced = (rowPrompt: RowType): boolean => {
@@ -36,7 +32,7 @@
     <Spinner size={4} />
   {:else}
     {#each row.references as reference}
-      {#if reference.owned && reference.name == column.name}
+      {#if reference.name == column.name}
         {#each reference.rows as referencedRow}
           {#if searchText === "" || referencedRow.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
             <li class="p-1">
@@ -52,7 +48,7 @@
     {/each}
     {#each context.dataSets as setPrompt}
       {#if matchesProps(setPrompt)}
-        {#key "prompt" + elementReference + gridPromptUuid}
+        {#key "prompt" + elementReference + referenceGridUuid}
           {#each setPrompt.rows as rowPrompt}
             {#if !IsReferenced(rowPrompt)}
               {#if searchText === "" || rowPrompt.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}

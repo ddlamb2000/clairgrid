@@ -5,22 +5,12 @@
   import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
-  let { context = $bindable(),
-        gridUuid,
-        filterColumnOwned = undefined,
-        filterColumnName = undefined,
-        filterColumnGridUuid = undefined,
-        filterColumnValue = undefined,
-        embedded = false } = $props()
+  let { context = $bindable(), gridUuid, embedded = false } = $props()
   const colorFocus = "bg-yellow-100/20"
 
   const matchesProps = (set: DataSetType): boolean => {
     return set.gridUuid === gridUuid
             && !set.rowUuid
-            && ((!set.filterColumnOwned && !filterColumnOwned) || (set.filterColumnOwned === filterColumnOwned))
-            && set.filterColumnName === filterColumnName
-            && set.filterColumnGridUuid === filterColumnGridUuid
-            && set.filterColumnValue === filterColumnValue
   }
 
   const toggleBoolean = (set: DataSetType, row: RowType, columnIndex: number) => {
@@ -63,7 +53,7 @@
                   <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.gridUuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.gridUuid}>
                     <li class="p-0.5">
-                      <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
+                      <PromptColumnType {context} {set} referenceGridUuid={metadata.UuidColumnTypes}
                                         elementReference={"referenceColumnType-" + set.gridUuid} />
                     </li>
                   </Dropdown>
@@ -72,7 +62,7 @@
               {#each set.grid.columns as column, indexColumn}
                 <th class="sticky -top-0.5 p-0.5 py-1 bg-gray-100 border border-slate-200">
                   <span class="flex">
-                    {#if column.bidirectional && !column.owned && column.grid}
+                    {#if column.grid}
                       {column.grid.displayString} <span class="text-xs">({column.name})</span>
                     {:else}
                       <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
@@ -82,7 +72,7 @@
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.gridUuid + "-" + column.uuid}>
                       {#if indexColumn === set.grid.columns.length - 1}
                         <li class="p-1">
-                          <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
+                          <PromptColumnType {context} {set} referenceGridUuid={metadata.UuidColumnTypes}
                                             elementReference={"referenceColumnType-" + set.gridUuid} />
                         </li>
                       {/if}
@@ -142,10 +132,6 @@
                           oninput={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[columnIndex]}>
                       </td>
-                    {:else if column.typeUuid === metadata.UuidReferenceColumnType}
-                      <td class="border border-slate-100 {context.isFocused(set, column, row) ? colorFocus : ''}">
-                        <Reference {context} {set} {row} {column} />
-                      </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                       <td class="border border-slate-100 cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
                         <a href="#top"
@@ -154,6 +140,10 @@
                           <Icon.CheckCircleOutline
                                 color={context.dataSets[setIndex].rows[rowIndex].values[columnIndex] === "true" ? "" : "lightgray"} />
                         </a>
+                      </td>
+                    {:else if column.typeUuid === metadata.UuidReferenceColumnType}
+                      <td class="border border-slate-100 {context.isFocused(set, column, row) ? colorFocus : ''}">
+                        <Reference {context} {set} {row} {column} />
                       </td>
                     {:else}
                       <td></td>
@@ -169,7 +159,7 @@
             <tr>
               <th>
                 <span class="flex">
-                  <a href="#top" onclick={() => context.addRow(context.dataSets[setIndex], filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue)}><Icon.CirclePlusOutline /></a>
+                  <a href="#top" onclick={() => context.addRow(context.dataSets[setIndex])}><Icon.CirclePlusOutline /></a>
                 </span>
               </th>
               <th class="py-1 border border-slate-200 bg-gray-100" colspan="99">

@@ -4,19 +4,15 @@
   import PromptReferenceGrid from './PromptReferenceGrid.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
-  let { context, set, gridPromptUuid, elementReference } = $props()
+  let { context, set, referenceGridUuid, elementReference } = $props()
 
   const matchesProps = (set: DataSetType): boolean => {
-    return set.gridUuid === gridPromptUuid
+    return set.gridUuid === referenceGridUuid
             && !set.uuid
-            && !set.filterColumnOwned
-            && !set.filterColumnName
-            && !set.filterColumnGridUuid
-            && !set.filterColumnValue
   }
 
   const loadPrompt = () => {
-    if(!context.gotData(matchesProps)) context.sendMessage({command: metadata.ActionLoad, gridUuid: gridPromptUuid})
+    if(!context.gotData(matchesProps)) context.sendMessage({command: metadata.ActionLoad, gridUuid: referenceGridUuid})
   }
 </script>
 
@@ -33,13 +29,13 @@
     {:else}
       {#each context.dataSets as setPrompt}
         {#if matchesProps(setPrompt)}
-          {#key "prompt" + elementReference + gridPromptUuid}
+          {#key "prompt" + elementReference + referenceGridUuid}
             {#each setPrompt.rows as rowPrompt}
               {#key "prompt" + elementReference + rowPrompt.uuid}
                 <li class="p-1">
                   {#if rowPrompt.uuid === metadata.UuidReferenceColumnType}
                     <PromptReferenceGrid {context} {set} {rowPrompt}                
-                                          gridPromptUuid={metadata.UuidGrids}
+                                          referenceGridUuid={metadata.UuidGrids}
                                           elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
                   {:else}
                     <a href="#top" role="menuitem"
