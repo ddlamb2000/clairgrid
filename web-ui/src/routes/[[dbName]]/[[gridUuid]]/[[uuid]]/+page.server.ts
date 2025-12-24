@@ -5,10 +5,9 @@ export const load: PageServerLoad = async ({ url, params }) => {
   const databases: string[] = env.DATABASES && env.DATABASES !== "" ? env.DATABASES.split(',') : []
   let dbName = params.dbName ?? env.DEFAULTDB
   if(!dbName || dbName === "" || databases.findIndex((db) => db === dbName) < 0) {
-    console.log(`Database "${dbName} isn't available`, url, params)
     return {
       ok: false,
-      errorMessage: `${dbName} isn't available`,
+      errorMessage: `${dbName} not found`,
       appName: env.APPNAME,
       dbName: "",
       gridUuid: "",
