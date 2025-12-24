@@ -7,12 +7,13 @@
 from ..metadata import SystemIds
 
 class Column():
-    def __init__(self, uuid, index, order, name, typeUuid, columnIndex):
+    def __init__(self, uuid, index, order, name, typeUuid, referenceGridUuid, columnIndex):
         self.uuid = str(uuid)
         self.index = index
         self.order = order
         self.name = name
         self.typeUuid = str(typeUuid)
+        self.referenceGridUuid = str(referenceGridUuid)
         self.columnIndex = columnIndex
         self._set_db_columns()
 
@@ -47,4 +48,5 @@ class Column():
         result['name'] = self.name
         result['columnIndex'] = self.columnIndex
         if self.typeUuid: result['typeUuid'] = str(self.typeUuid)
+        if self.referenceGridUuid: result['referenceGridUuid'] = str(self.referenceGridUuid)
         return result

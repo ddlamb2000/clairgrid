@@ -52,14 +52,14 @@ export interface ReplyType {
 }
 
 export interface DataSetType {
+  gridUuid?: string
+  rowUuid?: string
   grid: GridType
   countRows: number
   rows: RowType[]
   rowsAdded?: RowType[]
   rowsEdited?: RowType[]
   rowsDeleted?: RowType[]
-  gridUuid?: string
-  rowUuid?: string
   columnUuid?: string
 	referencedValuesAdded?: GridReferencePost[]
 	referencedValuesRemoved?: GridReferencePost[]

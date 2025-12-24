@@ -8,6 +8,7 @@ def _load_columns(self, grid):
                     texts.text0 as order, 
                     texts.text1 as name,
                     rel2.toUuid0 as typeUuid,
+                    rel2.toUuid1 as referenceGridUuid,
                     ints.int0 as columnIndex
             FROM relationships rel1
             LEFT OUTER JOIN rows ON rows.gridUuid = %s AND rows.uuid = rel1.toUuid0 AND rows.enabled = true
@@ -20,7 +21,7 @@ def _load_columns(self, grid):
         )
         index = 0
         for item in result: 
-            column = Column(item[0], index, order = item[1], name = item[2], typeUuid = item[3], columnIndex = item[4])
+            column = Column(item[0], index, order = item[1], name = item[2], typeUuid = item[3], referenceGridUuid = item[4], columnIndex = item[5])
             index += 1
             print(f"New column: {column}")
             grid.columns.append(column)

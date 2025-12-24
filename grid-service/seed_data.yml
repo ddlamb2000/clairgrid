@@ -81,6 +81,16 @@
             "updatedbyuuid_metadata": "RootUser"
         },
         {
+            "uuid_metadata": "ColumnTypeColumnReferenceGrid",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1,
+            "created": "2025-01-01T01:00:00+00:00",
+            "createdbyuuid_metadata": "RootUser",
+            "updated": "2025-01-01T01:00:00+00:00",
+            "updatedbyuuid_metadata": "RootUser"
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "griduuid_metadata": "Columns",
             "enabled": true,
@@ -291,6 +301,12 @@
             "text1": "Index"
         },
         {
+            "uuid_metadata": "ColumnTypeColumnReferenceGrid",
+            "partition": 0,
+            "text0": "f",
+            "text1": "Reference grid"
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "partition": 0,
             "text0": "a",
@@ -415,6 +431,11 @@
             "int0": 0
         },
         {
+            "uuid_metadata": "ColumnTypeColumnReferenceGrid",
+            "partition": 0,
+            "int0": 1
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "partition": 0,
             "int0": 0
@@ -486,6 +507,12 @@
             "touuid0_metadata": "ColumnColumnIndex"
         },
         {
+            "uuid": "7aea3fb6-0cfc-45f2-a595-cdecbb81034a",
+            "partition": 0,
+            "fromuuid_metadata": "Columns",
+            "touuid0_metadata": "ColumnTypeColumnReferenceGrid"
+        },
+        {
             "uuid": "c1bc176c-406a-414f-8b21-b043d2d3189a",
             "partition": 0,
             "fromuuid_metadata": "Grids",
@@ -555,13 +582,21 @@
             "uuid": "bb261e07-fd56-400a-8086-cd4d0fb3b99f",
             "partition": 0,
             "fromuuid_metadata": "ColumnColumnColumnType",
-            "touuid0_metadata": "ReferenceColumnType"
+            "touuid0_metadata": "ReferenceColumnType",
+            "touuid1_metadata": "ColumnTypes"
         },
         {
             "uuid": "0d64d653-9c65-43f7-9ec0-9aa0d08ed0b4",
             "partition": 0,
             "fromuuid_metadata": "ColumnColumnIndex",
             "touuid0_metadata": "IntColumnType"
+        },
+        {
+            "uuid": "0d64d653-9c65-43f7-9ec0-9aa0d08ed0b4",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnTypeColumnReferenceGrid",
+            "touuid0_metadata": "ReferenceColumnType",
+            "touuid1_metadata": "Grids"
         },
         {
             "uuid": "76f9fa86-fe3b-4f9d-a767-0566baeb9a25",
@@ -579,7 +614,8 @@
             "uuid": "51bd1bc8-0b4b-442a-a782-70b677a7d181",
             "partition": 0,
             "fromuuid_metadata": "GridColumnColumns",
-            "touuid0_metadata": "ReferenceColumnType"
+            "touuid0_metadata": "ReferenceColumnType",
+            "touuid1_metadata": "Columns"
         },
         {
             "uuid": "1b17bd43-ba99-4b6d-a458-79cee1916c29",
