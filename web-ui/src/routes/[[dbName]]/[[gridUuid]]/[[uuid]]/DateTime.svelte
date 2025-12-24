@@ -1,6 +1,6 @@
 <script lang="ts">
   let { dateTime, showDate = true } = $props()
-  import { onMount, onDestroy } from 'svelte'
+  import { onMount, onDestroy, untrack } from 'svelte'
 
   const displayDateTime = (dateTime: Date) => {
     const localDate = new Date(dateTime)
@@ -25,7 +25,12 @@
 		else return `${Math.round(seconds / YEAR)}&nbsp;year&nbsp;ago`
 	}
 
-  let timeAgo = $state(getTimeAgo(dateTime))
+  let timeAgo = $state(getTimeAgo(untrack(() => dateTime)))
+
+  $effect(() => {
+    timeAgo = getTimeAgo(dateTime)
+  })
+
   let timerId: any = null
 
   onMount(() => { timerId = setInterval(() => { timeAgo = getTimeAgo(dateTime) }, 60*1000) })

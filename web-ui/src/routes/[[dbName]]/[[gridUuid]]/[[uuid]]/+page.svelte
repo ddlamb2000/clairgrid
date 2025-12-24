@@ -1,7 +1,7 @@
 <script  lang="ts">
   import type { PageData } from './$types'
   import { Toggle } from 'flowbite-svelte'
-  import { onMount, onDestroy } from 'svelte'
+  import { onMount, onDestroy, untrack } from 'svelte'
   import { Context } from '$lib/context.svelte.ts'
   import Login from './Login.svelte'
   import Info from './Info.svelte'
@@ -14,7 +14,19 @@
   import '$lib/app.css'
   
   let { data }: { data: PageData } = $props()
-  let context = $state(new Context(data.dbName, data.url, data.gridUuid, data.uuid))
+  let context = $state(new Context(
+    untrack(() => data.dbName), 
+    untrack(() => data.url), 
+    untrack(() => data.gridUuid), 
+    untrack(() => data.uuid)
+  ))
+
+  $effect(() => {
+    context.dbName = data.dbName
+    context.url = data.url
+    context.gridUuid = data.gridUuid
+    context.uuid = data.uuid
+  })
 
   onMount(() => {
     if(data.ok) {
