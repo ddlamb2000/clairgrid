@@ -15,7 +15,7 @@ export const numberToLetters = (num: number) => {
 }
 
 export const debounce = <T extends unknown[], U>(callback: (...args: T) => PromiseLike<U> | U, wait: number) => {
-  let timer: number
+  let timer: ReturnType<typeof setTimeout>
   return (...args: T): Promise<U> => {
     clearTimeout(timer)
     return new Promise((resolve) => {
@@ -25,6 +25,7 @@ export const debounce = <T extends unknown[], U>(callback: (...args: T) => Promi
 }
 
 export const convertMsToText = (input: number) => {
-  if(input > 1000) return `${input/1000} s`
+  if(input > 1000*60) return `${Math.floor(input/1000/60)} min`
+  else if(input > 1000) return `${Math.floor(input/1000)} s`
   else return `${input} ms`
 }

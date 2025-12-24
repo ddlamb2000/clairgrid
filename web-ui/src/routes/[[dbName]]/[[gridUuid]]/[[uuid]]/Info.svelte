@@ -60,9 +60,9 @@
                 {#if message.reply.elapsedMs > 0}
                   <Badge color="dark" class="ms-1 px-2.5 py-0.5">
                     {convertMsToText(message.reply.elapsedMs)}
-                    {#if message.reply !== undefined && message.reply.dateTime !== undefined}<DateTime dateTime={message.reply?.dateTime} showDate={false} />{/if}
                   </Badge>
                 {/if}
+                {#if message.reply !== undefined && message.reply.dateTime !== undefined}<DateTime dateTime={message.reply?.dateTime} showDate={false} />{/if}
               </p>
             </div>
           </span>
