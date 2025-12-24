@@ -130,6 +130,7 @@
                   </td>
                   {#each set.grid.columns as column, columnIndex}
                   {#if column.typeUuid === metadata.UuidTextColumnType
+                          || column.typeUuid === metadata.UuidRichTextColumnType
                           || column.typeUuid === metadata.UuidUuidColumnType 
                           || column.typeUuid === metadata.UuidPasswordColumnType 
                           || column.typeUuid === metadata.UuidIntColumnType}

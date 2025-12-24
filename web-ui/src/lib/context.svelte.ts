@@ -99,6 +99,7 @@ export class Context extends ContextBase {
   getPrefixFromColumknType = (columnTypeUuid: string): string => {
     switch(columnTypeUuid) {
       case metadata.UuidTextColumnType:
+      case metadata.UuidRichTextColumnType:
       case metadata.UuidPasswordColumnType:
       case metadata.UuidUuidColumnType:
       case metadata.UuidBooleanColumnType:

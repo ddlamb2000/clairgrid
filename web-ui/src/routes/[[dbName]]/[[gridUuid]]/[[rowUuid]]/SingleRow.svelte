@@ -63,13 +63,14 @@
                   <tr class="align-top">
                     <td class="p-0.5 bg-gray-100 font-bold border border-slate-200">
                       {#if column.bidirectional && !column.owned && column.grid}
-                        {column.grid.displayString} <span class="text-xs">({column.label})</span>
+                        {column.grid.displayString} <span class="text-xs">({column.name})</span>
                       {:else}
                         <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
-                          bind:innerHTML={context.dataSet[setIndex].grid.columns[columnIndex].label}></span>
+                          bind:innerHTML={context.dataSet[setIndex].grid.columns[columnIndex].name}></span>
                       {/if}
                     </td>
                     {#if column.typeUuid === metadata.UuidTextColumnType
+                          || column.typeUuid === metadata.UuidRichTextColumnType
                           || column.typeUuid === metadata.UuidUuidColumnType 
                           || column.typeUuid === metadata.UuidPasswordColumnType 
                           || column.typeUuid === metadata.UuidIntColumnType}
