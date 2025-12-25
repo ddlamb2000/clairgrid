@@ -18,7 +18,7 @@ def _load_rows(self, grid):
         )
         for item in result:
             print(f"Loading row: {item[0]}")
-            row = Row(item[0], revision = item[1], values = item[2:])
+            row = Row(grid, item[0], revision = item[1], values = item[2:])
             print(f"New row: {row}")
             self.all_rows[grid.uuid][row.uuid] = row
         print(f"Rows loaded: {len(self.all_rows[grid.uuid])}")
