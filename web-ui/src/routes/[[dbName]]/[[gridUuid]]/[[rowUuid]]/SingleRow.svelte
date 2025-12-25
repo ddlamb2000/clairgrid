@@ -101,7 +101,7 @@
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, row, columnIndex)}>
                           <Icon.CheckCircleOutline
-                                color={context.dataSets[setIndex].rows[rowIndex].values[columnIndex] === "true" ? "" : "lightgray"} />
+                                color={context.dataSets[setIndex].rows[rowIndex].values[columnIndex] ? "" : "lightgray"} />
                         </a>
                       </td>
                     {:else}

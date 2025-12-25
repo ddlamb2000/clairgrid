@@ -305,11 +305,12 @@ class DatabaseManager(ConfigurationMixin):
             with open(file_name, 'r') as f:
                 import_data = json.load(f)
 
-            tables = ["rows", "texts", "ints", "relationships"]
+            tables = ["rows", "texts", "ints", "booleans", "relationships"]
             pk_map = {
                 "rows": ["uuid"],
                 "texts": ["uuid", "partition"],
                 "ints": ["uuid", "partition"],
+                "booleans": ["uuid", "partition"],
                 "relationships": ["uuid", "partition"]
             }
 

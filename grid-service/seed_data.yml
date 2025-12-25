@@ -55,6 +55,12 @@
             "revision": 1
         },
         {
+            "uuid_metadata": "ColumnColumnDisplay",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "griduuid_metadata": "Columns",
             "enabled": true,
@@ -207,6 +213,12 @@
             "text1": "Reference grid"
         },
         {
+            "uuid_metadata": "ColumnColumnDisplay",
+            "partition": 0,
+            "text0": "g",
+            "text1": "Row display"
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "partition": 0,
             "text0": "a",
@@ -336,6 +348,11 @@
             "int0": 1
         },
         {
+            "uuid_metadata": "ColumnColumnDisplay",
+            "partition": 0,
+            "int0": 0
+        },
+        {
             "uuid_metadata": "GridColumnName",
             "partition": 0,
             "int0": 0
@@ -411,6 +428,12 @@
             "partition": 0,
             "fromuuid_metadata": "Columns",
             "touuid0_metadata": "ColumnColumnReferenceGrid"
+        },
+        {
+            "uuid": "684444cc-01b2-4681-a739-0bb81441d706",
+            "partition": 0,
+            "fromuuid_metadata": "Columns",
+            "touuid0_metadata": "ColumnColumnDisplay"
         },
         {
             "uuid": "c1bc176c-406a-414f-8b21-b043d2d3189a",
@@ -499,6 +522,12 @@
             "touuid1_metadata": "Grids"
         },
         {
+            "uuid": "ab85a924-184f-486c-8d15-ff0e6c3c8d4a",
+            "partition": 0,
+            "fromuuid_metadata": "ColumnColumnDisplay",
+            "touuid0_metadata": "BooleanColumnType"
+        },
+        {
             "uuid": "76f9fa86-fe3b-4f9d-a767-0566baeb9a25",
             "partition": 0,
             "fromuuid_metadata": "GridColumnName",
@@ -552,6 +581,28 @@
             "partition": 0,
             "fromuuid_metadata": "UserColumnPassword",
             "touuid0_metadata": "PasswordColumnType"
+        }
+    ],
+    "booleans": [
+        {
+            "uuid_metadata": "GridColumnName",
+            "partition": 0,
+            "bool0": true
+        },
+        {
+            "uuid_metadata": "ColumnColumnName",
+            "partition": 0,
+            "bool0": true
+        },
+        {
+            "uuid_metadata": "ColumnTypeColumnName",
+            "partition": 0,
+            "bool0": true
+        },
+        {
+            "uuid_metadata": "UserColumnId",
+            "partition": 0,
+            "bool0": true
         }
     ]
 }
