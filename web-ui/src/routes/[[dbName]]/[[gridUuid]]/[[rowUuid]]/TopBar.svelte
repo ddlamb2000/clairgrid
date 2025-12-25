@@ -23,7 +23,7 @@
             onclick={() => context.navigateToGrid(set.gridUuid, set.rowUuid)}>
       <DynIcon iconName={set.grid.icon}/>
       {#if set.rowUuid && set.rows && set.rows.length > 0}
-        {set.rows[0].uuid}
+        {set.rows[0].displayString}
       {:else}
         {@html set.grid.name}
       {/if}

@@ -45,9 +45,9 @@
         {#each reference.rows as referencedRow, indexReferencedRow}
           {#if indexReferencedRow > 0}<br/>{/if}
           <Badge color="dark" rounded class="px-1 text-sm/4 font-light">
-            <a href={"/" + context.dbName + "/" + referencedRow.gridUuid + "/" + referencedRow.uuid}
+            <a href={"/" + context.dbName + "/" + column.referenceGridUuid + "/" + referencedRow.uuid}
                 class="cursor-pointer underline"
-                onclick={() => context.navigateToGrid(referencedRow.gridUuid, referencedRow.uuid)}>
+                onclick={() => context.navigateToGrid(column.referenceGridUuid, referencedRow.uuid)}>
               <span class="flex">
                 {@html referencedRow.displayString}
               </span>

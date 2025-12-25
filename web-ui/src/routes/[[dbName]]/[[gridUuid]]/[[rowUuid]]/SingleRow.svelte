@@ -33,7 +33,7 @@
         {#each context.dataSets[setIndex].rows as row, rowIndex}
           {#key row.uuid}
             <span class="flex">
-              <span class="text-2xl font-extrabold">{@html row.uuid}</span>
+              <span class="text-2xl font-extrabold">{@html row.displayString}</span>
               {#if set.grid.uuid === metadata.UuidGrids}
                 <a class="ms-2 text-sm font-light text-gray-500 underline"
                     href={"/" + context.dbName + "/" + row.uuid}
