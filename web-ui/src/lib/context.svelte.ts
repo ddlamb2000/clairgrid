@@ -444,18 +444,6 @@ export class Context extends ContextBase {
               console.log(`Grid ${reply.dataSet.grid.uuid} ${reply.dataSet.grid.name} is reloaded`)
             }
             if(reply.dataSet.rowUuid && reply.dataSet.grid) {
-              console.log(`Load associated grids for row ${reply.rowUuid}`)
-              if(reply.dataSet.grid.columns) {
-                for(const column of reply.dataSet.grid.columns) {
-                  if(column.typeUuid === metadata.UuidReferenceColumnType && reply.dataSet) {
-                    this.sendMessage({
-                      command: metadata.ActionLoad,
-                      commandText: "Load associated grid",
-                      gridUuid: column.referenceGridUuid
-                    })
-                  }
-                }
-              }
               if(reply.dataSet.grid.columnsUsage) {
                 for(const usage of reply.dataSet.grid.columnsUsage) {
                   if(usage.grid) {
