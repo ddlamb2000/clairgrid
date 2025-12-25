@@ -17,7 +17,7 @@ class SystemIdsMapping:
             "ColumnColumnName": "a5194e16-415e-45fd-a603-b5db45d13d7d",
             "ColumnColumnColumnType": "87245ad9-323a-4946-a0a7-a4082beae745",
             "ColumnColumnIndex": "0e3d5511-bc1c-4dfd-98ce-9ce369e05908",
-            "ColumnTypeColumnReferenceGrid": "a0ce0980-19af-4ff8-afc9-86d04bd047cd",
+            "ColumnColumnReferenceGrid": "a0ce0980-19af-4ff8-afc9-86d04bd047cd",
             "ColumnTypes": "2114a6ae-013c-4bb1-be6e-3ee875ae517f",
             "ColumnTypeColumnName": "9da0e49f-528c-4081-bc07-3c32497857ff",
             "ColumnTypeColumnDesc": "5a9eba36-7601-4627-be8e-50cf027d9ad8",

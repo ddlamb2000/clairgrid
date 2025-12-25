@@ -7,8 +7,8 @@
 from .base import BaseModel
 
 class Grid(BaseModel):
-    def __init__(self, uuid, name = None, description = None, created = None, created_by = None, updated = None, updated_by = None):
-        BaseModel.__init__(self, uuid, created, created_by, updated, updated_by)
+    def __init__(self, uuid, revision = 1, name = None, description = None):
+        BaseModel.__init__(self, uuid, revision)
         self.name = name
         self.description = description
         self.columns = []

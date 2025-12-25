@@ -8,11 +8,8 @@ def _load_rows(self, grid):
     db_join_clauses = '\n'.join(list(dict.fromkeys([column.db_join_clause for column in grid.columns])))
     try:
         result = self.db_manager.select_all('''
-            SELECT rows.uuid::text,
-                    rows.created,
-                    rows.createdByUuid,
-                    rows.updated,
-                    rows.updatedByuuid''' + db_select_columns + '''
+            SELECT rows.uuid::text, rows.revision
+        ''' + db_select_columns + '''
             FROM rows
         ''' + db_join_clauses + '''
             WHERE rows.gridUuid = %s
@@ -21,7 +18,7 @@ def _load_rows(self, grid):
         )
         for item in result:
             print(f"Loading row: {item[0]}")
-            row = Row(item[0], created = item[1], created_by = item[2], updated = item[3], updated_by = item[4], values = item[5:])
+            row = Row(item[0], revision = item[1], values = item[2:])
             print(f"New row: {row}")
             self.all_rows[grid.uuid][row.uuid] = row
         print(f"Rows loaded: {len(self.all_rows[grid.uuid])}")

@@ -7,8 +7,8 @@
 from .base import BaseModel
 
 class Row(BaseModel):
-    def __init__(self, uuid, created = None, created_by = None, updated = None, updated_by = None, values = None):
-        BaseModel.__init__(self, uuid, created, created_by, updated, updated_by)
+    def __init__(self, uuid, revision = 1, values = None):
+        BaseModel.__init__(self, uuid, revision)
         self.values = values
 
     def __repr__(self):

@@ -8,10 +8,7 @@ def _load_grid(self, grid_uuid):
         result = self.db_manager.select_one('''
             SELECT texts.text0 as name,
                 texts.text1 as description,
-                rows.created,
-                rows.createdByUuid,
-                rows.updated,
-                rows.updatedByuuid
+                rows.revision
             FROM rows
             LEFT OUTER JOIN texts ON rows.uuid = texts.uuid AND texts.partition = 0
             WHERE rows.gridUuid = %s AND rows.uuid = %s AND rows.enabled = true
@@ -23,10 +20,7 @@ def _load_grid(self, grid_uuid):
                 grid = Grid(grid_uuid,
                             name = result[0],
                             description = result[1],
-                            created = result[2],
-                            created_by = result[3],
-                            updated = result[4],
-                            updated_by = result[5])
+                            revision = result[2])
                 print(f"New grid: {grid}")
                 self.all_grids[grid_uuid] = grid
             else:

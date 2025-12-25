@@ -20,15 +20,11 @@ def get_migration_steps(root_user_name, root_password):
         30: "CREATE EXTENSION IF NOT EXISTS vector",
         
         40: "CREATE TABLE rows ("
-                "uuid uuid NOT NULL, "
                 "gridUuid uuid NOT NULL, "
+                "uuid uuid NOT NULL, "
                 "enabled boolean NOT NULL, "
                 "revision integer NOT NULL CHECK (revision > 0), "
-                "created timestamp with time zone NOT NULL, "
-                "createdByUuid uuid NOT NULL, "
-                "updated timestamp with time zone NOT NULL, "
-                "updatedByuuid uuid NOT NULL, "
-                "PRIMARY KEY (uuid),"
+                "PRIMARY KEY (gridUuid, uuid),"
                 "UNIQUE (uuid)"
             ")",
 
@@ -82,16 +78,12 @@ def get_migration_steps(root_user_name, root_password):
             ")",
 
         140: "INSERT INTO rows "
-                "(uuid, gridUuid, enabled, revision, created, createdByUuid, updated, updatedByuuid) "
+                "(gridUuid, uuid, enabled, revision) "
                 "VALUES ("
-                f"'{SystemIds.RootUser}',"
                 f"'{SystemIds.Users}',"
-                "true,"
-                "1,"
-                "now(),"
                 f"'{SystemIds.RootUser}',"
-                "now(),"
-                f"'{SystemIds.RootUser}'"
+                "true,"
+                "1"
             ")",
 
 
