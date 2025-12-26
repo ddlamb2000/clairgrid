@@ -6,13 +6,16 @@
   import * as metadata from "$lib/metadata.svelte"
   let { context, set, referenceGridUuid, elementReference } = $props()
 
-  const matchesProps = (set: DataSetType): boolean => {
-    return set.gridUuid === referenceGridUuid
-            && !set.uuid
-  }
+  const matchesProps = (set: DataSetType): boolean => set.gridUuid === referenceGridUuid && !set.rowUuid
 
   const loadPrompt = () => {
-    if(!context.gotData(matchesProps)) context.sendMessage({command: metadata.ActionLoad, gridUuid: referenceGridUuid})
+    if(!context.gotData(matchesProps)) {
+      context.sendMessage({
+        command: metadata.ActionLoad,
+        commandText: "Load column types",
+        gridUuid: referenceGridUuid
+      })
+    }
   }
 </script>
 
@@ -35,7 +38,7 @@
                 <li class="p-1">
                   {#if rowPrompt.uuid === metadata.UuidReferenceColumnType}
                     <PromptReferenceGrid {context} {set} {rowPrompt}                
-                                          referenceGridUuid={metadata.UuidGrids}
+                                          gridPromptUuid={metadata.UuidGrids}
                                           elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
                   {:else}
                     <a href="#top" role="menuitem"

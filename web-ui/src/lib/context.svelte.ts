@@ -2,7 +2,7 @@
 // Copyright David Lambert 2025
 
 import { ContextBase } from '$lib/contextBase.svelte.ts'
-import type { DataSetType, RowType, ColumnType, GridType, ReferenceType, ReplyType } from '$lib/apiTypes'
+import type { DataSetType, RowType, ColumnType, GridType, ReplyType } from '$lib/apiTypes'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { replaceState } from "$app/navigation"
 import { Focus } from '$lib/focus.svelte.ts'
@@ -72,7 +72,6 @@ export class Context extends ContextBase {
 
   changeCell = debounce(
     async (set: DataSetType, row: RowType) => {
-      row.updated = new Date
       const rowClone = Object.assign({}, row)
       if(set.grid.columns) {
         for(const column of set.grid.columns) {
@@ -256,22 +255,7 @@ export class Context extends ContextBase {
   }
 
   addReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
-    const reference = row.references !== undefined ? 
-                        row.references.find((reference) => reference.name === column.name) :
-                        undefined
-    if(reference !== undefined) {
-      if(reference.rows !== undefined) reference.rows.push(rowPrompt)
-      else reference.rows = [rowPrompt]
-    } else {
-      const reference: ReferenceType = {
-        label: column.label,
-        name: column.name,
-        gridUuid: column.gridPromptUuid,
-        rows: [rowPrompt]
-      }
-      if(row.references !== undefined) row.references.push(reference)
-      else row.references = [reference]
-    }
+    row.values[column.index].push(rowPrompt)
     return this.sendMessage({
       command: metadata.ActionChangeGrid,
       commandText: 'Add value',
@@ -288,15 +272,8 @@ export class Context extends ContextBase {
   }
 
   removeReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
-    if(row.references !== undefined) {
-      const reference = row.references.find((reference) => reference.name === column.name)
-      if(reference !== undefined) {
-        if(reference.rows !== undefined) {
-          const rowIndex = reference.rows.findIndex((r) => r.uuid === rowPrompt.uuid)
-          if(rowIndex >= 0) reference.rows.splice(rowIndex, 1)
-        }
-      }
-    }
+    const rowIndex = row.values[column.index].findIndex((reference: RowType) => reference.uuid === rowPrompt.uuid)
+    if(rowIndex >= 0) row.values[column.index].splice(rowIndex, 1)
     return this.sendMessage({
       command: metadata.ActionChangeGrid,
       commandText: 'Remove value',

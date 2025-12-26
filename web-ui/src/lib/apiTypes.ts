@@ -75,26 +75,15 @@ export interface ColumnType {
   index: number
   name: string
   order?: number
-  label?: string
-  type: string
   typeUuid: string
-  gridUuid: string
-  grid?: GridType
   referenceGridUuid?: string
+  referenceGrid?: GridType
 }
 
 export interface RowType {
-  gridUuid: string
 	uuid: string
   values: any[]
   displayString?: string
-}
-
-export interface ReferenceType {
-	label?: string
-	name?: string
-	gridUuid?: string
-	rows?: RowType[]
 }
 
 export interface TransactionType {

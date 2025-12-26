@@ -9,9 +9,7 @@
   let { context = $bindable(), gridUuid, rowUuid } = $props()
   const colorFocus = "bg-yellow-100/20"
 
-  const matchesProps = (set: DataSetType): boolean => {
-    return set.gridUuid === gridUuid && set.rowUuid === rowUuid
-  }
+  const matchesProps = (set: DataSetType): boolean => set.gridUuid === gridUuid && set.rowUuid === rowUuid
 
   const toggleBoolean = (set: DataSetType, row: RowType, columnIndex: number) => {
     row.values[columnIndex] = row.values[columnIndex] === "true" ? "false" : "true"

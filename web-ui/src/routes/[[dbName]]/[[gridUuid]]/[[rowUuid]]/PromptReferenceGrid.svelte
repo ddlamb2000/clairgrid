@@ -6,17 +6,16 @@
   let { context, set, rowPrompt, gridPromptUuid, elementReference } = $props()
   let searchText = $state("")
 
-  const matchesProps = (set: DataSetType): boolean => {
-    return set.gridUuid === gridPromptUuid
-            && !set.uuid
-            && !set.filterColumnOwned
-            && !set.filterColumnName
-            && !set.filterColumnGridUuid
-            && !set.filterColumnValue
-  }
+  const matchesProps = (set: DataSetType): boolean => set.gridUuid === gridPromptUuid && !set.rowUuid
 
   const loadPrompt = () => {
-    if(!context.gotData(matchesProps)) context.sendMessage({command: metadata.ActionLoad, gridUuid: gridPromptUuid})
+    if(!context.gotData(matchesProps)) {
+      context.sendMessage({
+        command: metadata.ActionLoad,
+        commandText: "Load grids for column type",
+        gridUuid: gridPromptUuid
+      })
+    }
   }
 </script>
   

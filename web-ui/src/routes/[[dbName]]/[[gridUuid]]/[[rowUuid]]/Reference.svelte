@@ -6,9 +6,7 @@
   import * as Icon from 'flowbite-svelte-icons'
   let { context, set, column, row } = $props()
 
-  const matchesProps = (set: DataSetType): boolean => {
-    return set.gridUuid === column.referenceGridUuid && !set.rowUuid
-  }
+  const matchesProps = (set: DataSetType): boolean => set.gridUuid === column.referenceGridUuid && !set.rowUuid
 
   const loadPrompt = () => {
     if(!context.gotData(matchesProps)) {
@@ -30,7 +28,7 @@
           onclick={() => loadPrompt()}>
           <span class="flex">
             <span class="text-xs -ms-1">&nbsp;</span>
-            <Icon.ChevronDownOutline class="text-gray-300  hover:text-gray-900" />    
+            <Icon.ChevronDownOutline class="text-gray-400  hover:text-gray-900" />    
           </span>
       </a>
     </Badge>
@@ -41,7 +39,7 @@
   <div>
     {#each row.values[column.index] as reference, indexReferencedRow}
       {#if indexReferencedRow > 0}<br/>{/if}
-      <Badge color="blue" class="px-1 text-sm/4 font-light">
+      <Badge color="dark" class="px-1 text-sm/4 font-light">
         <a href={"/" + context.dbName + "/" + column.referenceGridUuid + "/" + reference.uuid}
             class="cursor-pointer underline"
             onclick={() => context.navigateToGrid(column.referenceGridUuid, reference.uuid)}>
