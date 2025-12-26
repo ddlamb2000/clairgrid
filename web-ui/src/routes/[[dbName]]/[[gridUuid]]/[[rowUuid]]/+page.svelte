@@ -44,17 +44,21 @@
   </nav>
   <section class={"main-container grid "}>
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
-      <div class="h-10 ps-1 overflow-y-auto bg-gray-100">
+      <div class="h-10 ps-1 overflow-y-auto bg-gray-200">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <TopBar {context} appName={data.appName} />
         {/if}
       </div>
-      <aside class={"p-1 " + (context.userPreferences.showPrompt ? "h-0" : "h-10") + "overflow-y-auto bg-gray-50"}>
-        {#if !context.userPreferences.showPrompt}
-          <FocusArea {context} />
-        {/if}
-      </aside>
-      <div class="ps-4 bg-gray-50 grid overflow-auto">
+      {#if !context.userPreferences.showPrompt}
+        <aside class={"h-8 ps-2 pe-2 pt-1 overflow-y-auto bg-gray-100"}>
+          {#if !context.userPreferences.showPrompt}
+            <FocusArea {context} />
+          {/if}
+        </aside>
+      {:else}
+        <aside class="h-0"></aside>
+      {/if}
+      <div class="ps-4 bg-gray-20 grid overflow-auto">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[50px]">
             {#if context.userPreferences.showPrompt}

@@ -13,6 +13,8 @@ let connection: any = null
  * Key: dbName, Value: AMQP Channel
  */
 const requestChannels: Map<string, any> = new Map()
+const requestAuthenticationChannels: Map<string, any> = new Map()
+const requestLocateChannels: Map<string, any> = new Map()
 
 /**
  * Nested map storing callback channels.
@@ -29,13 +31,14 @@ const callBackChannels: Map<string, Map<string, any>> = new Map()
  * Value: AMQP Queue
  */
 const callBackQueues: Map<string, Map<string, any>> = new Map()
-
 /**
  * Generates the request queue name based on the database name.
  * @param dbName - The name of the database.
  * @returns The generated request queue name.
  */
 const getRequestQueueName = (dbName: string) => `grid_service_${dbName.toLocaleLowerCase()}`
+const getRequestAuthenticationQueueName = (dbName: string) => `authentication_service_${dbName.toLocaleLowerCase()}`
+const getRequestLocateQueueName = (dbName: string) => `locate_service_${dbName.toLocaleLowerCase()}`
 
 /**
  * Generates the callback queue name based on the context UUID.
@@ -49,16 +52,22 @@ const getCallBackQueueName = (contextUuid: string) => `callback_${contextUuid}`
  * Displays "No open channels" if none exist.
  */
 const logChannels = () => {
-  if (requestChannels.size === 0) {
-    console.log(`No open channels`)
-    return
+  const logStats = (name: string, channels: Map<string, any>) => {
+    if(channels.size === 0) {
+      console.log(`No open ${name} channels`)
+      return
+    }
+    const stats = Array.from(channels.keys()).map(dbName => {
+      const contexts = callBackChannels.get(dbName)
+      const contextUuids = contexts ? Array.from(contexts.keys()).join(',') : ''
+      return `${dbName}:[${contextUuids}]`
+    }).join(', ')
+    console.log(`Open ${name} channels: ${stats}`)
   }
-  const stats = Array.from(requestChannels.keys()).map(dbName => {
-    const contexts = callBackChannels.get(dbName)
-    const contextUuids = contexts ? Array.from(contexts.keys()).join(',') : ''
-    return `${dbName}:[${contextUuids}]`
-  }).join(', ')
-  console.log(`Open channels: ${stats}`)
+
+  logStats('request', requestChannels)
+  logStats('request authentication', requestAuthenticationChannels)
+  logStats('request locate', requestLocateChannels)
 }
 
 /**
@@ -85,13 +94,26 @@ export const initMessaging = async (dbName: string, contextUuid: string) => {
           : undefined),
     })
   }
-  
   if(!requestChannels.has(dbName)) {
     const requestChannel = await connection.createChannel()
     const requestQueueName = getRequestQueueName(dbName)
     await requestChannel.assertQueue(requestQueueName, { durable: false })
     console.log(`Request queue ${requestQueueName} declared`)
     requestChannels.set(dbName, requestChannel)
+  }
+  if(!requestAuthenticationChannels.has(dbName)) {
+    const requestAuthenticationChannel = await connection.createChannel()
+    const requestAuthenticationQueueName = getRequestAuthenticationQueueName(dbName)
+    await requestAuthenticationChannel.assertQueue(requestAuthenticationQueueName, { durable: false })
+    console.log(`Request authentication queue ${requestAuthenticationQueueName} declared`)
+    requestAuthenticationChannels.set(dbName, requestAuthenticationChannel)
+  }
+  if(!requestLocateChannels.has(dbName)) {
+    const requestLocateChannel = await connection.createChannel()
+    const requestLocateQueueName = getRequestLocateQueueName(dbName)
+    await requestLocateChannel.assertQueue(requestLocateQueueName, { durable: false })
+    console.log(`Request locate queue ${requestLocateQueueName} declared`)
+    requestLocateChannels.set(dbName, requestLocateChannel)
   }
 
   let dbCallBackChannels = callBackChannels.get(dbName)
@@ -127,7 +149,9 @@ export const sendMessage = async (request: any) => {
   const requestText = JSON.stringify(request)
   console.log(`📩 api`, requestText)
   const requestChannel = requestChannels.get(request.dbName)
-  const requestQueueName = getRequestQueueName(request.dbName)
+  const requestQueueName = request.command === metadata.ActionAuthentication ? getRequestAuthenticationQueueName(request.dbName) :
+                            request.command === metadata.ActionLocateGrid ? getRequestLocateQueueName(request.dbName) :
+                            getRequestQueueName(request.dbName)
   if (!requestChannel) {
     console.error(`send: no request channel for db ${request.dbName}`)
     return
@@ -190,22 +214,34 @@ export const closeMessaging = async (dbName: string, contextUuid: string) => {
       dbCallBackChannels.delete(contextUuid)
       dbCallBackQueues?.delete(contextUuid)
     }
-    if (dbCallBackChannels.size === 0) {
+    if(dbCallBackChannels.size === 0) {
       callBackChannels.delete(dbName)
       callBackQueues.delete(dbName)
     }
   }
 
   const requestChannel = requestChannels.get(dbName)
-  if (requestChannel && (!callBackChannels.has(dbName) || callBackChannels.get(dbName)!.size === 0)) {
+  if(requestChannel) {
     await requestChannel.close()
     requestChannels.delete(dbName)
   }
-  
-  if(connection !== null && requestChannels.size === 0 && callBackChannels.size === 0) {
+  const requestAuthenticationChannel = requestAuthenticationChannels.get(dbName)
+  if(requestAuthenticationChannel) {
+    await requestAuthenticationChannel.close()
+    requestAuthenticationChannels.delete(dbName)
+  }
+  const requestLocateChannel = requestLocateChannels.get(dbName)
+  if(requestLocateChannel) {
+    await requestLocateChannel.close()
+    requestLocateChannels.delete(dbName)
+  }
+
+  if(connection !== null && requestChannels.size === 0 && requestAuthenticationChannels.size === 0 && requestLocateChannels.size === 0 && callBackChannels.size === 0) {
     await connection.close()
     connection = null
     requestChannels.clear()
+    requestAuthenticationChannels.clear()
+    requestLocateChannels.clear()
     callBackChannels.clear()
     callBackQueues.clear()
   }

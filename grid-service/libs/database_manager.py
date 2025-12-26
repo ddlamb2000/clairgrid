@@ -21,7 +21,7 @@ class DatabaseManager(ConfigurationMixin):
     Manages database connection and migrations for the Grid Service.
     """
 
-    def __init__(self, db_name, purge_database=False):
+    def __init__(self, db_name, seedData = False, purgeDatabase = False):
         """
         Initializes the DatabaseManager by loading configuration from environment variables.
         Establishes database connection and runs migrations.
@@ -31,12 +31,12 @@ class DatabaseManager(ConfigurationMixin):
         """
         self.conn = None
         self.db_name = db_name
-        self.purge_database = purge_database
         self.load_configuration()        
         self.connect()
-        if self.purge_database and self.db_name == "clairgrid_test": self.run_deletions() # purge the test database
-        self.run_migrations()
-        self.import_database(self.seed_data_file)
+        if purgeDatabase and self.db_name == "clairgrid_test": self.run_deletions() # purge the test database
+        if seedData:
+            self.run_migrations()
+            self.import_database(self.seed_data_file)
 
     def load_configuration(self):
         """

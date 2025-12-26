@@ -54,15 +54,16 @@ services:
     networks:
       - clairgrid
   
-  grid-service-development:
+  authentication-service-development:
     build:
       context: ./grid-service
       dockerfile: Dockerfile.development
-    container_name: clairgrid-grid-service-development
-    image: clairgrid-grid-service-development
+    container_name: clairgrid-authentication-service-development
+    image: clairgrid-authentication-service-development
     volumes:
       - .:/usr/src/clairgrid/
     environment:
+      ENABLE_AUTHENTICATION_SERVICE: true
       DATABASES: "clairgrid_master,clairgrid_test"
       DB_HOST_clairgrid_master: db # name of the database host
       DB_PORT_clairgrid_master: 5432 # TCP port number of the database host
@@ -98,7 +99,99 @@ services:
     depends_on:
       - db
       - rabbitmq  
-  
+
+  grid-service-development:
+    build:
+      context: ./grid-service
+      dockerfile: Dockerfile.development
+    container_name: clairgrid-grid-service-development
+    image: clairgrid-grid-service-development
+    volumes:
+      - .:/usr/src/clairgrid/
+    environment:
+      ENABLE_GRID_SERVICE: true
+      DATABASES: "clairgrid_master,clairgrid_test"
+      DB_HOST_clairgrid_master: db # name of the database host
+      DB_PORT_clairgrid_master: 5432 # TCP port number of the database host
+      DB_USER_NAME_clairgrid_master: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE_clairgrid_master: /run/secrets/db-password
+      DB_HOST_clairgrid_test: db # name of the database host
+      DB_PORT_clairgrid_test: 5432 # TCP port number of the database host
+      DB_USER_NAME_clairgrid_test: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE_clairgrid_test: /run/secrets/db-password
+      SEED_DATA_FILE: seed_data.yml
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_master: 5000 # timeout threshold (in milliseconds) for database requests
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_test: 5000 # timeout threshold (in milliseconds) for database requests
+      ROOT_USER_NAME_clairgrid_master: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE_clairgrid_master: /run/secrets/root-password
+      ROOT_USER_NAME_clairgrid_test: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE_clairgrid_test: /run/secrets/root-password
+      JWT_SECRET_FILE_clairgrid_master: /run/secrets/jwt-secret
+      JWT_SECRET_FILE_clairgrid_test: /run/secrets/jwt-secret
+      JWT_EXPIRATION_clairgrid_master: 20 # expiration (in minutes) of the JWT token
+      JWT_EXPIRATION_clairgrid_test: 20 # expiration (in minutes) of the JWT token
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: clairgrid
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
+    secrets:
+      - db-password
+      - root-password
+      - rabbitmq-password
+      - jwt-secret
+    restart: unless-stopped
+    networks:
+      - clairgrid
+    depends_on:
+      - db
+      - rabbitmq  
+
+  locate-service-development:
+    build:
+      context: ./grid-service
+      dockerfile: Dockerfile.development
+    container_name: clairgrid-locate-service-development
+    image: clairgrid-locate-service-development
+    volumes:
+      - .:/usr/src/clairgrid/
+    environment:
+      ENABLE_LOCATE_SERVICE: true
+      DATABASES: "clairgrid_master,clairgrid_test"
+      DB_HOST_clairgrid_master: db # name of the database host
+      DB_PORT_clairgrid_master: 5432 # TCP port number of the database host
+      DB_USER_NAME_clairgrid_master: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE_clairgrid_master: /run/secrets/db-password
+      DB_HOST_clairgrid_test: db # name of the database host
+      DB_PORT_clairgrid_test: 5432 # TCP port number of the database host
+      DB_USER_NAME_clairgrid_test: clairgrid # login role set as owner of the database
+      DB_PASSWORD_FILE_clairgrid_test: /run/secrets/db-password
+      SEED_DATA_FILE: seed_data.yml
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_master: 5000 # timeout threshold (in milliseconds) for database requests
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_test: 5000 # timeout threshold (in milliseconds) for database requests
+      ROOT_USER_NAME_clairgrid_master: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE_clairgrid_master: /run/secrets/root-password
+      ROOT_USER_NAME_clairgrid_test: root # user name for the user created with administrator privileges
+      ROOT_PASSWORD_FILE_clairgrid_test: /run/secrets/root-password
+      JWT_SECRET_FILE_clairgrid_master: /run/secrets/jwt-secret
+      JWT_SECRET_FILE_clairgrid_test: /run/secrets/jwt-secret
+      JWT_EXPIRATION_clairgrid_master: 20 # expiration (in minutes) of the JWT token
+      JWT_EXPIRATION_clairgrid_test: 20 # expiration (in minutes) of the JWT token
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: clairgrid
+      RABBITMQ_PASSWORD_FILE: /run/secrets/rabbitmq-password
+    secrets:
+      - db-password
+      - root-password
+      - rabbitmq-password
+      - jwt-secret
+    restart: unless-stopped
+    networks:
+      - clairgrid
+    depends_on:
+      - db
+      - rabbitmq  
+
   web-ui-development:
     build:
       context: ./web-ui
@@ -125,6 +218,30 @@ services:
     depends_on:
       - rabbitmq
 
+  authentication-service-sandbox:
+    build:
+      context: ./grid-service
+      dockerfile: Dockerfile.production
+    container_name: clairgrid-authentication-service-sandbox
+    image: clairgrid-authentication-service-production
+    environment:
+      ENABLE_AUTHENTICATION_SERVICE: true
+      DATABASES: "clairgrid_sandbox"
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_sandbox: 2000 # timeout threshold (in milliseconds) for database requests
+      JWT_EXPIRATION_clairgrid_sandbox: 120 # expiration (in minutes) of the JWT token
+      RABBITMQ_USER: clairgrid
+    secrets:
+      - db-password
+      - root-password
+      - rabbitmq-password
+      - jwt-secret
+    restart: unless-stopped
+    networks:
+      - clairgrid
+    depends_on:
+      - db
+      - rabbitmq
+
   grid-service-sandbox:
     build:
       context: ./grid-service
@@ -132,9 +249,32 @@ services:
     container_name: clairgrid-grid-service-sandbox
     image: clairgrid-grid-service-production
     environment:
+      ENABLE_GRID_SERVICE: true
       DATABASES: "clairgrid_sandbox"
       TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_sandbox: 2000 # timeout threshold (in milliseconds) for database requests
-      JWT_EXPIRATION_clairgrid_sandbox: 120 # expiration (in minutes) of the JWT token
+      RABBITMQ_USER: clairgrid
+    secrets:
+      - db-password
+      - root-password
+      - rabbitmq-password
+      - jwt-secret
+    restart: unless-stopped
+    networks:
+      - clairgrid
+    depends_on:
+      - db
+      - rabbitmq
+
+  locate-service-sandbox:
+    build:
+      context: ./grid-service
+      dockerfile: Dockerfile.production
+    container_name: clairgrid-locate-service-sandbox
+    image: clairgrid-grid-service-production
+    environment:
+      ENABLE_LOCATE_SERVICE: true
+      DATABASES: "clairgrid_sandbox"
+      TIMEOUT_THRESHOLD_MILLISECONDS_clairgrid_sandbox: 2000 # timeout threshold (in milliseconds) for database requests
       RABBITMQ_USER: clairgrid
     secrets:
       - db-password
@@ -172,7 +312,7 @@ services:
 
   load-balancer-sandbox:
     image: nginx:latest
-    container_name: clairgrid-load-balancer
+    container_name: clairgrid-load-balancer-sandbox
     configs:
       - source: nginx-configuration
         target: /etc/nginx/conf.d/default.conf
@@ -180,6 +320,8 @@ services:
       - "8080:8080"
     networks:
       - clairgrid
+    depends_on:
+      - web-ui-sandbox
 
 configs:
   db-init:

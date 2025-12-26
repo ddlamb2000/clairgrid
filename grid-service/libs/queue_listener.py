@@ -19,11 +19,11 @@ class QueueListener(ConfigurationMixin):
     """
     Listener for handling Grid Service requests via RabbitMQ.
     """
-    def __init__(self, db_manager):
+    def __init__(self, db_manager, queueNamePrefix="grid_service"):
         self.db_manager = db_manager
         self.authentication_manager = AuthenticationManager(db_manager)
         self.grid_manager = GridManager(db_manager)
-        self.queue_name = f'grid_service_{self.db_manager.db_name.lower()}'
+        self.queue_name = f'{queueNamePrefix}_{self.db_manager.db_name.lower()}'
         self.load_configuration()
         self._init_command_handlers()
 

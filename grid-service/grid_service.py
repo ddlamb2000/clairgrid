@@ -30,11 +30,24 @@ def main():
             db_manager.close()
 
     for database in databases:
-        db_manager = DatabaseManager(database)
-        listener = QueueListener(db_manager)
-        listeners.append(listener)
-        t = threading.Thread(target=run_listener, args=(listener, db_manager))
-        t.start()
+        db_manager = DatabaseManager(database, seedData = os.getenv("ENABLE_GRID_SERVICE") == "true")
+        if os.getenv("ENABLE_GRID_SERVICE") == "true":
+            listener = QueueListener(db_manager)
+            listeners.append(listener)
+            t = threading.Thread(target=run_listener, args=(listener, db_manager))
+            t.start()
+        if os.getenv("ENABLE_AUTHENTICATION_SERVICE") == "true":
+            listenerAuthentication = QueueListener(db_manager, queueNamePrefix="authentication_service")
+            listeners.append(listenerAuthentication)
+            t = threading.Thread(target=run_listener, args=(listenerAuthentication, db_manager))
+            t.start()
+            threads.append(t)
+        if os.getenv("ENABLE_LOCATE_SERVICE") == "true":
+            listenerLocate = QueueListener(db_manager, queueNamePrefix="locate_service")
+            listeners.append(listenerLocate)
+            t = threading.Thread(target=run_listener, args=(listenerLocate, db_manager))
+            t.start()
+            threads.append(t)
         threads.append(t)
 
     try:
