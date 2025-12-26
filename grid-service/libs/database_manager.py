@@ -147,6 +147,10 @@ class DatabaseManager(ConfigurationMixin):
 
         return latestMigrationSequence
 
+    @staticmethod
+    def _remove_double_spaces(statement):
+        return '\n'.join(' '.join(line.split()) for line in statement.split('\n'))
+
     @echo
     def select_one(self, statement, params=None):
         if self.conn is None or self.conn.closed:
@@ -154,6 +158,7 @@ class DatabaseManager(ConfigurationMixin):
 
         with self.conn.cursor() as cur:
             try:
+                statement = self._remove_double_spaces(statement)
                 print(f"Executing statement: {statement} with params: {params}")
                 cur.execute(statement, params)
                 return cur.fetchone()
@@ -168,6 +173,7 @@ class DatabaseManager(ConfigurationMixin):
 
         with self.conn.cursor() as cur:
             try:
+                statement = self._remove_double_spaces(statement)
                 print(f"Executing statement: {statement} with params: {params}")
                 cur.execute(statement, params)
                 for row in cur: yield row

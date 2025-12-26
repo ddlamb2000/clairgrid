@@ -1,20 +1,23 @@
 from ..model.row import Row
+from ..utils.decorators import echo
 
+@echo
 def _load_rows(self, grid):
     print(f"Loading rows for grid {grid.uuid}")
     self.all_rows[grid.uuid] = { } # dictionary of rows by uuid
     db_select_clauses = [column.db_select_clause for column in grid.columns]
     db_select_columns = (',\n' if len(db_select_clauses) > 1 else '') + ',\n'.join(db_select_clauses)
-    db_join_clauses = '\n'.join(list(dict.fromkeys([column.db_join_clause for column in grid.columns])))
+    db_join_clauses = ''.join(list(dict.fromkeys([column.db_join_clause for column in grid.columns])))
     try:
         result = self.db_manager.select_all('''
-            SELECT rows.uuid::text, rows.revision
-        ''' + db_select_columns + '''
-            FROM rows
-        ''' + db_join_clauses + '''
-            WHERE rows.gridUuid = %s
+            -- Load rows
+            SELECT rows.uuid::text,
+            rows.revision''' + db_select_columns + '''
+            FROM rows''' +  db_join_clauses + '''
+            -- Filter by grid uuid and enabled
+            WHERE rows.gridUuid = ''' + f"'{grid.uuid}' -- {grid.name}" + '''
             AND rows.enabled = true
-        ''', (grid.uuid,)
+        '''
         )
         number_of_rows = 0
         for item in result:

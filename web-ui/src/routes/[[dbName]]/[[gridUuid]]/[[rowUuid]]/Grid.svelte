@@ -119,7 +119,7 @@
                     </Dropdown>
                   </td>
                   {#each set.grid.columns as column, columnIndex}
-                  {#if column.typeUuid === metadata.UuidTextColumnType
+                    {#if column.typeUuid === metadata.UuidTextColumnType
                           || column.typeUuid === metadata.UuidRichTextColumnType
                           || column.typeUuid === metadata.UuidUuidColumnType 
                           || column.typeUuid === metadata.UuidPasswordColumnType 
@@ -130,15 +130,15 @@
                           align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
-                          bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[columnIndex]}>
+                          bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[column.index]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                       <td class="border border-slate-100 cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
-                            onclick={() => toggleBoolean(set, row, columnIndex)}>
+                            onclick={() => toggleBoolean(set, row, column.index)}>
                           <Icon.CheckCircleOutline
-                                color={context.dataSets[setIndex].rows[rowIndex].values[columnIndex] ? "" : "lightgray"} />
+                                color={context.dataSets[setIndex].rows[rowIndex].values[column.index] ? "" : "lightgray"} />
                         </a>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}

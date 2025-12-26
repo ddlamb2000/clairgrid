@@ -79,17 +79,13 @@
                                   {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
-                          bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[columnIndex]}>
+                          bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[column.index]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                       <td class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}">
                         {#if column.owned && column.bidirectional}
                           <Grid {context}
                                 gridUuid={column.gridPromptUuid}
-                                filterColumnOwned={false}
-                                filterColumnName={column.name}
-                                filterColumnGridUuid={gridUuid}
-                                filterColumnValue={uuid}      
                                 embedded={true} />
                         {:else}
                           <Reference {context} {set} {row} {column} />
@@ -99,9 +95,9 @@
                       <td class="p-0.5 cursor-pointer border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}">
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
-                            onclick={() => toggleBoolean(set, row, columnIndex)}>
+                            onclick={() => toggleBoolean(set, row, column.index)}>
                           <Icon.CheckCircleOutline
-                                color={context.dataSets[setIndex].rows[rowIndex].values[columnIndex] ? "" : "lightgray"} />
+                                color={context.dataSets[setIndex].rows[rowIndex].values[column.index] ? "" : "lightgray"} />
                         </a>
                       </td>
                     {:else}
@@ -132,10 +128,6 @@
                     </span>
                     <Grid {context}
                           gridUuid={usage.grid.uuid}
-                          filterColumnOwned={true}
-                          filterColumnName={usage.name}
-                          filterColumnGridUuid={usage.gridUuid}
-                          filterColumnValue={uuid}
                           embedded={true} />
                   </div>
                 {/if}

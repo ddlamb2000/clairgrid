@@ -112,7 +112,7 @@ export class ListenStream {
                 const nowDate = Date.parse(now)
                 const requestInitiatedOnDate = Date.parse(json.requestInitiatedOn)
                 const elapsedMs = nowDate - requestInitiatedOnDate
-                console.log(`◀︎(${elapsedMs} ms)`, json)
+                console.log(`📩 reply (${elapsedMs} ms)`, json)
                 this.context.trackResponse({
                   requestUuid: json.requestUuid,
                   command: json.command,

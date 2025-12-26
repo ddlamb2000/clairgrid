@@ -6,22 +6,31 @@ from ..utils.decorators import echo
 def _load_columns(self, grid, load_reference_grid = True):
     try:
         result = self.db_manager.select_all('''
+            -- Load columns
             SELECT rows.uuid,
-                    texts.text0 as order, 
-                    texts.text1 as name,
-                    rel2.toUuid0 as typeUuid,
-                    rel2.toUuid1 as referenceGridUuid,
-                    ints.int0 as columnIndex,
-                    booleans.bool0 as display
+                    texts.text0, -- order
+                    texts.text1, -- name
+                    rel2.toUuid0, -- type uuid
+                    rel2.toUuid1, -- reference grid uuid
+                    ints.int0, -- column index
+                    booleans.bool0 -- display flag
             FROM relationships rel1
-            LEFT OUTER JOIN rows ON rows.gridUuid = %s AND rows.uuid = rel1.toUuid0 AND rows.enabled = true
+            -- Join rows to get column uuid
+            LEFT OUTER JOIN rows ON rows.gridUuid = ''' + f"'{metadata.SystemIds.Columns}' -- Columns" + '''
+            AND rows.uuid = rel1.toUuid0 AND rows.enabled = true
+            -- Join texts to get order and name
             LEFT OUTER JOIN texts ON texts.uuid = rows.uuid AND texts.partition = 0
+            -- Join relationships to get type uuid and reference grid uuid
             LEFT OUTER JOIN relationships rel2 ON rel2.fromUuid = rows.uuid AND rel2.partition = 0
+            -- Join ints to get column index
             LEFT OUTER JOIN ints ON ints.uuid = rows.uuid AND ints.partition = 0
+            -- Join booleans to get display flag
             LEFT OUTER JOIN booleans ON booleans.uuid = rows.uuid AND booleans.partition = 0
-            WHERE rel1.fromUuid = %s AND rel1.partition = 0
+            -- Filter by grid uuid and enabled
+            WHERE rel1.fromUuid = ''' + f"'{grid.uuid}' -- {grid.name}" + '''
+            AND rel1.partition = 0
             ORDER BY texts.text0
-        ''', (metadata.SystemIds.Columns, grid.uuid)
+        '''
         )
         index = 0
         for item in result: 

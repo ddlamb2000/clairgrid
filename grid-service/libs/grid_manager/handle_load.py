@@ -28,7 +28,7 @@ def handle_load(self, request):
             print(f"Grid added to memory: {grid_uuid} {grid.name}")
             self._load_rows(grid)
         else:
-            print(f"Grid already in memory: {grid_uuid} {grid.name}")
+            print(f"👍🏻 Grid already in memory: {grid_uuid} {grid.name}")
     except Exception as e:
         print(f"❌ Error loading grid {grid_uuid}: {e}")
         return {

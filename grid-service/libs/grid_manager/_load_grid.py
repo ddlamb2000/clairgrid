@@ -6,13 +6,18 @@ from ..utils.decorators import echo
 def _load_grid(self, grid_uuid, load_reference_grid = True):
     try:
         result = self.db_manager.select_one('''
-            SELECT texts.text0 as name,
-                texts.text1 as description,
+            -- Load grid
+            SELECT texts.text0, -- name
+                texts.text1, -- description
                 rows.revision
             FROM rows
+            -- Join texts to get name and description
             LEFT OUTER JOIN texts ON rows.uuid = texts.uuid AND texts.partition = 0
-            WHERE rows.gridUuid = %s AND rows.uuid = %s AND rows.enabled = true
-        ''', (metadata.SystemIds.Grids, grid_uuid)
+            -- Filter by grid uuid and enabled
+            WHERE rows.gridUuid = ''' + f"'{metadata.SystemIds.Grids}' -- Grids" + '''
+            AND rows.uuid = ''' + f"'{grid_uuid}'" + '''
+            AND rows.enabled = true
+        '''
         )
         if result:
             grid = self.all_grids.get(grid_uuid)
@@ -24,7 +29,7 @@ def _load_grid(self, grid_uuid, load_reference_grid = True):
                 print(f"New grid: {grid}")
                 self.all_grids[grid_uuid] = grid
             else:
-                print(f"Grid already in memory: {grid_uuid} {result[0]}")
+                print(f"👍🏻 Grid already in memory: {grid_uuid} {result[0]}")
             self._load_columns(grid, load_reference_grid)
             print(f"Grid loaded: {grid}")
             return grid
