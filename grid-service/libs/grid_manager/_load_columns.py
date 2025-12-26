@@ -3,7 +3,7 @@ from ..model.column import Column
 from ..utils.decorators import echo
 
 @echo
-def _load_columns(self, grid, load_reference_grid = True):
+def _load_columns(self, grid, loadReferenceGrid = True):
     try:
         result = self.db_manager.select_all('''
             -- Load columns
@@ -35,7 +35,7 @@ def _load_columns(self, grid, load_reference_grid = True):
         index = 0
         for item in result: 
             referenceGridUuid = item[4]
-            referenceGrid = _get_reference_grid(self, referenceGridUuid, load_reference_grid)
+            referenceGrid = _get_reference_grid(self, referenceGridUuid, loadReferenceGrid)
             column = Column(item[0],
                             index,
                             order = item[1],
@@ -45,22 +45,22 @@ def _load_columns(self, grid, load_reference_grid = True):
                             referenceGrid = referenceGrid,
                             columnIndex = item[5],
                             display = item[6])
-            index += column.number_of_fields
+            index += column.numberOfFields
             print(f"New column: {column}")
             grid.columns.append(column)
     except Exception as e:
         print(f"❌ Error loading columns for grid {grid.uuid}: {e}")
         raise e
 
-def _get_reference_grid(self, referenceGridUuid, load_reference_grid):
-    if referenceGridUuid and load_reference_grid:
+def _get_reference_grid(self, referenceGridUuid, loadReferenceGrid):
+    if referenceGridUuid and loadReferenceGrid:
         print(f"Loading reference grid: {referenceGridUuid}")
-        referenceGrid = self.all_grids.get(referenceGridUuid)
+        referenceGrid = self.allGrids.get(referenceGridUuid)
         if not referenceGrid:
             print(f"Reference grid not found in memory, loading from database")
-            referenceGrid = self._load_grid(referenceGridUuid, load_reference_grid = False)
+            referenceGrid = self._load_grid(referenceGridUuid, loadReferenceGrid = False)
             if referenceGrid:
-                self.all_grids[referenceGridUuid] = referenceGrid
+                self.allGrids[referenceGridUuid] = referenceGrid
                 print(f"Reference grid loaded: {referenceGridUuid}")
             else:
                 print(f"❌ Error loading reference grid {referenceGridUuid}")

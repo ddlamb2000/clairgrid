@@ -40,43 +40,43 @@ class Column():
             self.dbJoinKey = "uuid"
 
     def _set_db_reference_columns(self, referencedColumnIndex):
-        self.db_reference_column = f"{self.dbTable}_{self.partition}_{referencedColumnIndex}.text{self.columnIndex % 10}"
-        self.db_reference_join_key = "uuid"
+        self.dbReferenceColumn = f"{self.dbTable}_{self.partition}_{referencedColumnIndex}.text{self.columnIndex % 10}"
+        self.dbReferenceJoinKey = "uuid"
 
     def _set_db_reference_clauses(self, referencedColumnIndex):
-        self.db_select_reference_clause = f"{self.dbTable}_{self.partition}.{self.dbColumn}"
-        self.db_join_reference_clause = f"\n-- Join {self.dbTable}\n" + \
+        self.dbSelectReferenceClause = f"{self.dbTable}_{self.partition}.{self.dbColumn}"
+        self.dbJoinReferenceClause = f"\n-- Join {self.dbTable}\n" + \
                                 f"LEFT OUTER JOIN {self.dbTable} {self.dbTable}_{self.partition}_{referencedColumnIndex}\n" + \
                                 f"ON {self.dbTable}_{self.partition}_{referencedColumnIndex}.{self.dbJoinKey} = ref_rows_{referencedColumnIndex}.uuid\n" + \
                                 f"AND {self.dbTable}_{self.partition}_{referencedColumnIndex}.partition = {self.partition}"            
 
     def _set_db_clauses(self):
-        self.number_of_fields = 1
+        self.numberOfFields = 1
         if self.typeUuid == SystemIds.ReferenceColumnType and self.referenceGrid:
-            display_columns = [column for column in self.referenceGrid.columns if column.dbTable == 'texts' and column.display]
+            displayColumns = [column for column in self.referenceGrid.columns if column.dbTable == 'texts' and column.display]
 
-            for column in display_columns:
+            for column in displayColumns:
                 column._set_db_reference_columns(self.columnIndex)
                 column._set_db_reference_clauses(self.columnIndex)
 
-            db_select_reference_clauses = [column.db_reference_column for column in display_columns]
-            db_select_reference_columns = (',\n' if len(db_select_reference_clauses) > 0 else '') + ',\n'.join(db_select_reference_clauses)
-            db_join_reference_clauses = ''.join(list(dict.fromkeys([column.db_join_reference_clause for column in display_columns])))
+            dbSelectReferenceClauses = [column.dbReferenceColumn for column in displayColumns]
+            dbSelectReferenceColumns = (',\n' if len(dbSelectReferenceClauses) > 0 else '') + ',\n'.join(dbSelectReferenceClauses)
+            dbJoinReferenceClauses = ''.join(list(dict.fromkeys([column.dbJoinReferenceClause for column in displayColumns])))
 
-            self.db_select_clause = f"{self.dbTable}_{self.partition}.{self.dbColumn}" + db_select_reference_columns
-            self.db_join_clause = f"\n-- Join {self.dbTable} for reference grid {self.referenceGrid.name}\n" + \
+            self.dbSelectClause = f"{self.dbTable}_{self.partition}.{self.dbColumn}" + dbSelectReferenceColumns
+            self.dbJoinClause = f"\n-- Join {self.dbTable} for reference grid {self.referenceGrid.name}\n" + \
                                     f"LEFT OUTER JOIN {self.dbTable} {self.dbTable}_{self.columnIndex}\n" + \
                                     f"ON {self.dbTable}_{self.columnIndex}.{self.dbJoinKey} = rows.uuid\n" + \
                                     f"AND {self.dbTable}_{self.columnIndex}.partition = {self.partition}\n" + \
                                     f"LEFT OUTER JOIN rows ref_rows_{self.columnIndex}\n" + \
                                     f"ON ref_rows_{self.columnIndex}.gridUuid = '{self.referenceGridUuid}' -- {self.referenceGrid.name}\n" + \
                                     f"AND ref_rows_{self.columnIndex}.uuid = {self.dbTable}_{self.columnIndex}.toUuid{self.columnIndex % 10}\n" + \
-                                    f"AND ref_rows_{self.columnIndex}.enabled = true" + db_join_reference_clauses
+                                    f"AND ref_rows_{self.columnIndex}.enabled = true" + dbJoinReferenceClauses
 
-            self.number_of_fields += len(display_columns)
+            self.numberOfFields += len(displayColumns)
         else:
-            self.db_select_clause = f"{self.dbTable}_{self.partition}.{self.dbColumn}"
-            self.db_join_clause = f"\n-- Join {self.dbTable}\n" + \
+            self.dbSelectClause = f"{self.dbTable}_{self.partition}.{self.dbColumn}"
+            self.dbJoinClause = f"\n-- Join {self.dbTable}\n" + \
                                     f"LEFT OUTER JOIN {self.dbTable} {self.dbTable}_{self.partition}\n" + \
                                     f"ON {self.dbTable}_{self.partition}.{self.dbJoinKey} = rows.uuid\n" + \
                                     f"AND {self.dbTable}_{self.partition}.partition = {self.partition}"            

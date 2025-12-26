@@ -13,8 +13,8 @@ class GridManager(BaseManager):
     """
     def __init__(self, db_manager):
         BaseManager.__init__(self, db_manager)
-        self.all_grids = {} # dictionary of grids by uuid
-        self.all_rows = {} # dictionary of rows by grid_uuid and row_uuid
+        self.allGrids = {} # dictionary of grids by uuid
+        self.allRows = {} # dictionary of rows by gridUuid and rowUuid
 
     from .handle_load import handle_load
     from ._load_grid import _load_grid
