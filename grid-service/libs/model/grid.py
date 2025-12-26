@@ -14,7 +14,7 @@ class Grid(BaseModel):
         self.columns = []
 
     def __repr__(self):
-        return f"Grid({self.uuid=}, {self.name=})"
+        return f"Grid({self.uuid}, {self.name})"
 
     def to_json(self):
         result = BaseModel.to_json(self)

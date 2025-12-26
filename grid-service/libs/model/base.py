@@ -5,7 +5,7 @@
 '''
 
 class BaseModel:
-    def __init__(self, uuid, revision=1):
+    def __init__(self, uuid, revision = 0):
         self.uuid = uuid
         self.revision = revision
 

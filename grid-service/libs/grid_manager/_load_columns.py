@@ -33,11 +33,13 @@ def _load_columns(self, grid, loadReferenceGrid = True):
         '''
         )
         index = 0
+        fieldIndex = 0
         for item in result: 
             referenceGridUuid = item[4]
             referenceGrid = _get_reference_grid(self, referenceGridUuid, loadReferenceGrid)
             column = Column(item[0],
                             index,
+                            fieldIndex,
                             order = item[1],
                             name = item[2],
                             typeUuid = item[3],
@@ -45,7 +47,8 @@ def _load_columns(self, grid, loadReferenceGrid = True):
                             referenceGrid = referenceGrid,
                             columnIndex = item[5],
                             display = item[6])
-            index += column.numberOfFields
+            index += 1
+            fieldIndex += column.numberOfFields
             print(f"New column: {column}")
             grid.columns.append(column)
     except Exception as e:

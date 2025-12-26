@@ -4,16 +4,19 @@
 
 '''
 
+from typing import LiteralString
+
 from ..metadata import SystemIds
 
 class Column():
-    def __init__(self, uuid, index, order, name, typeUuid, referenceGridUuid = None, referenceGrid = None, columnIndex = 0, display = False):
-        self.uuid = str(uuid)
+    def __init__(self, uuid, index, fieldIndex, order, name, typeUuid, referenceGridUuid = None, referenceGrid = None, columnIndex = 0, display = False):
+        self.uuid = uuid
         self.index = index
+        self.fieldIndex = fieldIndex
         self.order = order
         self.name = name
-        self.typeUuid = str(typeUuid)
-        self.referenceGridUuid = str(referenceGridUuid)
+        self.typeUuid = typeUuid
+        self.referenceGridUuid = referenceGridUuid
         self.referenceGrid = referenceGrid
         self.columnIndex = columnIndex
         self.display = display
@@ -22,15 +25,15 @@ class Column():
 
     def _set_db_columns(self):
         self.partition = self.columnIndex // 10
-        if self.typeUuid == SystemIds.IntColumnType:
+        if str(self.typeUuid) == SystemIds.IntColumnType:
             self.dbTable = "ints"
             self.dbColumn = f"int{self.columnIndex % 10}"
             self.dbJoinKey = "uuid"
-        elif self.typeUuid == SystemIds.ReferenceColumnType:
+        elif str(self.typeUuid) == SystemIds.ReferenceColumnType:
             self.dbTable = "relationships"
             self.dbColumn = f"toUuid{self.columnIndex % 10}::text"
             self.dbJoinKey = "fromUuid"
-        elif self.typeUuid == SystemIds.BooleanColumnType:
+        elif str(self.typeUuid) == SystemIds.BooleanColumnType:
             self.dbTable = "booleans"
             self.dbColumn = f"bool{self.columnIndex % 10}"
             self.dbJoinKey = "uuid"
@@ -52,7 +55,7 @@ class Column():
 
     def _set_db_clauses(self):
         self.numberOfFields = 1
-        if self.typeUuid == SystemIds.ReferenceColumnType and self.referenceGrid:
+        if str(self.typeUuid) == SystemIds.ReferenceColumnType and self.referenceGrid:
             displayColumns = [column for column in self.referenceGrid.columns if column.dbTable == 'texts' and column.display]
 
             for column in displayColumns:
@@ -61,7 +64,7 @@ class Column():
 
             dbSelectReferenceClauses = [column.dbReferenceColumn for column in displayColumns]
             dbSelectReferenceColumns = (',\n' if len(dbSelectReferenceClauses) > 0 else '') + ',\n'.join(dbSelectReferenceClauses)
-            dbJoinReferenceClauses = ''.join(list(dict.fromkeys([column.dbJoinReferenceClause for column in displayColumns])))
+            dbJoinReferenceClauses = ''.join(list[LiteralString](dict.fromkeys([column.dbJoinReferenceClause for column in displayColumns])))
 
             self.dbSelectClause = f"{self.dbTable}_{self.partition}.{self.dbColumn}" + dbSelectReferenceColumns
             self.dbJoinClause = f"\n-- Join {self.dbTable} for reference grid {self.referenceGrid.name}\n" + \
@@ -82,11 +85,12 @@ class Column():
                                     f"AND {self.dbTable}_{self.partition}.partition = {self.partition}"            
     
     def __repr__(self):
-        return f"Column({self.uuid=}, {self.index=}, {self.order=}, {self.name=}, {self.typeUuid=} {self.dbColumn=} {self.columnIndex=} {self.partition=})"
+        return f"Column({self.uuid}, {self.fieldIndex=}, {self.order=}, {self.name=}, {self.typeUuid=} {self.dbColumn=} {self.columnIndex=} {self.partition=})"
 
     def to_json(self):
         result = { 'uuid': str(self.uuid) }
         result['index'] = self.index
+        result['fieldIndex'] = self.fieldIndex
         result['order'] = self.order
         result['name'] = self.name
         result['columnIndex'] = self.columnIndex
