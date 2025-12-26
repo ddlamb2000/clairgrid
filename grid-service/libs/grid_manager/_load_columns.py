@@ -1,7 +1,9 @@
 from .. import metadata
 from ..model.column import Column
+from ..utils.decorators import echo
 
-def _load_columns(self, grid):
+@echo
+def _load_columns(self, grid, load_reference_grid = True):
     try:
         result = self.db_manager.select_all('''
             SELECT rows.uuid,
@@ -23,18 +25,38 @@ def _load_columns(self, grid):
         )
         index = 0
         for item in result: 
+            referenceGridUuid = item[4]
+            referenceGrid = _get_reference_grid(self, referenceGridUuid, load_reference_grid)
             column = Column(item[0],
                             index,
                             order = item[1],
                             name = item[2],
                             typeUuid = item[3],
-                            referenceGridUuid = item[4],
+                            referenceGridUuid = referenceGridUuid,
+                            referenceGrid = referenceGrid,
                             columnIndex = item[5],
                             display = item[6])
-            index += 1
+            index += column.number_of_fields
             print(f"New column: {column}")
             grid.columns.append(column)
     except Exception as e:
         print(f"❌ Error loading columns for grid {grid.uuid}: {e}")
         raise e
+
+def _get_reference_grid(self, referenceGridUuid, load_reference_grid):
+    if referenceGridUuid and load_reference_grid:
+        print(f"Loading reference grid: {referenceGridUuid}")
+        referenceGrid = self.all_grids.get(referenceGridUuid)
+        if not referenceGrid:
+            print(f"Reference grid not found in memory, loading from database")
+            referenceGrid = self._load_grid(referenceGridUuid, load_reference_grid = False)
+            if referenceGrid:
+                self.all_grids[referenceGridUuid] = referenceGrid
+                print(f"Reference grid loaded: {referenceGridUuid}")
+            else:
+                print(f"❌ Error loading reference grid {referenceGridUuid}")
+                raise Exception(f"Error loading reference grid {referenceGridUuid}")
+        return referenceGrid
+    else:
+        return None
 

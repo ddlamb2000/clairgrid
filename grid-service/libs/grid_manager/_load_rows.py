@@ -16,12 +16,13 @@ def _load_rows(self, grid):
             AND rows.enabled = true
         ''', (grid.uuid,)
         )
+        number_of_rows = 0
         for item in result:
-            print(f"Loading row: {item[0]}")
             row = Row(grid, item[0], revision = item[1], values = item[2:])
             print(f"New row: {row}")
+            number_of_rows += 1
             self.all_rows[grid.uuid][row.uuid] = row
-        print(f"Rows loaded: {len(self.all_rows[grid.uuid])}")
+        print(f"Rows loaded: {number_of_rows}")
     except Exception as e:
         print(f"❌ Error loading rows for grid {grid.uuid}: {e}")
         raise e

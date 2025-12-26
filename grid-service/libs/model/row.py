@@ -17,7 +17,7 @@ class Row(BaseModel):
         self.display_string = ' | '.join([self.values[column.index] for column in grid.columns if column.display])
 
     def __repr__(self):
-        return f"Row({self.uuid=})"
+        return f"Row({self.uuid=}, {self.display_string=})"
 
     def to_json(self):
         result = BaseModel.to_json(self)

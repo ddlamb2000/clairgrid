@@ -3,7 +3,7 @@ from ..model.grid import Grid
 from ..utils.decorators import echo
 
 @echo
-def _load_grid(self, grid_uuid):
+def _load_grid(self, grid_uuid, load_reference_grid = True):
     try:
         result = self.db_manager.select_one('''
             SELECT texts.text0 as name,
@@ -25,7 +25,7 @@ def _load_grid(self, grid_uuid):
                 self.all_grids[grid_uuid] = grid
             else:
                 print(f"Grid already in memory: {grid_uuid} {result[0]}")
-            self._load_columns(grid)
+            self._load_columns(grid, load_reference_grid)
             print(f"Grid loaded: {grid}")
             return grid
     except Exception as e:

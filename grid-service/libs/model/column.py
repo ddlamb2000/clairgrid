@@ -7,15 +7,17 @@
 from ..metadata import SystemIds
 
 class Column():
-    def __init__(self, uuid, index, order, name, typeUuid, referenceGridUuid, columnIndex, display):
+    def __init__(self, uuid, index, order, name, typeUuid, referenceGridUuid = None, referenceGrid = None, columnIndex = 0, display = False):
         self.uuid = str(uuid)
         self.index = index
         self.order = order
         self.name = name
         self.typeUuid = str(typeUuid)
         self.referenceGridUuid = str(referenceGridUuid)
+        self.referenceGrid = referenceGrid
         self.columnIndex = columnIndex
         self.display = display
+        self.number_of_fields = 1
         self._set_db_columns()
 
     def _set_db_columns(self):
@@ -51,4 +53,5 @@ class Column():
         if self.display: result['display'] = bool(self.display)
         if self.typeUuid: result['typeUuid'] = str(self.typeUuid)
         if self.referenceGridUuid: result['referenceGridUuid'] = str(self.referenceGridUuid)
+        if self.referenceGrid: result['referenceGrid'] = self.referenceGrid.to_json()
         return result
