@@ -7,8 +7,7 @@
   let { context, set, column, row } = $props()
 
   const matchesProps = (set: DataSetType): boolean => {
-    return set.gridUuid === column.referenceGridUuid
-            && !set.rowUuid
+    return set.gridUuid === column.referenceGridUuid && !set.rowUuid
   }
 
   const loadPrompt = () => {
@@ -40,21 +39,17 @@
             elementReference={"reference-" + set.grid.uuid + column.uuid + row.uuid} />
   </div>
   <div>
-    {#each row.references as reference}
-      {#if reference.name === column.name}
-        {#each reference.rows as referencedRow, indexReferencedRow}
-          {#if indexReferencedRow > 0}<br/>{/if}
-          <Badge color="dark" rounded class="px-1 text-sm/4 font-light">
-            <a href={"/" + context.dbName + "/" + column.referenceGridUuid + "/" + referencedRow.uuid}
-                class="cursor-pointer underline"
-                onclick={() => context.navigateToGrid(column.referenceGridUuid, referencedRow.uuid)}>
-              <span class="flex">
-                {@html referencedRow.displayString}
-              </span>
-            </a>
-          </Badge>
-        {/each}
-      {/if}
+    {#each row.values[column.index] as reference, indexReferencedRow}
+      {#if indexReferencedRow > 0}<br/>{/if}
+      <Badge color="dark" rounded class="px-1 text-sm/4 font-light">
+        <a href={"/" + context.dbName + "/" + column.referenceGridUuid + "/" + reference.uuid}
+            class="cursor-pointer underline"
+            onclick={() => context.navigateToGrid(column.referenceGridUuid, reference.uuid)}>
+          <span class="flex">
+            {reference.displayString}
+          </span>
+        </a>
+      </Badge>
     {/each}
   </div>
 </span>

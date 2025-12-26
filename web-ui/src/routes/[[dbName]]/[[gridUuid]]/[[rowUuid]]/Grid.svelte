@@ -39,7 +39,7 @@
                   onclick={() => context.navigateToGrid(metadata.UuidGrids, set.gridUuid)}>
                 <span class="flex">
                   Definition
-                  <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
+                  <Icon.ArrowUpRightFromSquareOutline class="text-green-500 hover:text-green-900" />
                 </span>
               </a>
             {/if}
@@ -118,7 +118,7 @@
                       </li>
                     </Dropdown>
                   </td>
-                  {#each set.grid.columns as column, columnIndex}
+                  {#each set.grid.columns as column}
                     {#if column.typeUuid === metadata.UuidTextColumnType
                           || column.typeUuid === metadata.UuidRichTextColumnType
                           || column.typeUuid === metadata.UuidUuidColumnType 

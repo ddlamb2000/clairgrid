@@ -42,7 +42,7 @@ def handle_load(self, request):
     }
     if rowUuid:
         dataSet["rowUuid"] = rowUuid
-        dataSet["rows"] = [row.to_json() for row in self.allRows[gridUuid].values() if row.uuid == rowUuid]
+        dataSet["rows"] = [row.to_json() for row in self.allRows[gridUuid].values() if str(row.uuid) == rowUuid]
         dataSet["countRows"] = 1
     else:
         dataSet["rows"] = [row.to_json() for row in self.allRows[grid.uuid].values()]

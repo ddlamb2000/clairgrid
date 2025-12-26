@@ -10,12 +10,7 @@
   const colorFocus = "bg-yellow-100/20"
 
   const matchesProps = (set: DataSetType): boolean => {
-    return set.gridUuid === gridUuid
-            && set.rowUuid === rowUuid
-            && !set.filterColumnOwned
-            && !set.filterColumnName
-            && !set.filterColumnGridUuid
-            && !set.filterColumnValue
+    return set.gridUuid === gridUuid && set.rowUuid === rowUuid
   }
 
   const toggleBoolean = (set: DataSetType, row: RowType, columnIndex: number) => {
@@ -59,14 +54,14 @@
             </span>
             <table class="font-light text-sm table-auto border-collapse border border-slate-100 shadow-lg">
               <tbody class="border border-slate-100">
-                {#each set.grid.columns as column, columnIndex}
+                {#each set.grid.columns as column}
                   <tr class="align-top">
                     <td class="p-0.5 bg-gray-100 font-bold border border-slate-200">
                       {#if column.bidirectional && !column.owned && column.grid}
                         {column.grid.displayString} <span class="text-xs">({column.name})</span>
                       {:else}
                         <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
-                          bind:innerHTML={context.dataSets[setIndex].grid.columns[columnIndex].name}></span>
+                          bind:innerHTML={context.dataSets[setIndex].grid.columns[column.index].name}></span>
                       {/if}
                     </td>
                     {#if column.typeUuid === metadata.UuidTextColumnType

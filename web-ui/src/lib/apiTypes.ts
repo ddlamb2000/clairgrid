@@ -88,9 +88,6 @@ export interface RowType {
 	uuid: string
   values: any[]
   displayString?: string
-  references?: ReferenceType[]
-  created?: Date
-  updated?: Date
 }
 
 export interface ReferenceType {
