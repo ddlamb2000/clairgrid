@@ -17,11 +17,8 @@ class Grid(BaseModel):
         return f"Grid({self.uuid=}, {self.name=})"
 
     def to_json(self):
-        print(f"Grid.to_json({self.uuid=}, {self.name=}, {self.description=}, {self.columns=})")
         result = BaseModel.to_json(self)
-        print(f"Grid.to_json result: {result}")
         if self.name: result['name'] = self.name
         if self.description: result['description'] = self.description   
         result['columns'] = [column.to_json() for column in self.columns]
-        print(f"Grid.to_json result: {result}")
         return result
