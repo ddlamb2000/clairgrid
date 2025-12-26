@@ -6,7 +6,7 @@
 </script>
 
 {#if reply !== undefined}
-  <Badge color={reply.status === metadata.SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">
+  <Badge color={reply.status === metadata.SuccessStatus ? "green" : "red"} class="px-2.5 py-0.5">
     {#if reply.commandText}{reply.commandText}{/if}
     {#if reply.message}: {reply.message}{/if}
     <span class="font-light text-xs ms-1">

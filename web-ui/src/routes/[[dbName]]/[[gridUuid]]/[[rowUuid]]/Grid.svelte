@@ -78,7 +78,7 @@
                       {/if}
                       <li class="p-1">
                         <a href="#top" role="menuitem"
-                            class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                            class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
                             onclick={() => context.removeColumn(set, column)}
                             onkeyup={(e) => e.code === 'Enter' && context.removeColumn(set, column)}>
                           Remove column
@@ -110,7 +110,7 @@
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
                       <li class="p-1">
                         <a href="#top"  role="menuitem"
-                            class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                            class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
                             onclick={() => context.removeRow(set, row)}
                             onkeyup={(e) => e.code === 'Enter' && context.removeRow(set, row)}>
                           Remove row

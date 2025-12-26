@@ -21,7 +21,7 @@
 </script>
   
 <a href="#top" role="menuitem"
-    class={"cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light " + elementReference}
+    class={"cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light " + elementReference}
     onclick={() => loadPrompt()}>
   <span class="flex">
     {rowPrompt.displayString}
@@ -42,7 +42,7 @@
                 {#key "prompt" + elementReference + rowReference.uuid}
                   <li class="p-1">
                     <a href="#top" role="menuitem"
-                        class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600"
+                        class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600"
                         onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
                       {@html rowReference.displayString}
                     </a>

@@ -17,7 +17,7 @@
 </script>
 
 <a href="#top" role="menuitem"
-    class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+    class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
     onclick={() => loadPrompt()}>
   <span class="flex">
     Add column
@@ -39,7 +39,7 @@
                                           elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
                   {:else}
                     <a href="#top" role="menuitem"
-                        class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                        class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
                         onclick={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
                       {@html rowPrompt.displayString}
                     </a>

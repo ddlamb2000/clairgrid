@@ -36,7 +36,7 @@
         {#each reference.rows as referencedRow}
           {#if searchText === "" || referencedRow.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
             <li class="p-1">
-              <a href="#top" class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+              <a href="#top" class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
                   onclick={(e) => {e.stopPropagation(); context.removeReferencedValue(set, column, row, referencedRow)}}>
                 {@html referencedRow.displayString}
                 <Icon.CloseCircleOutline class="ms-1" color="lightgray" />
@@ -54,7 +54,7 @@
               {#if searchText === "" || rowPrompt.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
                 {#key "prompt" + elementReference + rowPrompt.uuid}
                   <li class="p-1">
-                    <a href="#top" role="menuitem" class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                    <a href="#top" role="menuitem" class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
                         onclick={(e) => {e.stopPropagation(); context.addReferencedValue(set, column, row, rowPrompt)}}>
                       {@html rowPrompt.displayString}
                       <Icon.CirclePlusOutline class="ms-1" />

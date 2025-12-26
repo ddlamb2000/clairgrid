@@ -119,7 +119,7 @@
                   <div class="mt-4">
                     <span class="font-bold">
                       {@html usage.grid.displayString}
-                      <span class="text-sm font-extralight">{usage.label} =</span><Badge color="dark" rounded class="ms-1 px-1 text-sm/4 font-light">{row.displayString}</Badge>  
+                      <span class="text-sm font-extralight">{usage.label} =</span><Badge color="dark" class="ms-1 px-1 text-sm/4 font-light">{row.displayString}</Badge>  
                     </span>
                     <Grid {context}
                           gridUuid={usage.grid.uuid}

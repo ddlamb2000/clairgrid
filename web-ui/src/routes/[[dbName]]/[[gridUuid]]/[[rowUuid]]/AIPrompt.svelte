@@ -66,7 +66,7 @@
       {#if message.request && message.request.action === metadata.ActionPrompt}
         <li transition:fade>
           {#if message.request.commandText}
-            <Badge color="blue" rounded class="px-2.5 py-0.5 text-sm font-bold">
+            <Badge color="blue" class="px-2.5 py-0.5 text-sm font-bold">
               {message.request.commandText}
             </Badge>
             {#if message.request.timeOut}
@@ -102,7 +102,7 @@
                 </li>
               {/each}
             </ul>
-            <Badge color={message.response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="ms-1 me-1 px-0.5 py-0.5">
+            <Badge color={message.response.status === metadata.SuccessStatus ? "green" : "red"} class="ms-1 me-1 px-0.5 py-0.5">
               {convertMsToText(message.response.elapsedMs)}
             </Badge>
             <span class="font-extralight italic text-xs text-gray-500 bottom-2">
