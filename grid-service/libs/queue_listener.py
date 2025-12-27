@@ -43,8 +43,8 @@ class QueueListener(ConfigurationMixin):
             metadata.ActionHeartbeat: self._handle_nothing,
             metadata.ActionAuthentication: self.authentication_manager.handle_authentication,
             metadata.ActionLoad: self.grid_manager.handle_load,
-            metadata.ActionChangeGrid: self.grid_manager.handle_change_grid,
-            metadata.ActionLocateGrid: self.grid_manager.handle_locate_grid,
+            metadata.ActionChange: self.grid_manager.handle_change,
+            metadata.ActionLocate: self.grid_manager.handle_locate,
             metadata.ActionPrompt: self.grid_manager.handle_prompt,
         }
 

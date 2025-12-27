@@ -48,7 +48,7 @@ export class Context extends ContextBase {
       console.log("changeFocus[2]", row !== undefined ? row.uuid : undefined)
       await this.sendMessage(
         {
-          command: metadata.ActionLocateGrid,
+          command: metadata.ActionLocate,
           commandText: "Locate",
           gridUuid: grid.uuid,
           columnUuid: column !== undefined ? column.uuid : undefined,
@@ -58,8 +58,7 @@ export class Context extends ContextBase {
     }
   }
 
-  navigateToGrid = async (gridUuid: string,
-                          rowUuid?: string) => {
+  navigateToGrid = async (gridUuid: string, rowUuid?: string) => {
 		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, rowUuid=${rowUuid}`)
     this.userPreferences.showPrompt = false
     this.reset()
@@ -75,7 +74,7 @@ export class Context extends ContextBase {
       const rowClone = Object.assign({}, row)
       if(set.grid.columns) {
         for(const column of set.grid.columns) {
-          if(column.typeUuid === metadata.UuidIntColumnType) {
+          if(column.typeUuid === metadata.IntColumnType) {
             if(!row.values[column.index] || row.values[column.index] === "" || row.values[column.index] === "<br>") rowClone.values[column.index] = undefined
             else if(typeof row.values[column.index] === "string") rowClone.values[column.index] = row.values[column.index].replace(/[^0-9-]/g, "") * 1
           }
@@ -83,7 +82,7 @@ export class Context extends ContextBase {
       }
       this.sendMessage(
         {
-          command: metadata.ActionChangeGrid,
+          command: metadata.ActionChange,
           commandText: 'Update',
           gridUuid: set.grid.uuid,
           dataSet: { rowsEdited: [rowClone] }
@@ -95,15 +94,15 @@ export class Context extends ContextBase {
 
   getPrefixFromColumknType = (columnTypeUuid: string): string => {
     switch(columnTypeUuid) {
-      case metadata.UuidTextColumnType:
-      case metadata.UuidRichTextColumnType:
-      case metadata.UuidPasswordColumnType:
-      case metadata.UuidUuidColumnType:
-      case metadata.UuidBooleanColumnType:
+      case metadata.TextColumnType:
+      case metadata.RichTextColumnType:
+      case metadata.PasswordColumnType:
+      case metadata.UuidColumnType:
+      case metadata.BooleanColumnType:
         return "text"
-      case metadata.UuidIntColumnType:
+      case metadata.IntColumnType:
         return "int"
-      case metadata.UuidReferenceColumnType:
+      case metadata.ReferenceColumnType:
         return "relationship"
       }
     return ""
@@ -140,7 +139,7 @@ export class Context extends ContextBase {
       if(set.grid.columns) set.grid.columns.push(column)
       else set.grid.columns = [column]
       const rowsAdded = [
-        { gridUuid: metadata.UuidColumns,
+        { gridUuid: metadata.Columns,
           uuid: uuidColumn,
           text1: newLabel,
           text2: columnName,
@@ -151,25 +150,25 @@ export class Context extends ContextBase {
       const referencedValuesAdded = [
         { columnName: "relationship1",
           fromUuid: uuidColumn,
-          toGridUuid: metadata.UuidGrids,
+          toGridUuid: metadata.Grids,
           uuid: set.grid.uuid },
         { columnName: "relationship1",
           fromUuid: uuidColumn,
-          toGridUuid: metadata.UuidColumnTypes,
+          toGridUuid: metadata.ColumnTypes,
           uuid: rowPrompt.uuid }
       ] 
       if(rowReference !== undefined) {
         referencedValuesAdded.push(
           { columnName: "relationship2",
           fromUuid: uuidColumn,
-          toGridUuid: metadata.UuidGrids,
+          toGridUuid: metadata.Grids,
           uuid: rowReference.uuid }  
         )
       }
       return this.sendMessage({
-        command: metadata.ActionChangeGrid,
+        command: metadata.ActionChange,
         commandText: 'Add column',
-        gridUuid: metadata.UuidColumns,
+        gridUuid: metadata.Columns,
         dataSet: { rowsAdded: rowsAdded, referencedValuesAdded: referencedValuesAdded }
       })
     }
@@ -211,20 +210,20 @@ export class Context extends ContextBase {
       return this.sendMessage({
         command: metadata.ActionChangeGrid,
         commandText: 'Remove column',
-        gridUuid: metadata.UuidColumns,
+        gridUuid: metadata.Columns,
         dataSet: {
           rowsDeleted: [
-            { gridUuid: metadata.UuidColumnTypes,
+            { gridUuid: metadata.ColumnTypes,
               uuid: column.uuid }
           ],
           referencedValuesRemoved: [
             { columnName: "relationship1",
               fromUuid: column.uuid,
-              toGridUuid: metadata.UuidGrids,
+              toGridUuid: metadata.Grids,
               uuid: set.grid.uuid },
             { columnName: "relationship1",
               fromUuid: column.uuid,
-              toGridUuid: metadata.UuidColumnTypes,
+              toGridUuid: metadata.ColumnTypes,
               uuid: column.typeUuid }
           ] 
         }
@@ -233,25 +232,70 @@ export class Context extends ContextBase {
   }
 
   newGrid = async () => {
-    const gridUuid = newUuid()
+    const newGridUuid = newUuid()
+    const newColumnUuid = newUuid()
+    const newRowUuid = newUuid()
     await this.sendMessage({
-      command: metadata.ActionChangeGrid,
-      commandText: 'New grid',
-      gridUuid: metadata.UuidGrids,
-      dataSet: {
-        rowsAdded: [
-          { gridUuid: metadata.UuidGrids,
-            uuid: gridUuid,
-            displayString: 'New grid',
-            text1: 'New grid',
-            text2: 'Untitled',
-            text3: 'journal',
-            created: new Date,
-            updated: new Date } 
+      command: metadata.ActionChange,
+      commandText: 'Create new grid',
+      changes: [
+          {
+            changeType: metadata.ChangeAdd,
+            gridUuid: metadata.Grids,
+            rowUuid: newGridUuid,
+          },
+          {
+            changeType: metadata.ChangeUpdate,
+            gridUuid: metadata.Grids,
+            columnUuid: metadata.GridColumnName,
+            rowUuid: newGridUuid,
+            changeValue: 'New grid',
+          },
+          {
+            changeType: metadata.ChangeUpdate,
+            gridUuid: metadata.Grids,
+            columnUuid: metadata.GridColumnDesc,
+            rowUuid: newGridUuid,
+            changeValue: 'Untitled',
+          },
+          {
+            changeType: metadata.ChangeAdd,
+            gridUuid: metadata.Columns,
+            rowUuid: newColumnUuid,
+          },
+          {
+            changeType: metadata.ChangeUpdate,
+            gridUuid: metadata.Columns,
+            columnUuid: metadata.ColumnColumnOrder,
+            rowUuid: newColumnUuid,
+            changeValue: 'a',
+          },
+          {
+            changeType: metadata.ChangeUpdate,
+            gridUuid: metadata.Columns,
+            columnUuid: metadata.ColumnColumnName,
+            rowUuid: newColumnUuid,
+            changeValue: 'New column',
+          },
+          {
+            changeType: metadata.ChangeAddReference,
+            gridUuid: metadata.Columns,
+            columnUuid: metadata.ColumnColumnColumnType,
+            rowUuid: newColumnUuid,
+            changeValue: metadata.TextColumnType,
+          },
+          {
+            changeType: metadata.ChangeAdd,
+            gridUuid: newGridUuid,
+            rowUuid: newRowUuid,
+          },
+          {
+            changeType: metadata.ChangeLoad,
+            gridUuid: metadata.Grids,
+            rowUuid: newGridUuid,
+          }
         ]
-      }
     })
-    this.navigateToGrid(gridUuid, "")
   }
 
   addReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
@@ -293,9 +337,9 @@ export class Context extends ContextBase {
     async (grid: GridType) => {
       this.sendMessage(
         {
-          command: metadata.ActionChangeGrid,
+          command: metadata.ActionChange,
           commandText: 'Update grid',
-          gridUuid: metadata.UuidGrids,
+          gridUuid: metadata.Grids,
           dataSet: { rowsEdited: [grid] }
         }
       )
@@ -309,10 +353,10 @@ export class Context extends ContextBase {
         {
           command: metadata.ActionChangeGrid,
           commandText: 'Update column',
-          gridUuid: metadata.UuidColumns,
+          gridUuid: metadata.Columns,
           dataSet: {
             rowsEdited: [
-              { gridUuid: metadata.UuidColumns,
+              { gridUuid: metadata.Columns,
                 uuid: column.uuid,
                 text1: column.label,
                 text2: column.name,
@@ -411,7 +455,7 @@ export class Context extends ContextBase {
       }
     } else if(this.user.checkLocalToken()) {
       if(reply.status == metadata.SuccessStatus) {
-        if(reply.command == metadata.ActionLoad) {
+        if(reply.command == metadata.ActionLoad || reply.command == metadata.ActionChange) {
           if(reply.dataSet && reply.dataSet.grid) {
             if(reply.rowUuid) console.log(`Load single row from ${reply.dataSet.grid.uuid} ${reply.dataSet.grid.name}`)
             else console.log(`Load grid ${reply.dataSet.grid.uuid} ${reply.dataSet.grid.name}`)
@@ -439,7 +483,7 @@ export class Context extends ContextBase {
               this.focus.set(reply.dataSet.grid, undefined, undefined)
             }
           }
-        } else if(reply.command == metadata.ActionLocateGrid) {
+        } else if(reply.command == metadata.ActionLocate) {
           this.locateGrid(reply.gridUuid, reply.columnUuid, reply.rowUuid)
         }
       }

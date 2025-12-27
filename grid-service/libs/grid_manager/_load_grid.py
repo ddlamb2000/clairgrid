@@ -29,11 +29,10 @@ def _load_grid(self, gridUuid, loadReferenceGrid = True):
                 print(f"New grid: {grid}")
                 self.allGrids[gridUuid] = grid
             else:
-                print(f"👍🏻 Grid already in memory: {gridUuid} {result[0]}")
+                print(f"👍🏻 {grid} already in memory")
             self._load_columns(grid, loadReferenceGrid)
             print(f"Grid loaded: {grid}")
             return grid
     except Exception as e:
         print(f"❌ Error loading grid {gridUuid}: {e}")
         raise e
-

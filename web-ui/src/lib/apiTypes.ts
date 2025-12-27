@@ -20,7 +20,15 @@ export interface RequestType {
   columnUuid?: string
   timeOut?: boolean
   dateTime?: string
-  dataSet?: GridPost
+  changes?: ChangeType[]
+}
+
+export interface ChangeType {
+  changeType: string
+  gridUuid?: string
+  rowUuid?: string
+  columnUuid?: string
+  changeValue?: any
 }
 
 export interface ReplyType {

@@ -20,7 +20,7 @@ class GridManager(BaseManager):
     from ._load_grid import _load_grid
     from ._load_columns import _load_columns
     from ._load_rows import _load_rows
-    from .handle_change_grid import handle_change_grid
-    from .handle_locate_grid import handle_locate_grid
+    from .handle_change import handle_change
+    from .handle_locate import handle_locate
     from .handle_prompt import handle_prompt
 

@@ -150,7 +150,7 @@ export const sendMessage = async (request: any) => {
   console.log(`📩 api`, requestText)
   const requestChannel = requestChannels.get(request.dbName)
   const requestQueueName = request.command === metadata.ActionAuthentication ? getRequestAuthenticationQueueName(request.dbName) :
-                            request.command === metadata.ActionLocateGrid ? getRequestLocateQueueName(request.dbName) :
+                            request.command === metadata.ActionLocate ? getRequestLocateQueueName(request.dbName) :
                             getRequestQueueName(request.dbName)
   if (!requestChannel) {
     console.error(`send: no request channel for db ${request.dbName}`)

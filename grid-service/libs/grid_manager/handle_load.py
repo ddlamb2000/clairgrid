@@ -19,7 +19,7 @@ def handle_load(self, request):
         if not grid:
             grid = self._load_grid(gridUuid)
             if not grid:
-                print(f"⚠️ Grid not found: {gridUuid}")
+                print(f"⚠️ Grid {gridUuid} not found")
                 return {
                     "status": metadata.FailedStatus,
                     "message": "Grid not found",
@@ -28,7 +28,7 @@ def handle_load(self, request):
             print(f"Grid added to memory: {gridUuid} {grid.name}")
             self._load_rows(grid)
         else:
-            print(f"👍🏻 Grid already in memory: {gridUuid} {grid.name}")
+            print(f"👍🏻 {grid} already in memory")
     except Exception as e:
         print(f"❌ Error loading grid {gridUuid}: {e}")
         return {
