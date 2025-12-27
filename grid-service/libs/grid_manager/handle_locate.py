@@ -9,5 +9,7 @@ def handle_locate(self, request):
         "status": metadata.SuccessStatus,
         "gridUuid": request.get('gridUuid'),
         "columnUuid": request.get('columnUuid'),
-        "rowUuid": request.get('rowUuid')
+        "rowUuid": request.get('rowUuid'),
+        "userUuid": request.get('userUuid'),
+        "user": request.get('user')
     }

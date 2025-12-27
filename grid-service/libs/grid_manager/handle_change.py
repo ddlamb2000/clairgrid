@@ -18,20 +18,24 @@ def _get_grid_column_row(self, gridUuid, columnUuid = None, rowUuid = None):
             else: row = None
     return grid, column, row
 
-def _add_row(self, gridUuid, grid, rowUuid):
+def _add_row(self, request, gridUuid, grid, rowUuid):
     print(f"✏️ Add row {rowUuid} in grid {grid}")
     if not gridUuid or not grid:
         print(f"❌ No grid provided for update")
         return {
             "status": metadata.FailedStatus,
-            "message": "No grid provided for update"
+            "message": "No grid provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         } 
 
     if not rowUuid:
         print(f"❌ No row UUID provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No row UUID provided for update"
+            "message": "No row UUID provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     newItem = []
@@ -54,34 +58,42 @@ def _add_row(self, gridUuid, grid, rowUuid):
         self.allRows[rowUuid] = { }
         print(f"✅ New grid added to memory: {grid}")        
 
-def _update_row(self, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):
+def _update_row(self, request, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):
     print(f"✏️ Update row {row} in grid {grid} for column {column} with value '{changeValue}'")
     if not gridUuid or not grid:
         print(f"❌ No grid provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No grid provided for update"
+            "message": "No grid provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }                
 
     if not columnUuid or not column:
         print(f"❌ No column provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No column provided for update"
+            "message": "No column provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     if str(column.typeUuid) == SystemIds.ReferenceColumnType:
         print(f"❌ Column {column} is a reference column, not supported for update")
         return {
             "status": metadata.FailedStatus,
-            "message": "Column is a reference column, not supported for update"
+            "message": "Column is a reference column, not supported for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     if not rowUuid or not row:
         print(f"❌ No row provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No row provided for update"
+            "message": "No row provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     row.values[column.index] = changeValue
@@ -96,41 +108,51 @@ def _update_row(self, gridUuid, grid, columnUuid, column, rowUuid, row, changeVa
             relatedGrid.description = changeValue
         print(f"✅ Grid updated: {grid}")
 
-def _add_relationship(self, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):
+def _add_relationship(self, request, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):
     print(f"✏️ Add relationship for row {row} in grid {grid} for column {column} with value '{changeValue}'")
     if not gridUuid or not grid:
         print(f"❌ No grid provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No grid provided for update"
+            "message": "No grid provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }                
 
     if not columnUuid or not column:
         print(f"❌ No column provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No column provided for update"
+            "message": "No column provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     if str(column.typeUuid) != SystemIds.ReferenceColumnType:
         print(f"❌ Column {column} is not a reference column, not supported for update")
         return {
             "status": metadata.FailedStatus,
-            "message": "Column is not a reference column, not supported for update"
+            "message": "Column is not a reference column, not supported for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     if not rowUuid or not row:
         print(f"❌ No row provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No row provided for update"
+            "message": "No row provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     if not changeValue:
         print(f"❌ No change value provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No change value provided for update"
+            "message": "No change value provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     referenceUuid = changeValue.get('uuid')
@@ -138,7 +160,9 @@ def _add_relationship(self, gridUuid, grid, columnUuid, column, rowUuid, row, ch
         print(f"❌ No reference UUID provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No reference UUID provided for update"
+            "message": "No reference UUID provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     referenceValues = changeValue.get('values')
@@ -146,7 +170,9 @@ def _add_relationship(self, gridUuid, grid, columnUuid, column, rowUuid, row, ch
         print(f"❌ No reference values provided")
         return {
             "status": metadata.FailedStatus,
-            "message": "No reference values provided for update"
+            "message": "No reference values provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     print(f"🔍 Reference values: {referenceValues}")
@@ -155,7 +181,7 @@ def _add_relationship(self, gridUuid, grid, columnUuid, column, rowUuid, row, ch
     row.values[column.index] += [referenceRow.to_json()]
     print(f"✅ Relationship added: {row}")
 
-def _remove_relationship(self, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):  
+def _remove_relationship(self, request, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):  
     print(f"✏️ Remove relationship for row {row} in grid {grid} for column {column} with value '{changeValue}'")
 
 @echo
@@ -169,16 +195,16 @@ def handle_change(self, request):
             rowUuid = change.get('rowUuid')
             (grid, column, row) = self._get_grid_column_row(change.get('gridUuid'), change.get('columnUuid'), change.get('rowUuid'))
             if changeType == metadata.ChangeAdd:
-                error = self._add_row(gridUuid, grid, rowUuid)
+                error = self._add_row(request, gridUuid, grid, rowUuid)
                 if error: return error
             elif changeType == metadata.ChangeUpdate:
-                error = self._update_row(gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
+                error = self._update_row(request, gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
                 if error: return error
             elif changeType == metadata.ChangeAddRelationship:
-                error = self._add_relationship(gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
+                error = self._add_relationship(request, gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
                 if error: return error
             elif changeType == metadata.ChangeRemoveRelationship:
-                error = self._remove_relationship(gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
+                error = self._remove_relationship(request, gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
                 if error: return error
             elif changeType == metadata.ChangeLoad:
                 print(f"⚙️ Load: {change}")
@@ -190,19 +216,27 @@ def handle_change(self, request):
                     return {
                         "status": metadata.SuccessStatus,
                         "message": f"'{grid.name}' loaded",
-                        "dataSet": dataSet
+                        "dataSet": dataSet,
+                        "userUuid": request.get('userUuid'),
+                        "user": request.get('user')
                     }
                 else:
                     return {
                         "status": metadata.FailedStatus,
-                        "message": f"Grid {gridUuid} not found"
+                        "message": f"Grid {gridUuid} not found",
+                        "userUuid": request.get('userUuid'),
+                        "user": request.get('user')
                     }
         return {
-            "status": metadata.SuccessStatus
+            "status": metadata.SuccessStatus,
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
     except Exception as e:
         report_exception(e, f"Error handling change")
         return {
             "status": metadata.FailedStatus,
-            "message": "Error handling change: " + str(e)
+            "message": "Error handling change: " + str(e),
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }

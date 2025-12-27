@@ -28,7 +28,8 @@ export class Context extends ContextBase {
         command: metadata.ActionAuthentication,
         commandText: `Login ${loginId}`,
         loginId: loginId,
-        passwordHash: btoa(loginPassword)
+        passwordHash: btoa(loginPassword),
+        user: loginId
       }
     )
   }
@@ -38,7 +39,9 @@ export class Context extends ContextBase {
       command: metadata.ActionLoad,
       commandText: "Load " + (this.rowUuid !== "" ? "row" : "grid"),
       gridUuid: this.gridUuid,
-      rowUuid: this.rowUuid !== undefined ? this.rowUuid : undefined
+      rowUuid: this.rowUuid !== undefined ? this.rowUuid : undefined,
+      userUuid: this.user.getUserUuid(),
+      user: this.user.getUser()
     })
   }
 
@@ -52,7 +55,9 @@ export class Context extends ContextBase {
           commandText: `Locate in '${grid.name}'`,
           gridUuid: grid.uuid,
           columnUuid: column !== undefined ? column.uuid : undefined,
-          rowUuid: row !== undefined ? row.uuid : undefined
+          rowUuid: row !== undefined ? row.uuid : undefined,
+          userUuid: this.user.getUserUuid(),
+          user: this.user.getUser(),
         }
       )
     }
@@ -84,6 +89,8 @@ export class Context extends ContextBase {
         {
           command: metadata.ActionChange,
           commandText: `Update '${row.displayString}' in '${set.grid.name}' for column '${column.name}'`,
+          userUuid: this.user.getUserUuid(),
+          user: this.user.getUser(),
           changes: [
               {
                 changeType: metadata.ChangeUpdate,
@@ -176,6 +183,8 @@ export class Context extends ContextBase {
         command: metadata.ActionChange,
         commandText: `Add column '${columnName}' in '${set.grid.name}'`,
         gridUuid: metadata.Columns,
+        userUuid: this.user.getUserUuid(),
+        user: this.user.getUser(),
         dataSet: { rowsAdded: rowsAdded, referencedValuesAdded: referencedValuesAdded }
       })
     }
@@ -189,6 +198,8 @@ export class Context extends ContextBase {
         command: metadata.ActionChangeGrid,
         commandText: 'Remove column',
         gridUuid: metadata.Columns,
+        userUuid: this.user.getUserUuid(),
+        user: this.user.getUser(),
         dataSet: {
           rowsDeleted: [
             { gridUuid: metadata.ColumnTypes,
@@ -218,6 +229,8 @@ export class Context extends ContextBase {
     return this.sendMessage({
       command: metadata.ActionChange,
       commandText: `Add row in '${set.grid.name}'`,
+      userUuid: this.user.getUserUuid(),
+      user: this.user.getUser(),
       changes: [
         {
           changeType: metadata.ChangeAdd,
@@ -238,6 +251,8 @@ export class Context extends ContextBase {
         command: metadata.ActionChange,
         commandText: `Remove row '${row.displayString}' in '${set.grid.name}'`,
         gridUuid: set.grid.uuid,
+        userUuid: this.user.getUserUuid(),
+        user: this.user.getUser(),
         dataSet: { rowsDeleted: [deletedRow] }
       })
     }
@@ -252,6 +267,8 @@ export class Context extends ContextBase {
     await this.sendMessage({
       command: metadata.ActionChange,
       commandText: `Create new grid with name 'New grid' and description 'Untitled' with column 'New column' of type 'Text'`,
+      userUuid: this.user.getUserUuid(),
+      user: this.user.getUser(),
       changes: [
           {
             changeType: metadata.ChangeAdd,
@@ -329,6 +346,8 @@ export class Context extends ContextBase {
     await this.sendMessage({
       command: metadata.ActionChange,
       commandText: `Add relationship in ${set.grid.name} from ${row.displayString} to ${rowPrompt.displayString} in column ${column.name}`,
+      userUuid: this.user.getUserUuid(),
+      user: this.user.getUser(),
       changes: [
           {
             changeType: metadata.ChangeAddRelationship,
@@ -351,6 +370,8 @@ export class Context extends ContextBase {
       command: metadata.ActionChangeGrid,
       commandText: `Remove relationship in ${set.grid.name} from ${row.displayString} to ${rowPrompt.displayString} in column ${column.name}`,
       gridUuid: set.grid.uuid,
+      userUuid: this.user.getUserUuid(),
+      user: this.user.getUser(),
       dataSet: {
         referencedValuesRemoved: [
           { columnName: column.name,
@@ -369,6 +390,8 @@ export class Context extends ContextBase {
           command: metadata.ActionChange,
           commandText: 'Update grid',
           gridUuid: metadata.Grids,
+          userUuid: this.user.getUserUuid(),
+          user: this.user.getUser(),
           dataSet: { rowsEdited: [grid] }
         }
       )
@@ -383,6 +406,8 @@ export class Context extends ContextBase {
           command: metadata.ActionChangeGrid,
           commandText: 'Update column',
           gridUuid: metadata.Columns,
+          userUuid: this.user.getUserUuid(),
+          user: this.user.getUser(),
           dataSet: {
             rowsEdited: [
               { gridUuid: metadata.Columns,
@@ -431,7 +456,9 @@ export class Context extends ContextBase {
     this.sendMessage(
       {
         command: metadata.ActionPrompt,
-        commandText: prompt
+        commandText: prompt,
+        userUuid: this.user.getUserUuid(),
+        user: this.user.getUser(),
       }
     )
   }
@@ -502,6 +529,8 @@ export class Context extends ContextBase {
                     this.sendMessage({
                       command: metadata.ActionLoad,
                       commandText: "Load usage grid",
+                      userUuid: this.user.getUserUuid(),
+                      user: this.user.getUser(),
                       gridUuid: usage.grid.uuid
                     })
                   }

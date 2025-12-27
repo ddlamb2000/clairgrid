@@ -53,7 +53,9 @@ export class ContextBase {
         contextUuid: request.contextUuid,
         command: request.command,
         commandText: request.commandText,
-        dateTime: (new Date).toISOString()
+        dateTime: (new Date).toISOString(),
+        userUuid: request.userUuid,
+        user: request.user
       })
       const uri = `/${this.dbName}/${this.#contextUuid}/send`
       this.messageStatus = 'Sending'

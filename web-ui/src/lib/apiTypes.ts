@@ -43,6 +43,8 @@ export interface ReplyType {
   dbName?: string
 	jwt?: string
   requestInitiatedOn?: string
+  userUuid?: string
+  user?: string
   gridUuid?: string
   rowUuid?: string
   columnUuid?: string

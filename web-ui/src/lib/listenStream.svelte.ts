@@ -123,7 +123,9 @@ export class ListenStream {
                   status: json.status,
                   sameContext: json.contextUuid === this.context.getContextUuid(),
                   elapsedMs: elapsedMs,
-                  dateTime: (new Date).toISOString()
+                  dateTime: (new Date).toISOString(),
+                  userUuid: json.userUuid,
+                  user: json.user
                 })
                 await this.context.handleAction(json)
               } else {

@@ -26,7 +26,9 @@ def handle_load(self, request):
     if not gridUuid:
         return {
             "status": metadata.FailedStatus,
-            "message": "No grid UUID provided"
+            "message": "No grid UUID provided",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     grid = None
@@ -36,13 +38,17 @@ def handle_load(self, request):
         report_exception(e, f"Error loading grid {gridUuid}")
         return {
             "status": metadata.FailedStatus,
-            "message": "Error loading grid: " + str(e)
+            "message": "Error loading grid: " + str(e),
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     if not grid:
         return {
             "status": metadata.FailedStatus,
-            "message": f"Grid {gridUuid} not found"
+            "message": f"Grid {gridUuid} not found",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
         }
 
     dataSet = {
@@ -69,5 +75,7 @@ def handle_load(self, request):
     return {
         "status": metadata.SuccessStatus,
         "message": f"'{grid.name}' loaded",
-        "dataSet": dataSet
+        "dataSet": dataSet,
+        "userUuid": request.get('userUuid'),
+        "user": request.get('user')
     }

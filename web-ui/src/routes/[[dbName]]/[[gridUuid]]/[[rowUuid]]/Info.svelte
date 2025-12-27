@@ -30,6 +30,11 @@
                   {:else}
                     <Spinner size={4} />
                   {/if}
+                  {#if message.request.user !== undefined}
+                    <Badge color="purple" class="ms-1 px-2.5 py-0.5">
+                      <span class="text-gray-600">{message.request.user}</span>
+                    </Badge>
+                  {/if}
                   {#if message.request && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} showDate={false}/>{/if}
                   <span class="text-gray-500 ms-1">{message.request.requestUuid}</span>
                 </p>
@@ -56,6 +61,11 @@
                   {:else}
                     <Badge color="red" class="px-2.5 py-0.5">
                       {#if message.reply.commandText}{message.reply.commandText}: {message.reply.message}{/if}
+                    </Badge>
+                  {/if}
+                  {#if message.reply.user !== undefined}
+                    <Badge color="purple" class="ms-1 px-2.5 py-0.5">
+                      <span class="text-gray-600">{message.reply.user}</span>
                     </Badge>
                   {/if}
                   {#if message.reply.elapsedMs > 0}
