@@ -121,6 +121,12 @@
             "revision": 1
         },
         {
+            "uuid_metadata": "GridColumnOwner",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1
+        },
+        {
             "uuid_metadata": "UserColumnId",
             "griduuid_metadata": "Columns",
             "enabled": true,
@@ -343,6 +349,12 @@
             "text1": "Access level"
         },
         {
+            "uuid_metadata": "GridColumnOwner",
+            "partition": 0,
+            "text0": "e",
+            "text1": "Owner"
+        },
+        {
             "uuid_metadata": "UuidColumnType",
             "partition": 0,
             "text0": "UUID",
@@ -446,6 +458,11 @@
             "int0": 1
         },
         {
+            "uuid_metadata": "GridColumnOwner",
+            "partition": 0,
+            "int0": 2
+        },
+        {
             "uuid_metadata": "UserColumnId",
             "partition": 0,
             "int0": 0
@@ -471,7 +488,9 @@
             "uuid": "f686333a-fa92-4c05-8c7a-0e55b5d9af37",
             "partition": 0,
             "fromuuid_metadata": "Columns",
-            "touuid0_metadata": "ColumnColumnOrder"
+            "touuid0_metadata": "ColumnColumnOrder",
+            "touuid1_metadata": "AccessLevelWriteAccess",
+            "touuid2_metadata": "RootUser"
         },
         {
             "uuid": "c4c681ef-a968-48ca-a051-191c1853f09f",
@@ -507,7 +526,9 @@
             "uuid": "c1bc176c-406a-414f-8b21-b043d2d3189a",
             "partition": 0,
             "fromuuid_metadata": "Grids",
-            "touuid0_metadata": "GridColumnName"
+            "touuid0_metadata": "GridColumnName",
+            "touuid1_metadata": "AccessLevelWriteAccess",
+            "touuid2_metadata": "RootUser"
         },
         {
             "uuid": "d21a5f6e-e7b8-4280-9705-852dd5917e84",
@@ -528,11 +549,18 @@
             "touuid0_metadata": "GridColumnAccessLevel"
         },
         {
+            "uuid": "b47115a3-0fcc-411f-adac-f39c80df677c",
+            "partition": 0,
+            "fromuuid_metadata": "Grids",
+            "touuid0_metadata": "GridColumnOwner"
+        },
+        {
             "uuid": "0e62fcc8-0134-4ad1-8e95-a391b9ccca80",
             "partition": 0,
             "fromuuid_metadata": "ColumnTypes",
             "touuid0_metadata": "ColumnTypeColumnName",
-            "touuid1_metadata": "AccessLevelReadAccess"
+            "touuid1_metadata": "AccessLevelReadAccess",
+            "touuid2_metadata": "RootUser"
         },
         {
             "uuid": "d0ab74b6-b16f-4977-85c0-45a78654e271",
@@ -545,13 +573,15 @@
             "partition": 0,
             "fromuuid_metadata": "AccessLevels",
             "touuid0_metadata": "AccessLevelColumnLevel",
-            "touuid1_metadata": "AccessLevelReadAccess"
+            "touuid1_metadata": "AccessLevelReadAccess",
+            "touuid2_metadata": "RootUser"
         },
         {
             "uuid": "0be4456d-6c0d-4c84-859e-715325c6927c",
             "partition": 0,
             "fromuuid_metadata": "Users",
-            "touuid0_metadata": "UserColumnId"
+            "touuid0_metadata": "UserColumnId",
+            "touuid2_metadata": "RootUser"
         },
         {
             "uuid": "8d910205-1579-4599-9ef3-76bf8a86b755",
@@ -634,6 +664,13 @@
             "fromuuid_metadata": "GridColumnAccessLevel",
             "touuid0_metadata": "ReferenceColumnType",
             "touuid1_metadata": "AccessLevels"
+        },
+        {
+            "uuid": "9cdf9e69-b4fe-4b85-b3d5-06d29d18354f",
+            "partition": 0,
+            "fromuuid_metadata": "GridColumnOwner",
+            "touuid0_metadata": "ReferenceColumnType",
+            "touuid1_metadata": "Users"
         },
         {
             "uuid": "1b17bd43-ba99-4b6d-a458-79cee1916c29",

@@ -13,6 +13,7 @@ class SystemIdsMapping:
             "GridColumnDesc": "bc1c489d-40c3-441c-9257-c8717be290cd",
             "GridColumnColumns": "e91060d9-2887-424e-b8a1-72650cdaafb3",
             "GridColumnAccessLevel": "7806212a-a354-4bba-9ad2-6bf5bb8a98d8",
+            "GridColumnOwner": "6dd6b2d2-cfc1-45d0-af47-7758db711e56",
 
             "Columns": "533b6862-add3-4fef-8f93-20a17aaaaf5a",
             "ColumnColumnOrder": "808963d8-dced-4640-8310-00bda0c5faf4",
