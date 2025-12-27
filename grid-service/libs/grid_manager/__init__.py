@@ -21,10 +21,10 @@ class GridManager(BaseManager):
     from ._load_rows import _load_rows
     from .handle_load import handle_load
     from .handle_change import handle_change
-    from .handle_change import _get_grid_column_row
-    from .handle_change import _add_row
-    from .handle_change import _update_row
-    from .handle_change import _add_relationship
-    from .handle_change import _remove_relationship
+    from ._get_grid_column_row import _get_grid_column_row
+    from ._add_row import _add_row
+    from ._update_row import _update_row
+    from ._add_relationship import _add_relationship
+    from ._remove_relationship import _remove_relationship
     from .handle_locate import handle_locate
     from .handle_prompt import handle_prompt
