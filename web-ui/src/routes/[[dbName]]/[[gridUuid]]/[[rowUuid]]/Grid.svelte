@@ -36,7 +36,7 @@
             <tr>
               <th class="sticky -top-0.5 py-1 ">
                 {#if !set.grid.columns || set.grid.columns.length === 0}
-                  <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.gridUuid + " dark:text-white"} />
+                  <Icon.DotsVerticalOutline class={"mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 first-column-menu-" + set.gridUuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.gridUuid}>
                     <li class="p-0.5">
                       <PromptColumnType {context} {set} referenceGridUuid={metadata.ColumnTypes}
@@ -54,7 +54,7 @@
                       <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
                         bind:innerHTML={context.dataSets[setIndex].grid.columns[column.index].name}></span>
                     {/if}
-                    <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 column-menu-" + set.gridUuid + "-" + column.uuid + " dark:text-white"} />
+                    <Icon.DotsVerticalOutline class={"mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 column-menu-" + set.gridUuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.gridUuid + "-" + column.uuid}>
                       {#if column.index === set.grid.columns.length - 1}
                         <li class="p-1">
@@ -84,15 +84,15 @@
                     {#if gridUuid === metadata.Grids}
                       <a href={"/" + context.dbName + "/" + row.uuid}
                           onclick={ () => context.navigateToGrid(row.uuid) }>
-                        <Icon.ArrowUpRightFromSquareOutline class="text-green-500 hover:text-green-900" />
+                        <Icon.ForwardOutline class="mt-0.5 shrink-0 h-4 w-4text-green-500 hover:text-green-900" />
                       </a>
                     {:else}
                       <a href={"/" + context.dbName + "/" + gridUuid + "/" + row.uuid}
                           onclick={ () => context.navigateToGrid(gridUuid, row.uuid) }>
-                        <Icon.ArrowUpRightFromSquareOutline class="text-blue-500 hover:text-blue-900" />
+                        <Icon.ForwardOutline class="mt-0.5 shrink-0 h-4 w-4 text-blue-500 hover:text-blue-900" />
                       </a>
                     {/if}
-                    <Icon.DotsVerticalOutline class={"text-gray-300 hover:text-gray-900 row-menu-" + row.uuid}/>
+                    <Icon.DotsVerticalOutline class={"mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
                       <li class="p-1">
                         <a href="#top"  role="menuitem"
@@ -124,7 +124,7 @@
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, row, column)}>
                           <Icon.CheckCircleOutline
-                                color={context.dataSets[setIndex].rows[rowIndex].values[column.index] ? "" : "lightgray"} />
+                                color={context.dataSets[setIndex].rows[rowIndex].values[column.index] ? "" : "lightgray"} class="mt-0.5 shrink-0 h-4 w-4" />
                         </a>
                       </td>
                     {:else if column.typeUuid === metadata.ReferenceColumnType}
@@ -145,7 +145,7 @@
             <tr>
               <th>
                 <span class="flex">
-                  <a href="#top" onclick={() => context.addRow(context.dataSets[setIndex])}><Icon.CirclePlusOutline /></a>
+                  <a href="#top" onclick={() => context.addRow(context.dataSets[setIndex])}><Icon.CirclePlusOutline class="mt-0.5 shrink-0 h-4 w-4" /></a>
                 </span>
               </th>
               <th class="py-1 border border-slate-200 bg-gray-100" colspan="99">

@@ -16,7 +16,7 @@
         {#key message.request.requestUuid}
           <li>
             <span class="flex">
-              <Icon.AnnotationOutline class="w-4 h-4" />
+              <Icon.AnnotationOutline class="shrink-0 h-4 w-4" />
               <div class="ps-2 text-xs font-normal">
                 <p class="mb-0.5">
                   {#if message.request.commandText}
@@ -25,7 +25,7 @@
                     </Badge>
                   {/if}
                   {#if message.request.timeOut}
-                    <Icon.ClockOutline class="inline-flex text-red-700" />
+                    <Icon.ClockOutline class="shrink-0 h-4 w-4 inline-flex text-red-700" />
                     <span class="text-red-700">No response</span>
                   {:else}
                     <Spinner size={4} />
@@ -42,9 +42,9 @@
           <li>
             <span class="flex">
               {#if message.reply.sameContext}
-                <span class="flex"><Icon.CodePullRequestOutline color={message.reply.status === metadata.SuccessStatus ? "green" : "red"} class="w-4 h-4" /></span>
+                <span class="flex"><Icon.CodePullRequestOutline color={message.reply.status === metadata.SuccessStatus ? "green" : "red"} class="shrink-0 h-4 w-4" /></span>
               {:else}
-                <Icon.DownloadOutline color={message.reply.status === metadata.SuccessStatus ? "orange" : "red"} class="w-4 h-4" />
+                <Icon.DownloadOutline color={message.reply.status === metadata.SuccessStatus ? "orange" : "red"} class="shrink-0 h-4 w-4" />
               {/if}
               <div class="ps-2 text-xs font-normal">
                 <p class="mb-0.5">

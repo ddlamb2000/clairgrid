@@ -27,7 +27,7 @@
         <li class="p-1">
           <a href="#top" class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
               onclick={(e) => {e.stopPropagation(); context.removeReferencedValue(set, column, row, reference)}}>
-            <Icon.CloseCircleOutline class="me-1" color="lightgray" />
+            <Icon.CloseCircleOutline class="mt-0.5 shrink-0 h-4 w-4 me-1" color="red" />
             <Badge color="dark" class="px-1 text-sm/4 font-light">
               {reference.displayString}
             </Badge>
@@ -45,7 +45,7 @@
                   <li class="p-1">
                     <a href="#top" role="menuitem" class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
                         onclick={(e) => {e.stopPropagation(); context.addReferencedValue(set, column, row, rowPrompt)}}>
-                      <Icon.CirclePlusOutline class="me-1" />
+                      <Icon.CirclePlusOutline class="mt-0.5 shrink-0 h-4 w-4 me-1" />
                       <Badge color="dark" class="px-1 text-sm/4 font-light">
                         {rowPrompt.displayString}
                       </Badge>
