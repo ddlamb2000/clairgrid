@@ -1,6 +1,7 @@
 from .. import metadata
 from ..metadata import SystemIds
 from ..model.grid import Grid
+from ..model.column import Column
 from ..model.row import Row, ReferenceRow
 from ..utils.decorators import echo
 from ..authentication.jwt_decorator import validate_jwt
@@ -11,7 +12,8 @@ def _get_grid_column_row(self, gridUuid, columnUuid = None, rowUuid = None):
     grid, column, row = None, None, None
     if gridUuid:
         grid = _get_grid(self, gridUuid)
-        if grid and columnUuid: column = grid.get_column_by_uuid(columnUuid)
+        if grid and columnUuid:
+            column = grid.get_column_by_uuid(columnUuid)
         if grid and rowUuid:
             rows = self.allRows[gridUuid]
             if rows: row = rows.get(rowUuid)
@@ -48,8 +50,10 @@ def _add_row(self, request, gridUuid, grid, rowUuid):
             newItem.append("")
 
     row = Row(grid, uuid = rowUuid, revision = 1, values = newItem)
-    self.allRows[grid.uuid][rowUuid] = row
-    print(f"✅ Row added: {row}")
+    print(f"self.allRows: {self.allRows[gridUuid]}")
+    self.allRows[str(gridUuid)][str(rowUuid)] = row
+    print(f"self.allRows: {self.allRows[gridUuid]}")
+    print(f"✅ {row} added to grid {grid}")
 
     if gridUuid == SystemIds.Grids:
         print(f"Creating new grid in memory with uuid {rowUuid}")
@@ -179,6 +183,24 @@ def _add_relationship(self, request, gridUuid, grid, columnUuid, column, rowUuid
     row.values[column.index] += [referenceRow.to_json()]
     print(f"✅ Relationship added: {row}")
 
+    if gridUuid == SystemIds.Grids and columnUuid == SystemIds.GridColumnColumns:
+        print(f"Updating columns usage for grid {grid}")
+        (relatedGrid, relatedColumn, relatedRow) = self._get_grid_column_row(rowUuid)
+        (relatedColumnGrid, relatedColumnColumn, relatedColumnRow) = self._get_grid_column_row(SystemIds.Columns, None, referenceUuid)
+        if relatedGrid and relatedColumnRow:
+            columnType = relatedColumnRow.values[2]
+            typeUuid = columnType[0].get('uuid')
+            column = Column(referenceUuid,
+                    index = 0,
+                    fieldIndex = 0,
+                    order = relatedColumnRow.values[0],
+                    name = relatedColumnRow.values[1],
+                    typeUuid = typeUuid,
+                    columnIndex = relatedColumnRow.values[3],
+                    display = relatedColumnRow.values[5])
+
+            relatedGrid.columns.append(column)
+
 def _remove_relationship(self, request, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):  
     print(f"✏️ Remove relationship for row {row} in grid {grid} for column {column} with value '{changeValue}'")
     if not gridUuid or not grid:
@@ -264,32 +286,19 @@ def handle_change(self, request):
                 error = self._remove_relationship(request, gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
                 if error: return error
             elif changeType == metadata.ChangeLoad:
-                print(f"⚙️ Load: {change}")
-                if grid:
-                    return {
-                        "status": metadata.SuccessStatus,
-                        "message": f"'{grid.name}' loaded",
-                        "userUuid": request.get('userUuid'),
-                        "user": request.get('user'),
-                        "dataSet": {
-                            "gridUuid": str(grid.uuid),
-                            "grid": grid.to_json()
-                        }
-                    }
-                else:
-                    return {
-                        "status": metadata.FailedStatus,
-                        "message": f"Grid {gridUuid} not found",
-                        "userUuid": request.get('userUuid'),
-                        "user": request.get('user')
-                    }
+                return self.handle_load({
+                    "gridUuid": gridUuid,
+                    "userUuid": request.get('userUuid'),
+                    "user": request.get('user'),
+                    "jwt": request.get('jwt')
+                })
 
         return {
             "status": metadata.SuccessStatus,
             "userUuid": request.get('userUuid'),
             "user": request.get('user')
         }
-        
+
     except Exception as e:
         report_exception(e, f"Error handling change")
         return {
