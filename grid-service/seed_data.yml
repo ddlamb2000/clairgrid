@@ -19,6 +19,12 @@
             "revision": 1
         },
         {
+            "uuid_metadata": "AccessLevels",
+            "griduuid_metadata": "Grids",
+            "enabled": true,
+            "revision": 1
+        },
+        {
             "uuid_metadata": "Users",
             "griduuid_metadata": "Grids",
             "enabled": true,
@@ -86,6 +92,30 @@
         },
         {
             "uuid_metadata": "ColumnTypeColumnDesc",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1
+        },
+        {
+            "uuid_metadata": "AccessLevelColumnLevel",
+            "griduuid_metadata": "Columns",
+            "enabled": true,
+            "revision": 1
+        },
+        {
+            "uuid_metadata": "AccessLevelReadAccess",
+            "griduuid_metadata": "AccessLevels",
+            "enabled": true,
+            "revision": 1
+        },
+        {
+            "uuid_metadata": "AccessLevelWriteAccess",
+            "griduuid_metadata": "AccessLevels",
+            "enabled": true,
+            "revision": 1
+        },
+        {
+            "uuid_metadata": "GridColumnAccessLevel",
             "griduuid_metadata": "Columns",
             "enabled": true,
             "revision": 1
@@ -175,6 +205,22 @@
             "partition": 0,
             "text0": "Column Types",
             "text1": "Type of grids columns"
+        },
+        {
+            "uuid_metadata": "AccessLevels",
+            "partition": 0,
+            "text0": "Access Levels",
+            "text1": "Access levels for data grids"
+        },
+        {
+            "uuid_metadata": "AccessLevelReadAccess",
+            "partition": 0,
+            "text0": "Read access"
+        },
+        {
+            "uuid_metadata": "AccessLevelWriteAccess",
+            "partition": 0,
+            "text0": "Write access"
         },
         {
             "uuid_metadata": "Users",
@@ -285,6 +331,18 @@
             "text1": "True or false"
         },
         {
+            "uuid_metadata": "AccessLevelColumnLevel",
+            "partition": 0,
+            "text0": "a",
+            "text1": "Access level"
+        },
+        {
+            "uuid_metadata": "GridColumnAccessLevel",
+            "partition": 0,
+            "text0": "d",
+            "text1": "Access level"
+        },
+        {
             "uuid_metadata": "UuidColumnType",
             "partition": 0,
             "text0": "UUID",
@@ -378,6 +436,16 @@
             "int0": 1
         },
         {
+            "uuid_metadata": "AccessLevelColumnLevel",
+            "partition": 0,
+            "int0": 0
+        },
+        {
+            "uuid_metadata": "GridColumnAccessLevel",
+            "partition": 0,
+            "int0": 1
+        },
+        {
             "uuid_metadata": "UserColumnId",
             "partition": 0,
             "int0": 0
@@ -454,16 +522,30 @@
             "touuid0_metadata": "GridColumnColumns"
         },
         {
+            "uuid": "36e7e31b-7d06-498f-8cc3-1314d6950972",
+            "partition": 0,
+            "fromuuid_metadata": "Grids",
+            "touuid0_metadata": "GridColumnAccessLevel"
+        },
+        {
             "uuid": "0e62fcc8-0134-4ad1-8e95-a391b9ccca80",
             "partition": 0,
             "fromuuid_metadata": "ColumnTypes",
-            "touuid0_metadata": "ColumnTypeColumnName"
+            "touuid0_metadata": "ColumnTypeColumnName",
+            "touuid1_metadata": "AccessLevelReadAccess"
         },
         {
             "uuid": "d0ab74b6-b16f-4977-85c0-45a78654e271",
             "partition": 0,
             "fromuuid_metadata": "ColumnTypes",
             "touuid0_metadata": "ColumnTypeColumnDesc"
+        },
+        {
+            "uuid": "5430fcb3-c115-48ae-92b3-5d0efc3c9e2a",
+            "partition": 0,
+            "fromuuid_metadata": "AccessLevels",
+            "touuid0_metadata": "AccessLevelColumnLevel",
+            "touuid1_metadata": "AccessLevelReadAccess"
         },
         {
             "uuid": "0be4456d-6c0d-4c84-859e-715325c6927c",
@@ -547,6 +629,13 @@
             "touuid1_metadata": "Columns"
         },
         {
+            "uuid": "93a7fe75-99f5-4e39-9137-a39d51ffe20f",
+            "partition": 0,
+            "fromuuid_metadata": "GridColumnAccessLevel",
+            "touuid0_metadata": "ReferenceColumnType",
+            "touuid1_metadata": "AccessLevels"
+        },
+        {
             "uuid": "1b17bd43-ba99-4b6d-a458-79cee1916c29",
             "partition": 0,
             "fromuuid_metadata": "ColumnTypeColumnName",
@@ -557,6 +646,12 @@
             "partition": 0,
             "fromuuid_metadata": "ColumnTypeColumnDesc",
             "touuid0_metadata": "RichTextColumnType"
+        },
+        {
+            "uuid": "ee2c0e3e-14be-4b8c-9cf6-a82b700b9d50",
+            "partition": 0,
+            "fromuuid_metadata": "AccessLevelColumnLevel",
+            "touuid0_metadata": "TextColumnType"
         },
         {
             "uuid": "7890a5a7-03a4-445a-83c0-a12376803f4b",
@@ -596,6 +691,11 @@
         },
         {
             "uuid_metadata": "ColumnTypeColumnName",
+            "partition": 0,
+            "bool0": true
+        },
+        {
+            "uuid_metadata": "AccessLevelColumnLevel",
             "partition": 0,
             "bool0": true
         },

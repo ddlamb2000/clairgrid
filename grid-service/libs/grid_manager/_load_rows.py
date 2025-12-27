@@ -10,12 +10,12 @@ def _load_rows(self, grid):
     print(f"Loading rows for grid {grid.uuid}")
     self.allRows[str(grid.uuid)] = { } # dictionary of rows by uuid
     dbSelectClauses = [column.dbSelectClause for column in grid.columns]
-    dbSelectColumns = (',\n' if len(dbSelectClauses) > 1 else '') + ',\n'.join(dbSelectClauses)
+    dbSelectColumns = (',\n' if len(dbSelectClauses) > 0 else '') + ',\n'.join(dbSelectClauses)
     dbJoinClauses = ''.join(list[LiteralString](dict.fromkeys([column.dbJoinClause for column in grid.columns])))
     try:
         result = self.db_manager.select_all('''
             -- Load rows
-            SELECT rows.uuid,
+            SELECT DISTINCT rows.uuid,
             rows.revision''' + dbSelectColumns + '''
             FROM rows''' +  dbJoinClauses + '''
             -- Filter by grid uuid and enabled

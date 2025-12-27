@@ -6,12 +6,13 @@
 '''
 
 class SystemIdsMapping:
-    def __init__(self):
+    def __init__(self): 
         self._map = {
             "Grids": "f35ef7de-66e7-4e51-9a09-6ff8667da8f7",
             "GridColumnName": "e9e4a415-c31e-4383-ae70-18949d6ec692",
             "GridColumnDesc": "bc1c489d-40c3-441c-9257-c8717be290cd",
             "GridColumnColumns": "e91060d9-2887-424e-b8a1-72650cdaafb3",
+            "GridColumnAccessLevel": "7806212a-a354-4bba-9ad2-6bf5bb8a98d8",
 
             "Columns": "533b6862-add3-4fef-8f93-20a17aaaaf5a",
             "ColumnColumnOrder": "808963d8-dced-4640-8310-00bda0c5faf4",
@@ -33,6 +34,11 @@ class SystemIdsMapping:
             "BooleanColumnType": "6e205ebd-6567-44dc-8fd4-ef6ad281ab40",
             "UuidColumnType": "d7c004ff-da5e-4a18-9520-cd42b2847508",
             "DateColumnType": "28ac131f-f04b-4350-b464-3db4f8920597",
+
+            "AccessLevels": "263cb4d8-ddde-4555-a514-853a4b271973",
+            "AccessLevelColumnLevel": "8410d75d-7e71-4004-9a6f-544fca4e686e",
+            "AccessLevelReadAccess": "07f4d6ee-4d0e-4862-8030-b982b3d64a49",
+            "AccessLevelWriteAccess": "807ef79d-8004-4be2-a3e2-f873c72906cc",
 
             "Users": "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2",
             "UserColumnId": "927a3228-f83d-4235-b70a-e0d3c0881598",
