@@ -16,10 +16,10 @@ class GridManager(BaseManager):
         self.allGrids = {} # dictionary of grids by uuid
         self.allRows = {} # dictionary of rows by gridUuid and rowUuid
 
-    from .handle_load import handle_load
     from ._load_grid import _load_grid
     from ._load_columns import _load_columns
     from ._load_rows import _load_rows
+    from .handle_load import handle_load
     from .handle_change import handle_change
     from .handle_change import _get_grid_column_row
     from .handle_change import _add_row

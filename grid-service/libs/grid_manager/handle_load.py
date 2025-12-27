@@ -39,17 +39,33 @@ def handle_load(self, request):
             "message": "Error loading grid: " + str(e)
         }
 
+    if not grid:
+        return {
+            "status": metadata.FailedStatus,
+            "message": f"Grid {gridUuid} not found"
+        }
+
     dataSet = {
         "gridUuid": gridUuid,
         "grid": grid.to_json()
     }
-    if rowUuid:
-        dataSet["rowUuid"] = rowUuid
-        dataSet["rows"] = [row.to_json() for row in self.allRows[gridUuid].values() if str(row.uuid) == str(rowUuid)]
-        dataSet["countRows"] = 1
-    else:
-        dataSet["rows"] = [row.to_json() for row in self.allRows[grid.uuid].values()]
-        dataSet["countRows"] = len(dataSet["rows"])
+    try:
+        rows = self.allRows[gridUuid]
+        if rowUuid:
+            dataSet["rowUuid"] = rowUuid
+            if rows:
+                dataSet["rows"] = [row.to_json() for row in rows.values() if str(row.uuid) == str(rowUuid)]
+                dataSet["countRows"] = 1
+        else:
+            if rows:
+                dataSet["rows"] = [row.to_json() for row in rows.values()]
+                dataSet["countRows"] = len(dataSet["rows"])
+    except Exception as e:
+        report_exception(e, f"Error loading rows for grid {gridUuid}")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "Error loading rows: " + str(e)
+        }
     return {
         "status": metadata.SuccessStatus,
         "message": f"'{grid.name}' loaded",

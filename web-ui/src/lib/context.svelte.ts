@@ -247,6 +247,8 @@ export class Context extends ContextBase {
     const newGridUuid = newUuid()
     const newColumnUuid = newUuid()
     const newRowUuid = newUuid()
+    this.gridUuid = newGridUuid
+    this.rowUuid = ""
     await this.sendMessage({
       command: metadata.ActionChange,
       commandText: 'Create new grid',
@@ -297,14 +299,20 @@ export class Context extends ContextBase {
             changeValue: metadata.TextColumnType,
           },
           {
+            changeType: metadata.ChangeAddReference,
+            gridUuid: metadata.Grids,
+            columnUuid: metadata.GridColumnColumns,
+            rowUuid: newGridUuid,
+            changeValue: newColumnUuid,
+          },
+          {
             changeType: metadata.ChangeAdd,
             gridUuid: newGridUuid,
             rowUuid: newRowUuid,
           },
           {
             changeType: metadata.ChangeLoad,
-            gridUuid: metadata.Grids,
-            rowUuid: newGridUuid,
+            gridUuid: newGridUuid,
           }
         ]
     })
@@ -491,6 +499,7 @@ export class Context extends ContextBase {
                 }
               }
             }
+            console.log(`handleAction[3] ${this.gridUuid} ${reply.dataSet.grid.uuid}`)
             if(this.gridUuid === reply.dataSet.grid.uuid) {
               this.focus.set(reply.dataSet.grid, undefined, undefined)
             }

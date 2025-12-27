@@ -7,18 +7,18 @@
 
 import inspect
 
-def report_exception(exception, message = None):
+def report_exception(e, message = None):
     if message:
-        print(f"❌ {message} due to exception '{exception}'", end=" ")
-        stacktrace = exception.__traceback__
+        print(f"❌ {message} due to exception '{e}'")
+        stacktrace = e.__traceback__
         for frame in inspect.getinnerframes(stacktrace):
             filename = frame.filename
             lineno = frame.lineno
             function = frame.function
-            print(f"; file = \"{filename}\", line {lineno}, in {function}", end=" ")
+            print(f"      file = \"{filename}\", line {lineno}, in {function}")
             code_context = frame.code_context
             code_context = code_context[0].strip() if code_context else "No code context"
-            print(f" ; code = \"{code_context}\"", flush=True)
+            print(f"        code = \"{code_context}\"", flush=True)
 
     else:
-        print(f"❌ Exception '{exception}'", flush=True)
+        print(f"❌ Exception '{e}'", flush=True)
