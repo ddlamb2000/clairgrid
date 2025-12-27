@@ -29,8 +29,11 @@ export class Focus {
             && this.#column && this.#column.uuid === column.uuid
   }
 
+  getColor = () => "bg-yellow-200/20"
+
   getGridName = () => this.#grid !== undefined ? this.#grid.name : ""
   getGridUuid = () => this.#grid !== undefined ? this.#grid.uuid : ""
   getColumnName = () => this.#column !== undefined ? this.#column.name : ""
   getRowName = () => this.#row !== undefined ? this.#row.displayString : ""
+  getRowUuid = () => this.#row !== undefined ? this.#row.uuid : ""
 }

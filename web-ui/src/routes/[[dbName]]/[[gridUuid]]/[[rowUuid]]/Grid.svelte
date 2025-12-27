@@ -6,7 +6,6 @@
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(), gridUuid, embedded = false } = $props()
-  const colorFocus = "bg-yellow-100/20"
 
   const matchesProps = (set: DataSetType): boolean => set.gridUuid === gridUuid && !set.rowUuid
 
@@ -23,24 +22,14 @@
     {#if matchesProps(set)}
       {#key set.gridUuid}
         {#if !embedded}
-          <span class="flex">
+          <span class="block align-items-center">
             <span contenteditable class="text-2xl font-extrabold"
                   oninput={() => context.changeGrid(set.grid)}
                   bind:innerHTML={context.dataSets[setIndex].grid.name}></span>
             <span contenteditable class="ms-2 text-sm font-light"
                   oninput={() => context.changeGrid(set.grid)}
                   bind:innerHTML={context.dataSets[setIndex].grid.description}></span>
-            {#if set.gridUuid !== metadata.UuidGrids}
-              <a class="ms-2 text-sm font-light text-gray-500 underline"
-                  href={"/" + context.dbName + "/" + metadata.UuidGrids + "/" + set.gridUuid}
-                  onclick={() => context.navigateToGrid(metadata.UuidGrids, set.gridUuid)}>
-                <span class="flex">
-                  Definition
-                  <Icon.ArrowUpRightFromSquareOutline class="text-green-500 hover:text-green-900" />
-                </span>
-              </a>
-            {/if}
-        </span>
+          </span>
         {/if}
         <table class="font-light text-sm table-auto border-collapse shadow-lg mb-0.5">
           <thead>
@@ -122,7 +111,7 @@
                           || column.typeUuid === metadata.UuidPasswordColumnType 
                           || column.typeUuid === metadata.UuidIntColumnType}
                       <td contenteditable
-                          class="border border-slate-100 {context.isFocused(set, column, row) ? colorFocus : ''}
+                          class="border border-slate-100 {context.isFocused(set, column, row) ? context.getColorFocus() : ''}
                                 {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
                           align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
                           onfocus={() => context.changeFocus(set.grid, column, row)}
@@ -130,7 +119,7 @@
                           bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[column.index]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
-                      <td class="border border-slate-100 cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
+                      <td class="border border-slate-100 cursor-pointer {context.isFocused(set, column, row) ? context.getColorFocus() : ''}" align='center'>
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, row, column.index)}>
@@ -139,7 +128,7 @@
                         </a>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
-                      <td class="border border-slate-100 {context.isFocused(set, column, row) ? colorFocus : ''}">
+                      <td class="border border-slate-100 {context.isFocused(set, column, row) ? context.getColorFocus() : ''}">
                         <Reference {context} {set} {row} {column} />
                       </td>
                     {:else}

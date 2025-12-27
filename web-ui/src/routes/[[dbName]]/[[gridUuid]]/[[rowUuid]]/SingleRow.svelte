@@ -7,7 +7,6 @@
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(), gridUuid, rowUuid } = $props()
-  const colorFocus = "bg-yellow-100/20"
 
   const matchesProps = (set: DataSetType): boolean => set.gridUuid === gridUuid && set.rowUuid === rowUuid
 
@@ -25,31 +24,11 @@
       {#key set.grid.uuid}
         {#each context.dataSets[setIndex].rows as row, rowIndex}
           {#key row.uuid}
-            <span class="flex">
-              <span class="text-2xl font-extrabold">{@html row.displayString}</span>
-              {#if set.grid.uuid === metadata.UuidGrids}
-                <a class="ms-2 text-sm font-light text-gray-500 underline"
-                    href={"/" + context.dbName + "/" + row.uuid}
-                    onclick={() => context.navigateToGrid(row.uuid, "")}>
-                  <span class="flex">
-                    Data
-                    <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
-                  </span>
-                </a>
-              {:else}
-                <span class="ms-2 text-sm font-light"
-                      oninput={() => context.changeGrid(set.grid)}
-                      >{@html set.grid.description}</span>
-                <a class="ms-2 text-sm font-light text-gray-500 underline"
-                    href={"/" + context.dbName + "/" + set.grid.uuid}
-                    onclick={() => context.navigateToGrid(set.grid.uuid, "")}>
-                    <span class="flex">
-                    {@html set.grid.name}
-                    <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
-                  </span>
-                </a>
-              {/if}
+            <span class="block items-center">
+              <span class="text-2xl font-extrabold">{set.grid.name}</span>
+              <span class="ms-2 text-sm font-light">{@html set.grid.description}</span>
             </span>
+            <span class="text-xl font-extrabold">{row.displayString}</span>
             <table class="font-light text-sm table-auto border-collapse border border-slate-100 shadow-lg">
               <tbody class="border border-slate-100">
                 {#each set.grid.columns as column}
@@ -68,14 +47,14 @@
                           || column.typeUuid === metadata.UuidPasswordColumnType 
                           || column.typeUuid === metadata.UuidIntColumnType}
                       <td contenteditable
-                          class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}
+                          class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? context.focus.getColor() : ''}
                                   {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[column.index]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
-                      <td class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}">
+                      <td class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? context.getColorFocus() : ''}">
                         {#if column.owned && column.bidirectional}
                           <Grid {context}
                                 gridUuid={column.gridPromptUuid}
@@ -85,7 +64,7 @@
                         {/if}
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
-                      <td class="p-0.5 cursor-pointer border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}">
+                      <td class="p-0.5 cursor-pointer border border-slate-200 {context.isFocused(set, column, row) ? context.getColorFocus() : ''}">
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, row, column.index)}>

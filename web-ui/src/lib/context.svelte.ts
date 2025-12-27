@@ -386,6 +386,8 @@ export class Context extends ContextBase {
   isFocused = (set: DataSetType, column: ColumnType, row: RowType): boolean | undefined => {
     return this.focus && this.focus.isFocused(set.grid, column, row)
   }
+
+  getColorFocus = (): string => this.focus.hasFocus() ? this.focus.getColor() : ""
       
   logout = async () => {
     this.user.removeToken()
