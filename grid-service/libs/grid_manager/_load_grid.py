@@ -1,6 +1,7 @@
 from .. import metadata
 from ..model.grid import Grid
 from ..utils.decorators import echo
+from ..utils.report_exception import report_exception
 
 @echo
 def _load_grid(self, gridUuid, loadReferenceGrid = True):
@@ -20,19 +21,11 @@ def _load_grid(self, gridUuid, loadReferenceGrid = True):
         '''
         )
         if result:
-            grid = self.allGrids.get(gridUuid)
-            if not grid:
-                grid = Grid(gridUuid,
-                            name = result[0],
-                            description = result[1],
-                            revision = result[2])
-                print(f"New grid: {grid}")
-                self.allGrids[gridUuid] = grid
-            else:
-                print(f"👍🏻 {grid} already in memory")
+            grid = Grid(gridUuid, name = result[0], description = result[1], revision = result[2])
+            self.allGrids[gridUuid] = grid
             self._load_columns(grid, loadReferenceGrid)
-            print(f"Grid loaded: {grid}")
+            print(f"New grid: {grid}")
             return grid
     except Exception as e:
-        print(f"❌ Error loading grid {gridUuid}: {e}")
+        report_exception(e, f"Error loading grid {gridUuid}")
         raise e

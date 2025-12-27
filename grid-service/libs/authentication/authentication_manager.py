@@ -11,6 +11,7 @@ import jwt
 import datetime
 from ..utils.configuration_mixin import ConfigurationMixin
 from ..utils.decorators import echo
+from ..utils.report_exception import report_exception
 
 class AuthenticationManager(ConfigurationMixin):
     """
@@ -57,7 +58,7 @@ class AuthenticationManager(ConfigurationMixin):
                 try:
                     token = self._generate_jwt_token(login_id, result[0], result[1], result[2])
                 except Exception as e:
-                    print(f"❌ Error generating JWT token: {e}", flush=True)
+                    report_exception(e, "Error generating JWT token")
                     return { 
                         "status": metadata.FailedStatus,
                         "message": "Error generating JWT token: " + str(e)

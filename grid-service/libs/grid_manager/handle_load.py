@@ -1,6 +1,22 @@
 from .. import metadata
 from ..utils.decorators import echo
 from ..authentication.jwt_decorator import validate_jwt
+from ..utils.report_exception import report_exception
+
+def _get_grid(self, gridUuid):
+    grid = self.allGrids.get(gridUuid)
+    if not grid:
+        grid = self._load_grid(gridUuid)
+        if not grid:
+            print(f"⚠️ Grid {gridUuid} not found")
+            return None
+        self.allGrids[gridUuid] = grid
+        print(f"Grid added to memory: {gridUuid} {grid.name}")
+        self._load_rows(grid)
+    else:
+        print(f"👍🏻 {grid} found in memory")
+
+    return grid
 
 @echo
 @validate_jwt
@@ -15,22 +31,9 @@ def handle_load(self, request):
 
     grid = None
     try:
-        grid = self.allGrids.get(gridUuid)
-        if not grid:
-            grid = self._load_grid(gridUuid)
-            if not grid:
-                print(f"⚠️ Grid {gridUuid} not found")
-                return {
-                    "status": metadata.FailedStatus,
-                    "message": "Grid not found",
-                }
-            self.allGrids[gridUuid] = grid
-            print(f"Grid added to memory: {gridUuid} {grid.name}")
-            self._load_rows(grid)
-        else:
-            print(f"👍🏻 {grid} already in memory")
+        grid = _get_grid(self, gridUuid)
     except Exception as e:
-        print(f"❌ Error loading grid {gridUuid}: {e}")
+        report_exception(e, f"Error loading grid {gridUuid}")
         return {
             "status": metadata.FailedStatus,
             "message": "Error loading grid: " + str(e)

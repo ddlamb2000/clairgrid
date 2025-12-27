@@ -1,6 +1,7 @@
 from .. import metadata
 from ..model.column import Column
 from ..utils.decorators import echo
+from ..utils.report_exception import report_exception
 
 @echo
 def _load_columns(self, grid, loadReferenceGrid = True):
@@ -52,7 +53,7 @@ def _load_columns(self, grid, loadReferenceGrid = True):
             print(f"New column: {column}")
             grid.columns.append(column)
     except Exception as e:
-        print(f"❌ Error loading columns for grid {grid.uuid}: {e}")
+        report_exception(e, f"Error loading columns for grid {grid.uuid}")
         raise e
 
 def _get_reference_grid(self, referenceGridUuid, loadReferenceGrid):
@@ -66,9 +67,8 @@ def _get_reference_grid(self, referenceGridUuid, loadReferenceGrid):
                 self.allGrids[referenceGridUuid] = referenceGrid
                 print(f"Reference grid loaded: {referenceGridUuid}")
             else:
-                print(f"❌ Error loading reference grid {referenceGridUuid}")
+                report_exception(e, f"Error loading reference grid {referenceGridUuid}")
                 raise Exception(f"Error loading reference grid {referenceGridUuid}")
         return referenceGrid
     else:
         return None
-

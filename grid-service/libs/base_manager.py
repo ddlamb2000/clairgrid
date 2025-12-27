@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 from . import metadata
 from .utils.configuration_mixin import ConfigurationMixin
 from .utils.decorators import echo
+from .utils.report_exception import report_exception
 
 class BaseManager(ConfigurationMixin):
     """
@@ -32,7 +33,7 @@ class BaseManager(ConfigurationMixin):
             if expires < datetime.now(timezone.utc):
                 return { "status": metadata.FailedStatus, "message": "Token expired" }
         except Exception as e:
-            print(f"❌ Error validating JWT: {e}")
+            report_exception(e, "Error validating JWT")
             return { "status": metadata.FailedStatus, "message": "Invalid JWT: " + str(e) }
         return None
 

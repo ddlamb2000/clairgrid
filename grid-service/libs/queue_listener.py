@@ -14,6 +14,7 @@ from .utils.configuration_mixin import ConfigurationMixin
 from .utils.decorators import echo
 from .authentication.authentication_manager import AuthenticationManager
 from .grid_manager import GridManager
+from .utils.report_exception import report_exception
 
 class QueueListener(ConfigurationMixin):
     """
@@ -86,10 +87,10 @@ class QueueListener(ConfigurationMixin):
                 reply = reply | self.process_request(request)
                 print(f"📤 reply {reply}", flush=True)
             except Exception as e:
-                print(f"❌ Error processing request: {e}", flush=True)
+                report_exception(e, f"Error processing request {request}")
                 reply = reply | {"status": "error", "can't process request, message": str(e)}
         except Exception as e:
-            print(f"❌ Error processing request: {e}", flush=True)
+            report_exception(e, "Error processing request")
             reply = {"status": "error", "message": f"invalid request: {str(e)}"}
             print(f"📤 reply {reply}", flush=True)
 
@@ -102,7 +103,7 @@ class QueueListener(ConfigurationMixin):
                                     body=json.dumps(reply))
                 ch.basic_ack(delivery_tag=method.delivery_tag)
             except Exception as e:
-                print(f"❌ Error publishing reply: {e}", flush=True)
+                report_exception(e, f"Error publishing reply to {props.reply_to}")
 
     @echo
     def start(self):

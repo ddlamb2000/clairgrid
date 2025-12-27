@@ -21,6 +21,8 @@ class GridManager(BaseManager):
     from ._load_columns import _load_columns
     from ._load_rows import _load_rows
     from .handle_change import handle_change
+    from .handle_change import _get_grid_column_row
+    from .handle_change import _add_row
+    from .handle_change import _update_row
     from .handle_locate import handle_locate
     from .handle_prompt import handle_prompt
-

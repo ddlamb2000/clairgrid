@@ -15,6 +15,7 @@ from .metadata.migration_steps import get_migration_steps, get_deletion_steps
 from .utils.configuration_mixin import ConfigurationMixin
 from .utils.decorators import echo
 from . import metadata
+from .utils.report_exception import report_exception
 
 class DatabaseManager(ConfigurationMixin):
     """
@@ -116,7 +117,7 @@ class DatabaseManager(ConfigurationMixin):
                 if result and result[0] is not None:
                     migrationTableExists = result[0]
             except psycopg.Error as e:
-                print(f"❌ Error checking if migration table exists: {e}", flush=True)
+                report_exception(e, "Error checking if migration table exists")
 
         return migrationTableExists
 
@@ -143,7 +144,7 @@ class DatabaseManager(ConfigurationMixin):
                     latestMigrationSequence = result[0]
                 print(f"Latest migration sequence is {latestMigrationSequence}.")
             except psycopg.Error as e:  
-                print(f"❌ Error getting latest migration sequence: {e}", flush=True)
+                report_exception(e, "Error getting latest migration sequence")
 
         return latestMigrationSequence
 
@@ -163,7 +164,7 @@ class DatabaseManager(ConfigurationMixin):
                 cur.execute(statement, params)
                 return cur.fetchone()
             except psycopg.Error as e:
-                print(f"❌ Error selecting from database {self.db_name} with statement {statement} and params {params}: {e}")
+                report_exception(e, f"Error selecting from database {self.db_name} with statement {statement} and params {params}")
                 raise e
 
     @echo
@@ -178,7 +179,7 @@ class DatabaseManager(ConfigurationMixin):
                 cur.execute(statement, params)
                 for row in cur: yield row
             except psycopg.Error as e:
-                print(f"❌ Error selecting from database {self.db_name} with statement {statement} and params {params}: {e}")
+                report_exception(e, f"Error selecting from database {self.db_name} with statement {statement} and params {params}")
                 raise e
 
     def _execute_migration_step(self, sequence, statement):
@@ -219,7 +220,7 @@ class DatabaseManager(ConfigurationMixin):
                         print(f"Update database {self.db_name} with migration step {sequence}")
                         self._execute_migration_step(sequence, statement)
             except psycopg.Error as e:
-                print(f"❌ Error executing migration sequence {sequence}: {e}", flush=True)
+                report_exception(e, f"Error executing migration sequence {sequence}")
                 raise e
 
     def run_deletions(self):
@@ -240,7 +241,7 @@ class DatabaseManager(ConfigurationMixin):
                     print(f"Update database {self.db_name} with deletion step {sequence}", flush=True)
                     cur.execute(statement)
                 except psycopg.Error as e:
-                    print(f"❌ Error executing deletion sequence {sequence}: {e}", flush=True)
+                    report_exception(e, f"Error executing deletion sequence {sequence}")
 
     def export_database(self, file_name):
         """
@@ -295,7 +296,7 @@ class DatabaseManager(ConfigurationMixin):
             print(f"Database {self.db_name} exported successfully to {file_name}.", flush=True)
 
         except Exception as e:
-            print(f"❌ Error exporting database: {e}", flush=True)
+            report_exception(e, "Error exporting database")
             raise e
 
     def import_database(self, file_name):
@@ -364,5 +365,5 @@ class DatabaseManager(ConfigurationMixin):
             print(f"Database {self.db_name} imported successfully from {file_name}.", flush=True)
 
         except Exception as e:
-            print(f"❌ Error importing database {self.db_name} from {file_name}: {e}", flush=True)
+            report_exception(e, f"Error importing database {self.db_name} from {file_name}")
             raise e

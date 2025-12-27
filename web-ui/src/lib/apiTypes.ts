@@ -63,8 +63,6 @@ export interface DataSetType {
   rowsEdited?: RowType[]
   rowsDeleted?: RowType[]
   columnUuid?: string
-	referencedValuesAdded?: GridReferencePost[]
-	referencedValuesRemoved?: GridReferencePost[]
   canViewRows: boolean
   canEditRows: boolean
   canAddRows: boolean
@@ -97,19 +95,4 @@ export interface RowType {
 export interface TransactionType {
   request?: RequestType
   reply?: ReplyType
-}
-
-export interface GridPost {
-  rowsAdded?: RowType[]
-  rowsEdited?: RowType[]
-  rowsDeleted?: RowType[]
-	referencedValuesAdded?: GridReferencePost[]
-	referencedValuesRemoved?: GridReferencePost[]
-}
-
-export interface GridReferencePost {
-	columnName: string
-	fromUuid: string
-	toGridUuid: string
-	uuid: string
 }

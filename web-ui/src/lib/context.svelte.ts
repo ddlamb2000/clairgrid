@@ -180,35 +180,6 @@ export class Context extends ContextBase {
       })
     }
   }
-  
-  addRow = async (set: DataSetType) => {
-    const uuid = newUuid()
-    const row: RowType = { gridUuid: set.grid.uuid, uuid: uuid, created: new Date, updated: new Date }
-    if(!set.rows) set.rows = []
-    set.rows.push(row)
-    set.countRows += 1
-    return this.sendMessage({
-      command: metadata.ActionChangeGrid,
-      commandText: 'Add row',
-      gridUuid: set.grid.uuid,
-      dataSet: { rowsAdded: [row] }
-    })
-  }
-
-  removeRow = async (set: DataSetType, row: RowType) => {
-    const rowIndex = set.rows.findIndex((r) => r.uuid === row.uuid)
-    if(rowIndex >= 0) {
-      const deletedRow: RowType = { gridUuid: set.grid.uuid, uuid: row.uuid }
-      set.rows.splice(rowIndex, 1)
-      set.countRows -= 1
-      return this.sendMessage({
-        command: metadata.ActionChangeGrid,
-        commandText: 'Remove row',
-        gridUuid: set.grid.uuid,
-        dataSet: { rowsDeleted: [deletedRow] }
-      })
-    }
-  }
 
   removeColumn = async (set: DataSetType, column: ColumnType) => {
     if(set.grid.columns && set.grid.columns !== undefined && column !== undefined && column.uuid !== undefined) {
@@ -234,6 +205,40 @@ export class Context extends ContextBase {
               uuid: column.typeUuid }
           ] 
         }
+      })
+    }
+  }
+  
+  addRow = async (set: DataSetType) => {
+    const newRowUuid = newUuid()
+    const row: RowType = { uuid: newRowUuid, values: [] }
+    if(!set.rows) set.rows = []
+    set.rows.push(row)
+    set.countRows += 1
+    return this.sendMessage({
+      command: metadata.ActionChange,
+      commandText: 'Add row',
+      changes: [
+        {
+          changeType: metadata.ChangeAdd,
+          gridUuid: set.grid.uuid,
+          rowUuid: newRowUuid,
+        }
+      ]
+    })
+  }
+
+  removeRow = async (set: DataSetType, row: RowType) => {
+    const rowIndex = set.rows.findIndex((r) => r.uuid === row.uuid)
+    if(rowIndex >= 0) {
+      const deletedRow: RowType = { gridUuid: set.grid.uuid, uuid: row.uuid }
+      set.rows.splice(rowIndex, 1)
+      set.countRows -= 1
+      return this.sendMessage({
+        command: metadata.ActionChangeGrid,
+        commandText: 'Remove row',
+        gridUuid: set.grid.uuid,
+        dataSet: { rowsDeleted: [deletedRow] }
       })
     }
   }

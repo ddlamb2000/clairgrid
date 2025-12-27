@@ -7,6 +7,7 @@
 
 import argparse
 from libs.database_manager import DatabaseManager
+from libs.utils.report_exception import report_exception
 
 def main(db_name, file_name):
     print(f"Starting export database {db_name} to {file_name}...", flush=True)
@@ -16,7 +17,7 @@ def main(db_name, file_name):
         db_manager.close()
         
     except Exception as e:
-        print(f"❌ Export script failed: {e}", flush=True)
+        report_exception(e, f"Export script failed")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Export database")

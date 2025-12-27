@@ -6,6 +6,7 @@
 '''
 
 from libs.database_manager import DatabaseManager
+from libs.utils.report_exception import report_exception
 
 def main():
     """
@@ -18,7 +19,7 @@ def main():
         db_manager.close()
         
     except Exception as e:
-        print(f"❌ Purge script failed: {e}", flush=True)
+        report_exception(e, "Purge script failed")
 
 if __name__ == "__main__":
     main()

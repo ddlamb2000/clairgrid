@@ -3,6 +3,7 @@ from typing import LiteralString
 from ..model.row import Row, ReferenceRow
 from ..utils.decorators import echo
 from ..metadata import SystemIds
+from ..utils.report_exception import report_exception
 
 @echo
 def _load_rows(self, grid):
@@ -49,6 +50,6 @@ def _load_rows(self, grid):
                 print(f"New row: {row}")
         print(f"Rows loaded: {len(self.allRows[str(grid.uuid)])}")
     except Exception as e:
-        print(f"❌ Error loading rows for grid {str(grid.uuid)}: {e}")
+        report_exception(e, f"Error loading rows for grid {str(grid.uuid)}")
         raise e
 
