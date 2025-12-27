@@ -36,7 +36,7 @@
             <tr>
               <th class="sticky -top-0.5 py-1 ">
                 {#if !set.grid.columns || set.grid.columns.length === 0}
-                  <Icon.DotsVerticalOutline class={"mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 first-column-menu-" + set.gridUuid + " dark:text-white"} />
+                  <Icon.CaretDownOutline class={"ms-1 mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 first-column-menu-" + set.gridUuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.gridUuid}>
                     <li class="p-0.5">
                       <PromptColumnType {context} {set} referenceGridUuid={metadata.ColumnTypes}
@@ -54,7 +54,7 @@
                       <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
                         bind:innerHTML={context.dataSets[setIndex].grid.columns[column.index].name}></span>
                     {/if}
-                    <Icon.DotsVerticalOutline class={"mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 column-menu-" + set.gridUuid + "-" + column.uuid + " dark:text-white"} />
+                    <Icon.CaretDownOutline class={"ms-1 mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 column-menu-" + set.gridUuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.gridUuid + "-" + column.uuid}>
                       {#if column.index === set.grid.columns.length - 1}
                         <li class="p-1">
@@ -91,8 +91,8 @@
                           onclick={ () => context.navigateToGrid(gridUuid, row.uuid) }>
                         <Icon.ForwardOutline class="mt-0.5 shrink-0 h-4 w-4 text-blue-500 hover:text-blue-900" />
                       </a>
+                      <Icon.CaretDownOutline class={"mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 row-menu-" + row.uuid}/>
                     {/if}
-                    <Icon.DotsVerticalOutline class={"mt-0.5 shrink-0 h-4 w-4 text-blue-500  hover:text-blue-900 row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
                       <li class="p-1">
                         <a href="#top"  role="menuitem"
