@@ -15,7 +15,8 @@ export interface IListenStreamContext {
     checkLocalToken: () => boolean,
     checkToken: (jwt: string) => boolean,
     setToken: (jwt: string) => void,
-    removeToken: () => void, reset: () => void 
+    removeToken: () => void, reset: () => void,
+    getUser: () => string,
   }
   sendMessage: (request: RequestType) => Promise<void>
   trackResponse: (response: ReplyType) => void
@@ -64,7 +65,7 @@ export class ListenStream {
       from: 'clairgrid api', 
       url: uri.toString(), 
       command: metadata.ActionInitialization, 
-      commandText: 'Initialization'  
+      commandText: `Initializing context for user ${this.context.user.getUser()}`  
     }
     if(gridUuid) {
       payload = {

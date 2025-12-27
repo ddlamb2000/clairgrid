@@ -49,7 +49,7 @@ export class Context extends ContextBase {
       await this.sendMessage(
         {
           command: metadata.ActionLocate,
-          commandText: "Locate",
+          commandText: `Locate in '${grid.name}'`,
           gridUuid: grid.uuid,
           columnUuid: column !== undefined ? column.uuid : undefined,
           rowUuid: row !== undefined ? row.uuid : undefined
@@ -83,7 +83,7 @@ export class Context extends ContextBase {
       this.sendMessage(
         {
           command: metadata.ActionChange,
-          commandText: 'Update',
+          commandText: `Update '${row.displayString}' in '${set.grid.name}' for column '${column.name}'`,
           changes: [
               {
                 changeType: metadata.ChangeUpdate,
@@ -174,7 +174,7 @@ export class Context extends ContextBase {
       }
       return this.sendMessage({
         command: metadata.ActionChange,
-        commandText: 'Add column',
+        commandText: `Add column '${columnName}' in '${set.grid.name}'`,
         gridUuid: metadata.Columns,
         dataSet: { rowsAdded: rowsAdded, referencedValuesAdded: referencedValuesAdded }
       })
@@ -217,7 +217,7 @@ export class Context extends ContextBase {
     set.countRows += 1
     return this.sendMessage({
       command: metadata.ActionChange,
-      commandText: 'Add row',
+      commandText: `Add row in '${set.grid.name}'`,
       changes: [
         {
           changeType: metadata.ChangeAdd,
@@ -235,8 +235,8 @@ export class Context extends ContextBase {
       set.rows.splice(rowIndex, 1)
       set.countRows -= 1
       return this.sendMessage({
-        command: metadata.ActionChangeGrid,
-        commandText: 'Remove row',
+        command: metadata.ActionChange,
+        commandText: `Remove row '${row.displayString}' in '${set.grid.name}'`,
         gridUuid: set.grid.uuid,
         dataSet: { rowsDeleted: [deletedRow] }
       })
@@ -251,7 +251,7 @@ export class Context extends ContextBase {
     this.rowUuid = ""
     await this.sendMessage({
       command: metadata.ActionChange,
-      commandText: 'Create new grid',
+      commandText: `Create new grid with name 'New grid' and description 'Untitled' with column 'New column' of type 'Text'`,
       changes: [
           {
             changeType: metadata.ChangeAdd,
@@ -292,18 +292,24 @@ export class Context extends ContextBase {
             changeValue: 'New column',
           },
           {
-            changeType: metadata.ChangeAddReference,
+            changeType: metadata.ChangeAddRelationship,
             gridUuid: metadata.Columns,
             columnUuid: metadata.ColumnColumnColumnType,
             rowUuid: newColumnUuid,
-            changeValue: metadata.TextColumnType,
+            changeValue: {
+              uuid: metadata.TextColumnType,
+              values: ["Text"]
+            }
           },
           {
-            changeType: metadata.ChangeAddReference,
+            changeType: metadata.ChangeAddRelationship,
             gridUuid: metadata.Grids,
             columnUuid: metadata.GridColumnColumns,
             rowUuid: newGridUuid,
-            changeValue: newColumnUuid,
+            changeValue: {
+              uuid: newColumnUuid,
+              values: ["New column"]
+            }
           },
           {
             changeType: metadata.ChangeAdd,
@@ -320,19 +326,22 @@ export class Context extends ContextBase {
 
   addReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
     row.values[column.index].push(rowPrompt)
-    return this.sendMessage({
-      command: metadata.ActionChangeGrid,
-      commandText: 'Add value',
-      gridUuid: set.grid.uuid,
-      dataSet: {
-        referencedValuesAdded: [
-          { columnName: column.name,
-          fromUuid: row.uuid,
-          toGridUuid: rowPrompt.gridUuid,
-          uuid: rowPrompt.uuid },
-        ] 
-      }
-    })    
+    await this.sendMessage({
+      command: metadata.ActionChange,
+      commandText: `Add relationship in ${set.grid.name} from ${row.displayString} to ${rowPrompt.displayString} in column ${column.name}`,
+      changes: [
+          {
+            changeType: metadata.ChangeAddRelationship,
+            gridUuid: set.grid.uuid,
+            columnUuid: column.uuid,
+            rowUuid: row.uuid,
+            changeValue: {
+              uuid: rowPrompt.uuid,
+              values: [rowPrompt.displayString]
+            }
+          },
+        ]
+    })
   }
 
   removeReferencedValue = async (set: DataSetType, column: ColumnType, row: RowType, rowPrompt: RowType) => {
@@ -340,7 +349,7 @@ export class Context extends ContextBase {
     if(rowIndex >= 0) row.values[column.index].splice(rowIndex, 1)
     return this.sendMessage({
       command: metadata.ActionChangeGrid,
-      commandText: 'Remove value',
+      commandText: `Remove relationship in ${set.grid.name} from ${row.displayString} to ${rowPrompt.displayString} in column ${column.name}`,
       gridUuid: set.grid.uuid,
       dataSet: {
         referencedValuesRemoved: [

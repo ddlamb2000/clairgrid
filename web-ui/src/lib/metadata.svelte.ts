@@ -11,7 +11,8 @@ export const ActionPrompt = "prompt"
 
 export const ChangeAdd = "add"
 export const ChangeUpdate = "update"
-export const ChangeAddReference = "addReference"
+export const ChangeAddRelationship = "addRelationship"
+export const ChangeRemoveRelationship = "removeRelationship"
 export const ChangeLoad = "load"
 
 export const SuccessStatus = "success"

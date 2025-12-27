@@ -160,7 +160,7 @@ class DatabaseManager(ConfigurationMixin):
         with self.conn.cursor() as cur:
             try:
                 statement = self._remove_double_spaces(statement)
-                print(f"Executing statement: {statement} with params: {params}")
+                print(f"🔍 Executing statement: {statement} with params: {params}")
                 cur.execute(statement, params)
                 return cur.fetchone()
             except psycopg.Error as e:

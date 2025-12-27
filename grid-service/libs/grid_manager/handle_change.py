@@ -1,7 +1,7 @@
 from .. import metadata
 from ..metadata import SystemIds
 from ..model.grid import Grid
-from ..model.row import Row
+from ..model.row import Row, ReferenceRow
 from ..utils.decorators import echo
 from ..authentication.jwt_decorator import validate_jwt
 from .handle_load import _get_grid
@@ -96,6 +96,68 @@ def _update_row(self, gridUuid, grid, columnUuid, column, rowUuid, row, changeVa
             relatedGrid.description = changeValue
         print(f"✅ Grid updated: {grid}")
 
+def _add_relationship(self, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):
+    print(f"✏️ Add relationship for row {row} in grid {grid} for column {column} with value '{changeValue}'")
+    if not gridUuid or not grid:
+        print(f"❌ No grid provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No grid provided for update"
+        }                
+
+    if not columnUuid or not column:
+        print(f"❌ No column provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No column provided for update"
+        }
+
+    if str(column.typeUuid) != SystemIds.ReferenceColumnType:
+        print(f"❌ Column {column} is not a reference column, not supported for update")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "Column is not a reference column, not supported for update"
+        }
+
+    if not rowUuid or not row:
+        print(f"❌ No row provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No row provided for update"
+        }
+
+    if not changeValue:
+        print(f"❌ No change value provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No change value provided for update"
+        }
+
+    referenceUuid = changeValue.get('uuid')
+    if not referenceUuid:
+        print(f"❌ No reference UUID provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No reference UUID provided for update"
+        }
+
+    referenceValues = changeValue.get('values')
+    if not referenceValues:
+        print(f"❌ No reference values provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No reference values provided for update"
+        }
+
+    print(f"🔍 Reference values: {referenceValues}")
+
+    referenceRow = ReferenceRow(column.referenceGrid, uuid =referenceUuid, values = referenceValues)
+    row.values[column.index] += [referenceRow.to_json()]
+    print(f"✅ Relationship added: {row}")
+
+def _remove_relationship(self, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):  
+    print(f"✏️ Remove relationship for row {row} in grid {grid} for column {column} with value '{changeValue}'")
+
 @echo
 @validate_jwt
 def handle_change(self, request):
@@ -112,8 +174,12 @@ def handle_change(self, request):
             elif changeType == metadata.ChangeUpdate:
                 error = self._update_row(gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
                 if error: return error
-            elif changeType == metadata.ChangeAddReference:
-                print(f"✏️ Add reference: {change}")
+            elif changeType == metadata.ChangeAddRelationship:
+                error = self._add_relationship(gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
+                if error: return error
+            elif changeType == metadata.ChangeRemoveRelationship:
+                error = self._remove_relationship(gridUuid, grid, columnUuid, column, rowUuid, row, change.get('changeValue'))
+                if error: return error
             elif changeType == metadata.ChangeLoad:
                 print(f"⚙️ Load: {change}")
                 if grid:

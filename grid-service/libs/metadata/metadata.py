@@ -64,7 +64,8 @@ ActionPrompt = "prompt"
 
 ChangeAdd = "add"
 ChangeUpdate = "update"
-ChangeAddReference = "addReference"
+ChangeAddRelationship = "addRelationship"
+ChangeRemoveRelationship = "removeRelationship"
 ChangeLoad = "load"
 
 SuccessStatus = "success"
