@@ -2,6 +2,7 @@ from .. import metadata
 from ..utils.decorators import echo
 from ..authentication.jwt_decorator import validate_jwt
 from ..utils.report_exception import report_exception
+from ..utils.report_memory_resource import report_memory_resource
 
 def _get_grid(self, gridUuid):
     grid = self.allGrids.get(gridUuid)
@@ -72,6 +73,8 @@ def handle_load(self, request):
             "status": metadata.FailedStatus,
             "message": "Error loading rows: " + str(e)
         }
+
+    report_memory_resource()
     return {
         "status": metadata.SuccessStatus,
         "message": f"'{grid.name}' loaded",
