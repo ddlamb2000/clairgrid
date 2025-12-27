@@ -3,11 +3,11 @@
   import * as Icon from 'flowbite-svelte-icons'
   import DynIcon from './DynIcon.svelte'
   import * as metadata from "$lib/metadata.svelte.ts"
-  let { context, appName } = $props()
+  let { context } = $props()
 </script>
 
 <Button size="xs" class="mt-1 mb-1 h-8 w-8 shadow-lg" color="green"
-        onclick={() => context.navigateToGrid(metadata.UuidGrids, "", true, "relationship3", metadata.UuidGrids, context.user.getUserUuid())}>
+        onclick={() => context.navigateToGrid(metadata.Grids, "", true, "relationship3", metadata.Grids, context.user.getUserUuid())}>
   <Icon.GridOutline />
 </Button>
 <Button size="xs" class="me-1 mt-1 mb-1 h-8 w-8 shadow-lg" color="blue" onclick={() => context.newGrid()}>  
@@ -21,11 +21,11 @@
             disabled={set.filterColumnName}
             color={!context.userPreferences.showPrompt && context.gridUuid === set.gridUuid && context.rowUuid === (set.rowUuid ?? "") ? "dark" : "light"}
             onclick={() => context.navigateToGrid(set.gridUuid, set.rowUuid)}>
-      <DynIcon iconName={set.grid.icon}/>
+      <DynIcon iconName={set.rowUuid ? "row" : "grid-3x3"}/>
       {#if set.rowUuid && set.rows && set.rows.length > 0}
-        {set.rows[0].displayString}
+      {set.rows[0].displayString} <span class="text-xs">({set.grid.name})</span>
       {:else}
-        {@html set.grid.name}
+        {set.grid.name}
       {/if}
       <span class="sr-only">Notifications</span>
       {#if set.filterColumnName}

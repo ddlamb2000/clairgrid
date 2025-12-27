@@ -46,7 +46,7 @@
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
       <div class="h-10 ps-1 overflow-y-auto bg-gray-200">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <TopBar {context} appName={data.appName} />
+          <TopBar {context} />
         {/if}
       </div>
       {#if !context.userPreferences.showPrompt}

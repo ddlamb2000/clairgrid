@@ -70,7 +70,7 @@ export class Context extends ContextBase {
 	}
 
   changeCell = debounce(
-    async (set: DataSetType, row: RowType) => {
+    async (set: DataSetType, row: RowType, column: ColumnType) => {
       const rowClone = Object.assign({}, row)
       if(set.grid.columns) {
         for(const column of set.grid.columns) {
@@ -84,8 +84,15 @@ export class Context extends ContextBase {
         {
           command: metadata.ActionChange,
           commandText: 'Update',
-          gridUuid: set.grid.uuid,
-          dataSet: { rowsEdited: [rowClone] }
+          changes: [
+              {
+                changeType: metadata.ChangeUpdate,
+                gridUuid: set.grid.uuid,
+                rowUuid: row.uuid,
+                columnUuid: column.uuid,
+                changeValue: rowClone.values[column.index]
+              }
+          ]
         }
       )
     },

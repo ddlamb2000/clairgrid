@@ -36,14 +36,14 @@
             {#each setPrompt.rows as rowPrompt}
               {#key "prompt" + elementReference + rowPrompt.uuid}
                 <li class="p-1">
-                  {#if rowPrompt.uuid === metadata.UuidReferenceColumnType}
+                  {#if rowPrompt.uuid === metadata.ReferenceColumnType}
                     <PromptReferenceGrid {context} {set} {rowPrompt}                
-                                          gridPromptUuid={metadata.UuidGrids}
+                                          gridPromptUuid={metadata.Grids}
                                           elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
                   {:else}
                     <a href="#top" role="menuitem"
                         class="cursor-pointer flex w-full hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
-                        onclick={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
+                        onclick={() => rowPrompt.uuid !== metadata.ReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
                       {@html rowPrompt.displayString}
                     </a>
                   {/if}

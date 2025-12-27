@@ -16,6 +16,12 @@ class Grid(BaseModel):
     def __repr__(self):
         return f"Grid({self.uuid}, {self.name})"
 
+    def get_column_by_uuid(self, columnUuid):
+        for column in self.columns:
+            if str(column.uuid) == str(columnUuid):
+                return column
+        return None
+
     def to_json(self):
         result = BaseModel.to_json(self)
         if self.name: result['name'] = self.name

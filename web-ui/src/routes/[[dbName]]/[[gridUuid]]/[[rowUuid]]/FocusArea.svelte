@@ -24,10 +24,10 @@
 
 
 
-      {#if context.focus.getGridUuid() !== metadata.UuidGrids}
+      {#if context.focus.getGridUuid() !== metadata.Grids}
         <a class="ms-2 text-sm font-light text-gray-500 underline"
-            href={"/" + context.dbName + "/" + metadata.UuidGrids + "/" + context.focus.getGridUuid()}
-            onclick={() => context.navigateToGrid(metadata.UuidGrids, context.focus.getGridUuid())}>
+            href={"/" + context.dbName + "/" + metadata.Grids + "/" + context.focus.getGridUuid()}
+            onclick={() => context.navigateToGrid(metadata.Grids, context.focus.getGridUuid())}>
           <span class="flex">
             Grid structure
             <Icon.ArrowUpRightFromSquareOutline class="text-green-500 hover:text-green-900" />

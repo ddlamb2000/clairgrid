@@ -9,9 +9,9 @@
 
   const matchesProps = (set: DataSetType): boolean => set.gridUuid === gridUuid && !set.rowUuid
 
-  const toggleBoolean = (set: DataSetType, row: RowType, columnIndex: number) => {
-    row.values[columnIndex] = row.values[columnIndex] === "true" ? "false" : "true"
-    context.changeCell(set, row)
+  const toggleBoolean = (set: DataSetType, row: RowType, column: ColumnType) => {
+    row.values[column.index] = !row.values[column.index]
+    context.changeCell(set, row, column)
   }
 </script>
 
@@ -39,26 +39,26 @@
                   <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.gridUuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.gridUuid}>
                     <li class="p-0.5">
-                      <PromptColumnType {context} {set} referenceGridUuid={metadata.UuidColumnTypes}
+                      <PromptColumnType {context} {set} referenceGridUuid={metadata.ColumnTypes}
                                         elementReference={"referenceColumnType-" + set.gridUuid} />
                     </li>
                   </Dropdown>
                 {/if}
               </th>
-              {#each set.grid.columns as column, indexColumn}
+              {#each set.grid.columns as column}
                 <th class="sticky -top-0.5 p-0.5 py-1 bg-gray-100 border border-slate-200">
                   <span class="flex">
                     {#if column.grid}
                       {column.grid.displayString} <span class="text-xs">({column.name})</span>
                     {:else}
                       <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
-                        bind:innerHTML={context.dataSets[setIndex].grid.columns[indexColumn].name}></span>
+                        bind:innerHTML={context.dataSets[setIndex].grid.columns[column.index].name}></span>
                     {/if}
                     <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 column-menu-" + set.gridUuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.gridUuid + "-" + column.uuid}>
-                      {#if indexColumn === set.grid.columns.length - 1}
+                      {#if column.index === set.grid.columns.length - 1}
                         <li class="p-1">
-                          <PromptColumnType {context} {set} referenceGridUuid={metadata.UuidColumnTypes}
+                          <PromptColumnType {context} {set} referenceGridUuid={metadata.ColumnTypes}
                                             elementReference={"referenceColumnType-" + set.gridUuid} />
                         </li>
                       {/if}
@@ -81,7 +81,7 @@
               {#key row.uuid}
                 <tr class="align-top">
                   <td class="nowrap flex">
-                    {#if gridUuid === metadata.UuidGrids}
+                    {#if gridUuid === metadata.Grids}
                       <a href={"/" + context.dbName + "/" + row.uuid}
                           onclick={ () => context.navigateToGrid(row.uuid) }>
                         <Icon.ArrowUpRightFromSquareOutline class="text-green-500 hover:text-green-900" />
@@ -105,29 +105,29 @@
                     </Dropdown>
                   </td>
                   {#each set.grid.columns as column}
-                    {#if column.typeUuid === metadata.UuidTextColumnType
-                          || column.typeUuid === metadata.UuidRichTextColumnType
-                          || column.typeUuid === metadata.UuidUuidColumnType 
-                          || column.typeUuid === metadata.UuidPasswordColumnType 
-                          || column.typeUuid === metadata.UuidIntColumnType}
+                    {#if column.typeUuid === metadata.TextColumnType
+                          || column.typeUuid === metadata.RichTextColumnType
+                          || column.typeUuid === metadata.UuidColumnType 
+                          || column.typeUuid === metadata.PasswordColumnType 
+                          || column.typeUuid === metadata.IntColumnType}
                       <td contenteditable
                           class="border border-slate-100 {context.isFocused(set, column, row) ? context.getColorFocus() : ''}
-                                {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
-                          align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
+                                {column.typeUuid === metadata.UuidColumnType || column.typeUuid === metadata.PasswordColumnType ? ' font-mono text-xs' : ''}"
+                          align={column.typeUuid === metadata.IntColumnType ? 'right' : 'left'}
                           onfocus={() => context.changeFocus(set.grid, column, row)}
-                          oninput={() => context.changeCell(set, row)}
+                          oninput={() => context.changeCell(set, row, column)}
                           bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[column.index]}>
                       </td>
-                    {:else if column.typeUuid === metadata.UuidBooleanColumnType}
+                    {:else if column.typeUuid === metadata.BooleanColumnType}
                       <td class="border border-slate-100 cursor-pointer {context.isFocused(set, column, row) ? context.getColorFocus() : ''}" align='center'>
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
-                            onclick={() => toggleBoolean(set, row, column.index)}>
+                            onclick={() => toggleBoolean(set, row, column)}>
                           <Icon.CheckCircleOutline
                                 color={context.dataSets[setIndex].rows[rowIndex].values[column.index] ? "" : "lightgray"} />
                         </a>
                       </td>
-                    {:else if column.typeUuid === metadata.UuidReferenceColumnType}
+                    {:else if column.typeUuid === metadata.ReferenceColumnType}
                       <td class="border border-slate-100 {context.isFocused(set, column, row) ? context.getColorFocus() : ''}">
                         <Reference {context} {set} {row} {column} />
                       </td>

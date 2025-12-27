@@ -10,9 +10,9 @@
 
   const matchesProps = (set: DataSetType): boolean => set.gridUuid === gridUuid && set.rowUuid === rowUuid
 
-  const toggleBoolean = (set: DataSetType, row: RowType, columnIndex: number) => {
-    row.values[columnIndex] = row.values[columnIndex] === "true" ? "false" : "true"
-    context.changeCell(set, row)
+  const toggleBoolean = (set: DataSetType, row: RowType, column: ColumnType) => {
+    row.values[column.index] = !row.values[column.index]
+    context.changeCell(set, row, column)
   }
 </script>
 
@@ -41,19 +41,19 @@
                           bind:innerHTML={context.dataSets[setIndex].grid.columns[column.index].name}></span>
                       {/if}
                     </td>
-                    {#if column.typeUuid === metadata.UuidTextColumnType
-                          || column.typeUuid === metadata.UuidRichTextColumnType
-                          || column.typeUuid === metadata.UuidUuidColumnType 
-                          || column.typeUuid === metadata.UuidPasswordColumnType 
-                          || column.typeUuid === metadata.UuidIntColumnType}
+                    {#if column.typeUuid === metadata.TextColumnType
+                          || column.typeUuid === metadata.RichTextColumnType
+                          || column.typeUuid === metadata.UuidColumnType 
+                          || column.typeUuid === metadata.PasswordColumnType 
+                          || column.typeUuid === metadata.IntColumnType}
                       <td contenteditable
                           class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? context.focus.getColor() : ''}
-                                  {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
+                                  {column.typeUuid === metadata.UuidColumnType || column.typeUuid === metadata.PasswordColumnType ? ' font-mono text-xs' : ''}"
                           onfocus={() => context.changeFocus(set.grid, column, row)}
-                          oninput={() => context.changeCell(set, row)}
+                          oninput={() => context.changeCell(set, row, column)}
                           bind:innerHTML={context.dataSets[setIndex].rows[rowIndex].values[column.index]}>
                       </td>
-                    {:else if column.typeUuid === metadata.UuidReferenceColumnType}
+                    {:else if column.typeUuid === metadata.ReferenceColumnType}
                       <td class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? context.getColorFocus() : ''}">
                         {#if column.owned && column.bidirectional}
                           <Grid {context}
@@ -63,11 +63,11 @@
                           <Reference {context} {set} {row} {column} />
                         {/if}
                       </td>
-                    {:else if column.typeUuid === metadata.UuidBooleanColumnType}
+                    {:else if column.typeUuid === metadata.BooleanColumnType}
                       <td class="p-0.5 cursor-pointer border border-slate-200 {context.isFocused(set, column, row) ? context.getColorFocus() : ''}">
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
-                            onclick={() => toggleBoolean(set, row, column.index)}>
+                            onclick={() => toggleBoolean(set, row, column)}>
                           <Icon.CheckCircleOutline
                                 color={context.dataSets[setIndex].rows[rowIndex].values[column.index] ? "" : "lightgray"} />
                         </a>

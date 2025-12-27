@@ -7,7 +7,7 @@ from ..metadata import SystemIds
 @echo
 def _load_rows(self, grid):
     print(f"Loading rows for grid {grid.uuid}")
-    self.allRows[grid.uuid] = { } # dictionary of rows by uuid
+    self.allRows[str(grid.uuid)] = { } # dictionary of rows by uuid
     dbSelectClauses = [column.dbSelectClause for column in grid.columns]
     dbSelectColumns = (',\n' if len(dbSelectClauses) > 1 else '') + ',\n'.join(dbSelectClauses)
     dbJoinClauses = ''.join(list[LiteralString](dict.fromkeys([column.dbJoinClause for column in grid.columns])))
@@ -25,7 +25,7 @@ def _load_rows(self, grid):
         indexData = 2
         for item in result:
             uuid, revision = item[0], item[1]
-            existingRow = self.allRows[grid.uuid].get(uuid)
+            existingRow = self.allRows[str(grid.uuid)].get(str(uuid))
             newItem = []
             for column in grid.columns:
                 if column.typeUuid and str(column.typeUuid) == SystemIds.ReferenceColumnType:
@@ -45,10 +45,10 @@ def _load_rows(self, grid):
                         newItem.append(item[indexData+column.fieldIndex])
             if not existingRow:
                 row = Row(grid, uuid = uuid, revision = revision, values = newItem)
-                self.allRows[grid.uuid][uuid] = row
+                self.allRows[str(grid.uuid)][str(uuid)] = row
                 print(f"New row: {row}")
-        print(f"Rows loaded: {len(self.allRows[grid.uuid])}")
+        print(f"Rows loaded: {len(self.allRows[str(grid.uuid)])}")
     except Exception as e:
-        print(f"❌ Error loading rows for grid {grid.uuid}: {e}")
+        print(f"❌ Error loading rows for grid {str(grid.uuid)}: {e}")
         raise e
 
