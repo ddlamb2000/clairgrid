@@ -175,14 +175,73 @@ def _add_relationship(self, request, gridUuid, grid, columnUuid, column, rowUuid
             "user": request.get('user')
         }
 
-    print(f"🔍 Reference values: {referenceValues}")
-
     referenceRow = ReferenceRow(column.referenceGrid, uuid =referenceUuid, values = referenceValues)
     row.values[column.index] += [referenceRow.to_json()]
     print(f"✅ Relationship added: {row}")
 
 def _remove_relationship(self, request, gridUuid, grid, columnUuid, column, rowUuid, row, changeValue):  
     print(f"✏️ Remove relationship for row {row} in grid {grid} for column {column} with value '{changeValue}'")
+    if not gridUuid or not grid:
+        print(f"❌ No grid provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No grid provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
+        }                
+
+    if not columnUuid or not column:
+        print(f"❌ No column provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No column provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
+        }
+
+    if str(column.typeUuid) != SystemIds.ReferenceColumnType:
+        print(f"❌ Column {column} is not a reference column, not supported for update")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "Column is not a reference column, not supported for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
+        }
+
+    if not rowUuid or not row:
+        print(f"❌ No row provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No row provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
+        }
+
+    if not changeValue:
+        print(f"❌ No change value provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No change value provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
+        }
+
+    referenceUuid = changeValue.get('uuid')
+    if not referenceUuid:
+        print(f"❌ No reference UUID provided")
+        return {
+            "status": metadata.FailedStatus,
+            "message": "No reference UUID provided for update",
+            "userUuid": request.get('userUuid'),
+            "user": request.get('user')
+        }
+
+    values = row.values[column.index]
+    for value in values:
+        if value.get('uuid') == referenceUuid:
+            values.remove(value)
+            break
+    print(f"✅ Relationship removed for uuid={referenceUuid}: {row}")
 
 @echo
 @validate_jwt
@@ -190,10 +249,8 @@ def handle_change(self, request):
     try:
         for change in request.get('changes', []):
             changeType = change.get('changeType')
-            gridUuid = change.get('gridUuid')
-            columnUuid = change.get('columnUuid')
-            rowUuid = change.get('rowUuid')
-            (grid, column, row) = self._get_grid_column_row(change.get('gridUuid'), change.get('columnUuid'), change.get('rowUuid'))
+            gridUuid, columnUuid, rowUuid = change.get('gridUuid'), change.get('columnUuid'), change.get('rowUuid')
+            (grid, column, row) = self._get_grid_column_row(gridUuid, columnUuid, rowUuid)
             if changeType == metadata.ChangeAdd:
                 error = self._add_row(request, gridUuid, grid, rowUuid)
                 if error: return error
@@ -209,16 +266,15 @@ def handle_change(self, request):
             elif changeType == metadata.ChangeLoad:
                 print(f"⚙️ Load: {change}")
                 if grid:
-                    dataSet = {
-                        "gridUuid": str(grid.uuid),
-                        "grid": grid.to_json()
-                    }
                     return {
                         "status": metadata.SuccessStatus,
                         "message": f"'{grid.name}' loaded",
-                        "dataSet": dataSet,
                         "userUuid": request.get('userUuid'),
-                        "user": request.get('user')
+                        "user": request.get('user'),
+                        "dataSet": {
+                            "gridUuid": str(grid.uuid),
+                            "grid": grid.to_json()
+                        }
                     }
                 else:
                     return {
@@ -227,11 +283,13 @@ def handle_change(self, request):
                         "userUuid": request.get('userUuid'),
                         "user": request.get('user')
                     }
+
         return {
             "status": metadata.SuccessStatus,
             "userUuid": request.get('userUuid'),
             "user": request.get('user')
         }
+        
     except Exception as e:
         report_exception(e, f"Error handling change")
         return {

@@ -270,74 +270,74 @@ export class Context extends ContextBase {
       userUuid: this.user.getUserUuid(),
       user: this.user.getUser(),
       changes: [
-          {
-            changeType: metadata.ChangeAdd,
-            gridUuid: metadata.Grids,
-            rowUuid: newGridUuid,
-          },
-          {
-            changeType: metadata.ChangeUpdate,
-            gridUuid: metadata.Grids,
-            columnUuid: metadata.GridColumnName,
-            rowUuid: newGridUuid,
-            changeValue: 'New grid',
-          },
-          {
-            changeType: metadata.ChangeUpdate,
-            gridUuid: metadata.Grids,
-            columnUuid: metadata.GridColumnDesc,
-            rowUuid: newGridUuid,
-            changeValue: 'Untitled',
-          },
-          {
-            changeType: metadata.ChangeAdd,
-            gridUuid: metadata.Columns,
-            rowUuid: newColumnUuid,
-          },
-          {
-            changeType: metadata.ChangeUpdate,
-            gridUuid: metadata.Columns,
-            columnUuid: metadata.ColumnColumnOrder,
-            rowUuid: newColumnUuid,
-            changeValue: 'a',
-          },
-          {
-            changeType: metadata.ChangeUpdate,
-            gridUuid: metadata.Columns,
-            columnUuid: metadata.ColumnColumnName,
-            rowUuid: newColumnUuid,
-            changeValue: 'New column',
-          },
-          {
-            changeType: metadata.ChangeAddRelationship,
-            gridUuid: metadata.Columns,
-            columnUuid: metadata.ColumnColumnColumnType,
-            rowUuid: newColumnUuid,
-            changeValue: {
-              uuid: metadata.TextColumnType,
-              values: ["Text"]
-            }
-          },
-          {
-            changeType: metadata.ChangeAddRelationship,
-            gridUuid: metadata.Grids,
-            columnUuid: metadata.GridColumnColumns,
-            rowUuid: newGridUuid,
-            changeValue: {
-              uuid: newColumnUuid,
-              values: ["New column"]
-            }
-          },
-          {
-            changeType: metadata.ChangeAdd,
-            gridUuid: newGridUuid,
-            rowUuid: newRowUuid,
-          },
-          {
-            changeType: metadata.ChangeLoad,
-            gridUuid: newGridUuid,
+        {
+          changeType: metadata.ChangeAdd,
+          gridUuid: metadata.Grids,
+          rowUuid: newGridUuid,
+        },
+        {
+          changeType: metadata.ChangeUpdate,
+          gridUuid: metadata.Grids,
+          columnUuid: metadata.GridColumnName,
+          rowUuid: newGridUuid,
+          changeValue: 'New grid',
+        },
+        {
+          changeType: metadata.ChangeUpdate,
+          gridUuid: metadata.Grids,
+          columnUuid: metadata.GridColumnDesc,
+          rowUuid: newGridUuid,
+          changeValue: 'Untitled',
+        },
+        {
+          changeType: metadata.ChangeAdd,
+          gridUuid: metadata.Columns,
+          rowUuid: newColumnUuid,
+        },
+        {
+          changeType: metadata.ChangeUpdate,
+          gridUuid: metadata.Columns,
+          columnUuid: metadata.ColumnColumnOrder,
+          rowUuid: newColumnUuid,
+          changeValue: 'a',
+        },
+        {
+          changeType: metadata.ChangeUpdate,
+          gridUuid: metadata.Columns,
+          columnUuid: metadata.ColumnColumnName,
+          rowUuid: newColumnUuid,
+          changeValue: 'New column',
+        },
+        {
+          changeType: metadata.ChangeAddRelationship,
+          gridUuid: metadata.Columns,
+          columnUuid: metadata.ColumnColumnColumnType,
+          rowUuid: newColumnUuid,
+          changeValue: {
+            uuid: metadata.TextColumnType,
+            values: ["Text"]
           }
-        ]
+        },
+        {
+          changeType: metadata.ChangeAddRelationship,
+          gridUuid: metadata.Grids,
+          columnUuid: metadata.GridColumnColumns,
+          rowUuid: newGridUuid,
+          changeValue: {
+            uuid: newColumnUuid,
+            values: ["New column"]
+          }
+        },
+        {
+          changeType: metadata.ChangeAdd,
+          gridUuid: newGridUuid,
+          rowUuid: newRowUuid,
+        },
+        {
+          changeType: metadata.ChangeLoad,
+          gridUuid: newGridUuid,
+        }
+      ]
     })
   }
 
@@ -349,17 +349,17 @@ export class Context extends ContextBase {
       userUuid: this.user.getUserUuid(),
       user: this.user.getUser(),
       changes: [
-          {
-            changeType: metadata.ChangeAddRelationship,
-            gridUuid: set.grid.uuid,
-            columnUuid: column.uuid,
-            rowUuid: row.uuid,
-            changeValue: {
-              uuid: rowPrompt.uuid,
-              values: [rowPrompt.displayString]
-            }
-          },
-        ]
+        {
+          changeType: metadata.ChangeAddRelationship,
+          gridUuid: set.grid.uuid,
+          columnUuid: column.uuid,
+          rowUuid: row.uuid,
+          changeValue: {
+            uuid: rowPrompt.uuid,
+            values: [rowPrompt.displayString]
+          }
+        }
+      ]
     })
   }
 
@@ -367,19 +367,22 @@ export class Context extends ContextBase {
     const rowIndex = row.values[column.index].findIndex((reference: RowType) => reference.uuid === rowPrompt.uuid)
     if(rowIndex >= 0) row.values[column.index].splice(rowIndex, 1)
     return this.sendMessage({
-      command: metadata.ActionChangeGrid,
+      command: metadata.ActionChange,
       commandText: `Remove relationship in ${set.grid.name} from ${row.displayString} to ${rowPrompt.displayString} in column ${column.name}`,
       gridUuid: set.grid.uuid,
       userUuid: this.user.getUserUuid(),
       user: this.user.getUser(),
-      dataSet: {
-        referencedValuesRemoved: [
-          { columnName: column.name,
-            fromUuid: row.uuid,
-            toGridUuid: rowPrompt.gridUuid,
-            uuid: rowPrompt.uuid },
-        ] 
-      }
+      changes: [
+        {
+          changeType: metadata.ChangeRemoveRelationship,
+          gridUuid: set.grid.uuid,
+          columnUuid: column.uuid,
+          rowUuid: row.uuid,
+          changeValue: {
+            uuid: rowPrompt.uuid
+          }
+        }
+      ]
     })    
   }
 
