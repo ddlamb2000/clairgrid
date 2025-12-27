@@ -67,7 +67,7 @@ def _get_reference_grid(self, referenceGridUuid, loadReferenceGrid):
                 self.allGrids[referenceGridUuid] = referenceGrid
                 print(f"Reference grid loaded: {referenceGridUuid}")
             else:
-                report_exception(e, f"Error loading reference grid {referenceGridUuid}")
+                print(f"❌ Error loading reference grid {referenceGridUuid}")
                 raise Exception(f"Error loading reference grid {referenceGridUuid}")
         return referenceGrid
     else:

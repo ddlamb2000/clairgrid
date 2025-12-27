@@ -43,7 +43,7 @@ class Column():
             self.dbJoinKey = "uuid"
 
     def _set_db_reference_columns(self, referencedColumnIndex):
-        self.dbReferenceColumn = f"{self.dbTable}_{self.partition}_{referencedColumnIndex}.text{self.columnIndex % 10}"
+        self.dbReferenceColumn = f"string_agg(DISTINCT {self.dbTable}_{self.partition}_{referencedColumnIndex}.text{self.columnIndex % 10}, '||||')"
         self.dbReferenceJoinKey = "uuid"
 
     def _set_db_reference_clauses(self, referencedColumnIndex):
@@ -66,7 +66,7 @@ class Column():
             dbSelectReferenceColumns = (',\n' if len(dbSelectReferenceClauses) > 0 else '') + ',\n'.join(dbSelectReferenceClauses)
             dbJoinReferenceClauses = ''.join(list[LiteralString](dict.fromkeys([column.dbJoinReferenceClause for column in displayColumns])))
 
-            self.dbSelectClause = f"{self.dbTable}_{self.partition}.{self.dbColumn}" + dbSelectReferenceColumns
+            self.dbSelectClause = f"string_agg(DISTINCT {self.dbTable}_{self.partition}.{self.dbColumn}, '||||')" + dbSelectReferenceColumns
             self.dbJoinClause = f"\n-- Join {self.dbTable} for reference grid {self.referenceGrid.name}\n" + \
                                     f"LEFT OUTER JOIN {self.dbTable} {self.dbTable}_{self.columnIndex}\n" + \
                                     f"ON {self.dbTable}_{self.columnIndex}.{self.dbJoinKey} = rows.uuid\n" + \

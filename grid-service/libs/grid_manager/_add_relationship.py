@@ -70,7 +70,7 @@ def _add_relationship(self, request, gridUuid, grid, columnUuid, column, rowUuid
             "user": request.get('user')
         }
 
-    referenceRow = ReferenceRow(column.referenceGrid, uuid =referenceUuid, values = referenceValues)
+    referenceRow = ReferenceRow(column.referenceGrid, uuid = referenceUuid, values = referenceValues)
     row.values[column.index] += [referenceRow.to_json()]
     print(f"✅ Relationship added: {row}")
 
